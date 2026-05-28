@@ -1,53 +1,76 @@
-# Pixel 10 Pro Thermal Polling Fix (Android 16)
+# Pixel 10 Pro XL Thermal Polling Fix
 
-🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
-> [!WARNING]  
-> **POTENTIAL BOOTLOOP ISSUE:** > A recent background Google Play System Update (January 2026) has introduced SELinux policy changes that may cause this thermal fix to trigger a bootloop. I am currently investigating the conflict and will update this repository with a fix as soon as possible. Use with extreme caution for now.
-🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+> [!WARNING]
+> This fork is scoped to **Google Pixel 10 Pro XL / mustang / Android 16**. It is not a generic Pixel module. Thermal overlays can affect boot stability. Keep a rollback path ready before flashing.
 
-## 📢 DISCLAIMER 
-I am very much a hobby dev, and new to rooting android devices. I made this repository to document my findings as I am learning. Please only implement the module if you know what you are doing, and always keep backups in case of something not working as intended.
- 
- Asurgical Magisk/KernelSU module to correct a 5-minute thermal polling delay found in the initial Android 16 QPR builds for the Pixel 10 Pro.
+## Supported target
 
-## 🚨 The Issue
-In the stock Android 16 firmware for the Pixel 10 Pro, the `PollingDelay` for critical thermal sensors is incorrectly set to **300,000ms** (5 minutes). 
+- Google Pixel 10 Pro XL
+- Codename: `mustang`
+- Android: `16`
+- Local evidence build used for this fork: `CP1A.260505.005 / 15081906`
 
-This creates a massive "blind spot" in the system's thermal management. During heavy workloads, the CPU can hit 90°C+ before the Thermal HAL even attempts to sample the temperature, leading to heat soak and potential long-term battery degradation.
+## Issue
 
-## ✅ The Fix
-This module overlays the stock thermal configs with focused edits:
-1.  **Reduces Polling Delay:** Sets `PollingDelay` to **5,000ms** for the `VIRTUAL-SKIN*` sensors across `thermal_info_config.json`, `thermal_info_config_throttling.json`, and `thermal_info_config_charge.json`.
-2.  **Keeps OEM thresholds:** Restores the original `HotThreshold`, `CdevCeilingFrequency`, and `Profile` data so only the sampling cadence changes.
-3.  **Retains Hysteresis & Passive Delay:** Keeps the default `PassiveDelay` (7,000ms) and `HotHysteresis` values to avoid oscillating CPU-frequency decisions even as the sensor updates faster.
+The stock Android 16 thermal configs on the tested Pixel 10 Pro XL expose 300000ms polling intervals for relevant thermal entries, including `VIRTUAL-SKIN-CPU-LIGHT-ODPM` in `thermal_info_config_throttling.json`.
 
----
+A 300000ms polling delay creates a long blind spot for fast heat buildup.
 
-## 📋 Technical Evidence & Root Cause
-**Affected Component:** `/vendor/etc/thermal_info_config.json`  
-**Target Config:** `VIRTUAL-SKIN-CPU-LIGHT-ODPM`
+## Fix
 
-The stock configuration effectively disables real-time thermal management for burst workloads. By the time the 300s timer expires, the device has already reached thermal saturation. This module restores the expected behavior for a flagship Tensor G5 device.
+This module overlays vendor thermal configs and keeps the intended change narrow:
 
-## ✅ Additional Overlays
-* `/vendor/etc/thermal_info_config_throttling.json` and `thermal_info_config_charge.json` inherit the same 5s polling cadence so the HAL cannot revert to the 300s delay through the included files.
+- `PollingDelay`: `300000` -> `5000` for the affected VIRTUAL-SKIN* thermal entries
+- keeps OEM threshold/profile data unchanged where inherited from the upstream fix
 
-### Verification
-Run the following command in Termux (with root) to verify the fix is active:
-```bash
-cat /vendor/etc/thermal_info_config.json | grep -A 15 "VIRTUAL-SKIN-CPU-LIGHT-ODPM"
-# Ensure "PollingDelay" is now 5000.
+Overlay paths inside the module:
+
+- `system/vendor/etc/thermal_info_config.json`
+- `system/vendor/etc/thermal_info_config_throttling.json`
+- `system/vendor/etc/thermal_info_config_charge.json`
+
+## Safety gates
+
+This fork adds:
+
+- `customize.sh`: install-time hardgate for `mustang` + Android 16 + expected thermal marker
+- `post-fs-data.sh`: pre-mount guard and failed-previous-boot detector
+- `service.sh`: clears the boot-pending guard only after `sys.boot_completed=1`
+- `action.sh`: manual Magisk action to disable the module
+- `update.json`: Magisk online update metadata
+
+## Online update
+
+`module.prop` points to:
+
+```text
+https://raw.githubusercontent.com/Lycidias93/pixel-10-pro-xl-thermal-fix/main/update.json
 ```
-Verify the included files as well:
-```bash
-cat /vendor/etc/thermal_info_config_throttling.json | rg -n "VIRTUAL-SKIN-CPU-LIGHT-ODPM" -C2
-cat /vendor/etc/thermal_info_config_charge.json | rg -n "PollingDelay" -C1
+
+The update JSON points to the GitHub release asset for this version:
+
+```text
+https://github.com/Lycidias93/pixel-10-pro-xl-thermal-fix/releases/download/v1.3-mustang.1/pixel-10-pro-xl-thermal-fix-v1.3-mustang.1.zip
 ```
 
-🛠 Installation
- * Download the thermal_fix.zip from the Releases tab.
- * Install via Magisk Manager or KernelSU.
- * Reboot your device.
+## Verification
 
- ⚠️ Disclaimer
- This module modifies system thermal parameters. Use at your own risk. While it is designed to increase safety by enforcing earlier throttling, the author is not responsible for any damage to your device.
+See `VERIFY_MUSTANG.md`.
+
+Quick after-install check from Termux:
+
+```sh
+su -c 'grep -R -n "VIRTUAL-SKIN-CPU-LIGHT-ODPM\|PollingDelay" /vendor/etc/thermal_info_config*.json | head -80'
+```
+
+## Rollback
+
+From a root shell:
+
+```sh
+touch /data/adb/modules/pixel-10-pro-xl-thermal-fix/disable
+touch /data/adb/modules/pixel-10-pro-xl-thermal-fix/skip_mount
+reboot
+```
+
+Or remove/disable the module in Magisk Manager.

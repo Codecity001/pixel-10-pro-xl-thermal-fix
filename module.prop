@@ -1,6 +1,7 @@
-id=pixel-10-thermal-fix
-name=Pixel 10 Pro Thermal Fix
-version=1.3
-versionCode=3
-author=marx161
-description=Fixes the 5-minute thermal polling settings across several config files.
+id=pixel-10-pro-xl-thermal-fix
+name=Pixel 10 Pro XL Thermal Polling Fix
+version=1.3-mustang.1
+versionCode=101301
+author=Lycidias93, based on marx161
+description=Pixel 10 Pro XL / mustang Android 16 thermal polling overlay: VIRTUAL-SKIN* PollingDelay 300000ms -> 5000ms.
+updateJson=https://raw.githubusercontent.com/Lycidias93/pixel-10-pro-xl-thermal-fix/main/update.json
