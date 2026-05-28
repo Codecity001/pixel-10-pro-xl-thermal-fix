@@ -303,7 +303,7 @@
                 0.9,
                 0.0
             ],
-            "PollingDelay": 5000,
+            "PollingDelay": 300000,
             "PassiveDelay": 7000,
             "SendCallback": true
         },
@@ -343,7 +343,7 @@
             ],
             "Multiplier": 0.001,
             "SendCallback": true,
-            "PollingDelay": 5000,
+            "PollingDelay": 300000,
             "PassiveDelay": 7000
         },
         {
