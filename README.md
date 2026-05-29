@@ -71,3 +71,14 @@ Adds exactly one additional live-stock thermal throttling overlay change on top 
 - VIRTUAL-SKIN-CPU-ODPM: PollingDelay 300000ms -> 5000ms
 
 No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.
+
+
+## v1.3-mustang.5 - CPU-MID bisect
+
+Adds VIRTUAL-SKIN-CPU-MID to the verified v1.3-mustang.4 baseline. Active target sensors:
+
+- VIRTUAL-SKIN-CPU-LIGHT-ODPM: PollingDelay 300000ms -> 5000ms
+- VIRTUAL-SKIN-CPU-ODPM: PollingDelay 300000ms -> 5000ms
+- VIRTUAL-SKIN-CPU-MID: PollingDelay 300000ms -> 5000ms
+
+No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.
