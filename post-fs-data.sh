@@ -1,10 +1,20 @@
 #!/system/bin/sh
 MODDIR=${0%/*}
 GUARDDIR="$MODDIR/guard"
+FAILCOUNT="$GUARDDIR/fail_count"
+THRESHOLD=2
 mkdir -p "$GUARDDIR"
 
 log_msg() {
   /system/bin/date -Is 2>/dev/null | /system/bin/sed "s/$/ $*/" >> "$GUARDDIR/bootguard.log" 2>/dev/null || true
+}
+
+num_or_zero() {
+  val="$(cat "$1" 2>/dev/null || echo 0)"
+  case "$val" in
+    ''|*[!0-9]*) echo 0 ;;
+    *) echo "$val" ;;
+  esac
 }
 
 disable_module() {
@@ -41,10 +51,22 @@ case "$fingerprint" in
 esac
 
 if [ -f "$GUARDDIR/pending_boot" ]; then
-  disable_module "previous_boot_did_not_reach_sys_boot_completed"
+  old_count="$(num_or_zero "$FAILCOUNT")"
+  new_count=$((old_count + 1))
+  echo "$new_count" > "$FAILCOUNT" 2>/dev/null || true
+  log_msg "PENDING previous_boot_incomplete count=${new_count} threshold=${THRESHOLD}"
+
+  if [ "$new_count" -ge "$THRESHOLD" ]; then
+    disable_module "previous_boot_did_not_reach_sys_boot_completed_count_${new_count}"
+    exit 0
+  fi
+
+  echo "$(getprop ro.boot.bootreason 2>/dev/null || true)" > "$GUARDDIR/pending_boot" 2>/dev/null || true
+  log_msg "GRACE keep_enabled count=${new_count} threshold=${THRESHOLD}"
   exit 0
 fi
 
+echo 0 > "$FAILCOUNT" 2>/dev/null || true
 echo "$(getprop ro.boot.bootreason 2>/dev/null || true)" > "$GUARDDIR/pending_boot" 2>/dev/null || true
-log_msg "ARM pending_boot device=${device} android=${android}"
+log_msg "ARM pending_boot device=${device} android=${android} threshold=${THRESHOLD}"
 exit 0

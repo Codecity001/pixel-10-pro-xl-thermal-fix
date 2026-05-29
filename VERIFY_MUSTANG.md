@@ -21,23 +21,35 @@ PollingDelay values are 300000 before install
 
 ## Expected after install
 
-Relevant VIRTUAL-SKIN* PollingDelay entries should be 5000.
+Relevant `VIRTUAL-SKIN*` PollingDelay entries should be 5000.
+
+Expected semantic scope:
+
+```text
+semantic_non_polling_changes=0
+bad_pollingdelay_changes=0
+non_virtual_pollingdelay_changes=0
+```
 
 Do not intentionally change:
 
 - HotThreshold
 - HotHysteresis
 - PassiveDelay
+- PIDInfo
 - CdevCeilingFrequency
 - Profile
+- physical sensor polling
+- VIRTUAL-USB-THROTTLING
 
 ## Bootloop guard behavior
 
-The same-module guard cannot guarantee protection from the first failed boot. It is designed to catch a failed previous boot on the next boot:
+The same-module guard cannot guarantee protection from the first failed boot. It is designed to catch repeated failed boots:
 
-1. post-fs-data.sh runs before module mount and writes guard/pending_boot.
-2. service.sh waits for sys.boot_completed=1 and removes guard/pending_boot.
-3. If the next boot sees guard/pending_boot still present, it creates skip_mount and disable, then exits before mount.
+1. `post-fs-data.sh` runs before module mount and writes `guard/pending_boot`.
+2. `service.sh` waits for `sys.boot_completed=1` and removes `guard/pending_boot` plus `guard/fail_count`.
+3. If the next boot sees `guard/pending_boot` still present, it increments `guard/fail_count` and grants one grace boot.
+4. If stale `pending_boot` appears again, it creates `skip_mount` and `disable`, then exits before mount.
 
 Manual rollback path from root shell:
 

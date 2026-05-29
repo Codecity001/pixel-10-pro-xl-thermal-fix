@@ -8,11 +8,11 @@ log_msg() {
 }
 
 i=0
-while [ "$i" -lt 120 ]; do
+while [ "$i" -lt 180 ]; do
   boot_completed="$(getprop sys.boot_completed 2>/dev/null || true)"
   if [ "$boot_completed" = "1" ]; then
-    rm -f "$GUARDDIR/pending_boot" 2>/dev/null || true
-    echo "$(date -Is 2>/dev/null || true)" > "$GUARDDIR/last_boot_ok" 2>/dev/null || true
+    rm -f "$GUARDDIR/pending_boot" "$GUARDDIR/fail_count" 2>/dev/null || true
+    /system/bin/date -Is > "$GUARDDIR/last_boot_ok" 2>/dev/null || true
     log_msg "BOOT_COMPLETED clear_pending"
     break
   fi
@@ -31,6 +31,12 @@ fi
   getprop ro.product.device
   getprop ro.build.version.release
   getprop ro.build.fingerprint
+  echo
+  echo "== boot props =="
+  getprop sys.boot_completed
+  getprop dev.bootcomplete
+  getprop sys.boot.reason
+  getprop ro.boot.bootreason
   echo
   echo "== thermal overlay sample =="
   grep -R -n "VIRTUAL-SKIN-CPU-LIGHT-ODPM\|PollingDelay" /vendor/etc/thermal_info_config*.json 2>/dev/null | head -80 || true

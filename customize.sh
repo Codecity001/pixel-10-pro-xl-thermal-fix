@@ -34,5 +34,12 @@ if ! grep -q "VIRTUAL-SKIN-CPU-LIGHT-ODPM" /vendor/etc/thermal_info_config_throt
   abort "! Expected VIRTUAL-SKIN-CPU-LIGHT-ODPM marker not found in stock throttling config"
 fi
 
+if [ -n "${MODPATH:-}" ]; then
+  ui_print "- Resetting stale guard flags for this intentional install/update"
+  rm -f "$MODPATH/disable" "$MODPATH/skip_mount" "$MODPATH/remove" 2>/dev/null || true
+  rm -f "$MODPATH/guard/pending_boot" "$MODPATH/guard/fail_count" "$MODPATH/guard/disabled_reason" 2>/dev/null || true
+fi
+
 ui_print "- Target guard PASS"
+ui_print "- Boot guard uses grace_count=2 before self-disable"
 ui_print "- Bootloop guard will arm on next boot and clear after sys.boot_completed=1"

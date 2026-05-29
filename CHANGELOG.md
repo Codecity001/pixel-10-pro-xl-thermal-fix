@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3-mustang.2 - Guard grace counter
+
+- Fixes false self-disable after a single stale `pending_boot`.
+- Adds a one-boot grace counter before `skip_mount` + `disable`.
+- Extends boot-completed wait window to 180 seconds.
+- Clears stale guard flags during intentional install/update.
+- Keeps narrowed semantic overlay scope: only `VIRTUAL-SKIN*` `PollingDelay` `300000` -> `5000`.
+
 ## 1.3-mustang.1 - Pixel 10 Pro XL / mustang guarded release
 
 - Scopes module metadata to Pixel 10 Pro XL / mustang.
