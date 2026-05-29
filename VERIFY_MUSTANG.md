@@ -1,60 +1,52 @@
-# Pixel 10 Pro XL / mustang verification
+# Verify Pixel 10 Pro XL Thermal Polling Fix
 
-## Supported target
+## Target
 
-- Model: Pixel 10 Pro XL
-- Codename: mustang
+- Device: Pixel 10 Pro XL
+- Codename: `mustang`
 - Android: 16
-- Verified local evidence build: CP1A.260505.005 / 15081906
+- Build: `CP1A.260505.005/15081906`
 
-This is not a generic Pixel thermal module.
+## v1.3-mustang.3 expected scope
 
-## Expected stock evidence before install
-
-```text
-getprop ro.product.model  -> Pixel 10 Pro XL
-getprop ro.product.device -> mustang
-getprop ro.build.version.release -> 16
-/vendor/etc/thermal_info_config_throttling.json contains VIRTUAL-SKIN-CPU-LIGHT-ODPM
-PollingDelay values are 300000 before install
-```
-
-## Expected after install
-
-Relevant `VIRTUAL-SKIN*` PollingDelay entries should be 5000.
-
-Expected semantic scope:
+Only this module overlay should exist:
 
 ```text
-semantic_non_polling_changes=0
-bad_pollingdelay_changes=0
-non_virtual_pollingdelay_changes=0
+system/vendor/etc/thermal_info_config_throttling.json
 ```
 
-Do not intentionally change:
+Removed from active module scope:
 
-- HotThreshold
-- HotHysteresis
-- PassiveDelay
-- PIDInfo
-- CdevCeilingFrequency
-- Profile
-- physical sensor polling
-- VIRTUAL-USB-THROTTLING
-
-## Bootloop guard behavior
-
-The same-module guard cannot guarantee protection from the first failed boot. It is designed to catch repeated failed boots:
-
-1. `post-fs-data.sh` runs before module mount and writes `guard/pending_boot`.
-2. `service.sh` waits for `sys.boot_completed=1` and removes `guard/pending_boot` plus `guard/fail_count`.
-3. If the next boot sees `guard/pending_boot` still present, it increments `guard/fail_count` and grants one grace boot.
-4. If stale `pending_boot` appears again, it creates `skip_mount` and `disable`, then exits before mount.
-
-Manual rollback path from root shell:
-
-```sh
-touch /data/adb/modules/pixel-10-pro-xl-thermal-fix/disable
-touch /data/adb/modules/pixel-10-pro-xl-thermal-fix/skip_mount
-reboot
+```text
+system/vendor/etc/thermal_info_config.json
+system/vendor/etc/thermal_info_config_charge.json
 ```
+
+Only one semantic value is expected to differ from live stock:
+
+```text
+VIRTUAL-SKIN-CPU-LIGHT-ODPM
+PollingDelay: 300000 -> 5000
+```
+
+## Runtime success criteria
+
+```text
+disable=absent
+skip_mount=absent
+pending_boot=absent or missing
+fail_count=absent or missing
+last_boot_ok=present
+PollingDelay=5000 for VIRTUAL-SKIN-CPU-LIGHT-ODPM
+AshLooper loops=0
+no new android.hardware.thermal-service.pixel tombstones
+```
+
+## Failure criteria
+
+```text
+/vendor/bin/hw/android.hardware.thermal-service.pixel
+Abort message: ThermalHAL could not be initialized properly.
+```
+
+If that appears again with v1.3-mustang.3 active, this target sensor overlay is not safe on the current build.

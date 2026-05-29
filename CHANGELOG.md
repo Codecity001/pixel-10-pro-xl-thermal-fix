@@ -1,22 +1,23 @@
 # Changelog
 
-## 1.3-mustang.2 - Guard grace counter
+## v1.3-mustang.3
 
-- Fixes false self-disable after a single stale `pending_boot`.
-- Adds a one-boot grace counter before `skip_mount` + `disable`.
-- Extends boot-completed wait window to 180 seconds.
-- Clears stale guard flags during intentional install/update.
-- Keeps narrowed semantic overlay scope: only `VIRTUAL-SKIN*` `PollingDelay` `300000` -> `5000`.
+- Rebuilt as a minimal live-stock-derived bisect release after ThermalHAL tombstones were observed with the broader overlay.
+- Uses the live stock `thermal_info_config_throttling.json` from Pixel 10 Pro XL build `CP1A.260505.005/15081906` as base.
+- Removes broad overlays for:
+  - `thermal_info_config.json`
+  - `thermal_info_config_charge.json`
+- Changes only:
+  - `VIRTUAL-SKIN-CPU-LIGHT-ODPM` `PollingDelay: 300000 -> 5000`
+- Replaces self-disable loop counter with passive guard logging while AshLooper remains the primary bootloop protector.
+- Keeps wrong-target boot-time disable for non-`mustang`/wrong fingerprint cases.
 
-## 1.3-mustang.1 - Pixel 10 Pro XL / mustang guarded release
+## v1.3-mustang.2
 
-- Scopes module metadata to Pixel 10 Pro XL / mustang.
-- Adds Magisk online update metadata via update.json.
-- Moves thermal overlays to Magisk-documented system/vendor layout.
-- Adds install-time device/build hardgate through customize.sh.
-- Adds same-module bootloop guard:
-  - post-fs-data.sh creates a pending boot marker before module mount.
-  - service.sh clears the marker after sys.boot_completed=1.
-  - if the previous boot did not reach boot_completed, the next boot touches skip_mount and disable before mount.
-- Adds Magisk action button helper to disable the module manually.
-- Keeps the original intent: VIRTUAL-SKIN* thermal PollingDelay 300000ms -> 5000ms only.
+- Added guard grace counter.
+- Still failed runtime validation on this device with ThermalHAL tombstones.
+
+## v1.3-mustang.1
+
+- Initial Pixel 10 Pro XL / `mustang` port.
+- Narrowed to `VIRTUAL-SKIN*` semantic changes.

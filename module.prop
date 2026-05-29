@@ -1,7 +1,7 @@
 id=pixel-10-pro-xl-thermal-fix
 name=Pixel 10 Pro XL Thermal Polling Fix
-version=1.3-mustang.2
-versionCode=101302
+version=1.3-mustang.3
+versionCode=101303
 author=Lycidias93, based on marx161
-description=Pixel 10 Pro XL / mustang Android 16 thermal polling overlay: VIRTUAL-SKIN* PollingDelay 300000ms -> 5000ms.
+description=Pixel 10 Pro XL / mustang Android 16 minimal live-stock thermal overlay: VIRTUAL-SKIN-CPU-LIGHT-ODPM PollingDelay 300000ms -> 5000ms.
 updateJson=https://raw.githubusercontent.com/Lycidias93/pixel-10-pro-xl-thermal-fix/main/update.json

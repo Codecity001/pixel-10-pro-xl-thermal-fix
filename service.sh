@@ -1,45 +1,34 @@
 #!/system/bin/sh
 MODDIR=${0%/*}
 GUARDDIR="$MODDIR/guard"
+LOG="$GUARDDIR/bootguard.log"
 mkdir -p "$GUARDDIR"
 
-log_msg() {
-  /system/bin/date -Is 2>/dev/null | /system/bin/sed "s/$/ $*/" >> "$GUARDDIR/bootguard.log" 2>/dev/null || true
+log_line() {
+  echo "$(date -Is 2>/dev/null || date) $*" >> "$LOG"
 }
 
 i=0
-while [ "$i" -lt 180 ]; do
-  boot_completed="$(getprop sys.boot_completed 2>/dev/null || true)"
-  if [ "$boot_completed" = "1" ]; then
-    rm -f "$GUARDDIR/pending_boot" "$GUARDDIR/fail_count" 2>/dev/null || true
-    /system/bin/date -Is > "$GUARDDIR/last_boot_ok" 2>/dev/null || true
-    log_msg "BOOT_COMPLETED clear_pending"
+while [ "$i" -lt 240 ]; do
+  if [ "$(getprop sys.boot_completed 2>/dev/null)" = "1" ]; then
+    rm -f "$GUARDDIR/pending_boot" "$GUARDDIR/fail_count"
+    date -Is > "$GUARDDIR/last_boot_ok" 2>/dev/null || date > "$GUARDDIR/last_boot_ok"
+    log_line "BOOT_COMPLETED passive_guard_ok"
     break
   fi
   i=$((i + 1))
   sleep 1
 done
 
-if [ "$(getprop sys.boot_completed 2>/dev/null || true)" != "1" ]; then
-  log_msg "WARN boot_completed_timeout pending_boot_left_for_next_boot_guard"
-  exit 0
+if [ "$(getprop sys.boot_completed 2>/dev/null)" != "1" ]; then
+  log_line "BOOT_COMPLETED_TIMEOUT passive_no_self_disable waited=${i}s"
 fi
 
 {
-  echo "== device =="
-  getprop ro.product.model
-  getprop ro.product.device
-  getprop ro.build.version.release
-  getprop ro.build.fingerprint
-  echo
-  echo "== boot props =="
-  getprop sys.boot_completed
-  getprop dev.bootcomplete
-  getprop sys.boot.reason
-  getprop ro.boot.bootreason
-  echo
-  echo "== thermal overlay sample =="
-  grep -R -n "VIRTUAL-SKIN-CPU-LIGHT-ODPM\|PollingDelay" /vendor/etc/thermal_info_config*.json 2>/dev/null | head -80 || true
-} > "$GUARDDIR/last_verify.txt" 2>/dev/null || true
-
-exit 0
+  echo "timestamp=$(date -Is 2>/dev/null || date)"
+  echo "device=$(getprop ro.product.device 2>/dev/null)"
+  echo "android=$(getprop ro.build.version.release 2>/dev/null)"
+  echo "fingerprint=$(getprop ro.build.fingerprint 2>/dev/null)"
+  echo "scope=thermal_info_config_throttling.json:VIRTUAL-SKIN-CPU-LIGHT-ODPM"
+  grep -A20 -B5 "VIRTUAL-SKIN-CPU-LIGHT-ODPM" /vendor/etc/thermal_info_config_throttling.json 2>/dev/null | grep -E "Name|PollingDelay" || true
+} > "$GUARDDIR/last_verify.txt"
