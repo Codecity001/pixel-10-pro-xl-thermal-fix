@@ -700,7 +700,7 @@
                 0.0
             ],
             "Multiplier": 0.001,
-            "PollingDelay": 300000,
+            "PollingDelay": 5000,
             "PassiveDelay": 7000,
             "PIDInfo": {
                 "K_Po": [

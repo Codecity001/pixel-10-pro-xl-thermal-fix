@@ -41,5 +41,5 @@ rm -f "$MODPATH/guard/pending_boot" "$MODPATH/guard/fail_count" "$MODPATH/guard/
 
 ui_print "Target guard PASS"
 ui_print "Minimal v3 scope: live-stock thermal_info_config_throttling.json only"
-ui_print "Changed sensor: VIRTUAL-SKIN-CPU-LIGHT-ODPM PollingDelay 300000ms -> 5000ms"
+ui_print "Changed sensor: VIRTUAL-SKIN-CPU-LIGHT-ODPM + VIRTUAL-SKIN-CPU-ODPM PollingDelay 300000ms -> 5000ms"
 ui_print "Passive guard: AshLooper remains primary bootloop protection"

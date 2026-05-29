@@ -50,3 +50,13 @@ Abort message: ThermalHAL could not be initialized properly.
 ```
 
 If that appears again with v1.3-mustang.3 active, this target sensor overlay is not safe on the current build.
+
+
+## v1.3-mustang.4 - Pixel 10 Pro XL VIRTUAL-SKIN CPU ODPM bisect
+
+Adds exactly one additional live-stock thermal throttling overlay change on top of v1.3-mustang.3:
+
+- VIRTUAL-SKIN-CPU-LIGHT-ODPM: PollingDelay 300000ms -> 5000ms
+- VIRTUAL-SKIN-CPU-ODPM: PollingDelay 300000ms -> 5000ms
+
+No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.

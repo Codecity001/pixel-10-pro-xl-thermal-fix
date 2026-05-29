@@ -36,4 +36,4 @@ case "$fingerprint" in
   *) disable_wrong_target "unsupported_fingerprint"; exit 0 ;;
 esac
 
-log_line "PASSIVE_ARM device=$device android=$android scope=throttling_cpu_light_odpm ashlooper_primary=true"
+log_line "PASSIVE_ARM device=$device android=$android scope=throttling_cpu_light_odpm_cpu_odpm ashlooper_primary=true"

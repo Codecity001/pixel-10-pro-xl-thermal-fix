@@ -1,3 +1,10 @@
+
+## v1.3-mustang.4
+
+- Adds one additional VIRTUAL-SKIN throttling sensor to the stable v1.3-mustang.3 baseline: VIRTUAL-SKIN-CPU-ODPM PollingDelay 300000ms -> 5000ms.
+- Keeps overlay scope limited to system/vendor/etc/thermal_info_config_throttling.json.
+- Does not restore thermal_info_config.json or thermal_info_config_charge.json.
+- Requires post-reboot runtime verification for fresh ThermalHAL tombstones.
 # Changelog
 
 ## v1.3-mustang.3
