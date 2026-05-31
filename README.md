@@ -152,3 +152,12 @@ Adds VIRTUAL-SKIN-SOC-EXTREME to the verified v1.3-mustang.9 baseline. Active ta
 - VIRTUAL-SKIN-SOC-EXTREME: PollingDelay 300000ms -> 5000ms
 
 No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.
+
+
+## v1.3-mustang.11 - base VIRTUAL-SKIN-SPEAKER bisect
+
+Adds one base thermal config sensor to the verified v1.3-mustang.10 throttling baseline:
+
+- thermal_info_config.json / VIRTUAL-SKIN-SPEAKER: PollingDelay 300000ms -> 5000ms
+
+The module keeps all eight throttling-only VIRTUAL-SKIN targets from v1.3-mustang.10 and does not add thermal_info_config_charge.json. VIRTUAL-SKIN entries with absent/null PollingDelay are intentionally left untouched. AshLooper remains the primary bootloop protection.
