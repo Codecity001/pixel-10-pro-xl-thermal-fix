@@ -1,4 +1,12 @@
 
+## v1.3-mustang.12
+
+- Adds both remaining true 300000ms charge thermal config candidates to the stable v1.3-mustang.11 baseline: thermal_info_config_charge.json VIRTUAL-SKIN-CHARGE-WIRED and VIRTUAL-SKIN-CHARGE-PERSIST PollingDelay 300000ms -> 5000ms.
+- Keeps all eight throttling-only VIRTUAL-SKIN targets from v1.3-mustang.10.
+- Keeps thermal_info_config.json VIRTUAL-SKIN-SPEAKER from v1.3-mustang.11.
+- Does not alter VIRTUAL-SKIN entries with absent/null PollingDelay.
+- Requires post-reboot runtime verification for fresh ThermalHAL tombstones.
+
 ## v1.3-mustang.11
 
 - Adds the first base thermal config candidate to the stable v1.3-mustang.10 throttling baseline: thermal_info_config.json VIRTUAL-SKIN-SPEAKER PollingDelay 300000ms -> 5000ms.

@@ -29,6 +29,6 @@ fi
   echo "device=$(getprop ro.product.device 2>/dev/null)"
   echo "android=$(getprop ro.build.version.release 2>/dev/null)"
   echo "fingerprint=$(getprop ro.build.fingerprint 2>/dev/null)"
-  echo "scope=thermal_info_config_throttling.json:all_8_vskin;thermal_info_config.json:VIRTUAL-SKIN-SPEAKER"
+  echo "scope=thermal_info_config_throttling.json:all_8_vskin;thermal_info_config.json:VIRTUAL-SKIN-SPEAKER;thermal_info_config_charge.json:VIRTUAL-SKIN-CHARGE-WIRED,VIRTUAL-SKIN-CHARGE-PERSIST"
   grep -A20 -B5 "VIRTUAL-SKIN-CPU-LIGHT-ODPM" /vendor/etc/thermal_info_config_throttling.json 2>/dev/null | grep -E "Name|PollingDelay" || true
 } > "$GUARDDIR/last_verify.txt"
