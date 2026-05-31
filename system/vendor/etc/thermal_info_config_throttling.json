@@ -87,7 +87,7 @@
             ],
             "Multiplier": 0.001,
             "SendCallback": true,
-            "PollingDelay": 300000,
+            "PollingDelay": 5000,
             "PassiveDelay": 7000,
             "BindedCdevInfo": [
                 {
