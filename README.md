@@ -121,3 +121,18 @@ Adds VIRTUAL-SKIN-HINT to the verified v1.3-mustang.7 baseline. Active target se
 - VIRTUAL-SKIN-CPU-HIGH: PollingDelay 300000ms -> 5000ms
 
 No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.
+
+
+## v1.3-mustang.9 - VIRTUAL-SKIN-SOC bisect
+
+Adds VIRTUAL-SKIN-SOC to the verified v1.3-mustang.8 baseline. Active target sensors:
+
+- VIRTUAL-SKIN: PollingDelay 300000ms -> 5000ms
+- VIRTUAL-SKIN-HINT: PollingDelay 300000ms -> 5000ms
+- VIRTUAL-SKIN-CPU-LIGHT-ODPM: PollingDelay 300000ms -> 5000ms
+- VIRTUAL-SKIN-CPU-ODPM: PollingDelay 300000ms -> 5000ms
+- VIRTUAL-SKIN-CPU-MID: PollingDelay 300000ms -> 5000ms
+- VIRTUAL-SKIN-CPU-HIGH: PollingDelay 300000ms -> 5000ms
+- VIRTUAL-SKIN-SOC: PollingDelay 300000ms -> 5000ms
+
+No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.
