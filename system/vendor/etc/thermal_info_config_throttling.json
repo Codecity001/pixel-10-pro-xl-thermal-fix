@@ -141,7 +141,7 @@
             ],
             "Multiplier": 0.001,
             "SendPowerHint": true,
-            "PollingDelay": 300000,
+            "PollingDelay": 5000,
             "PassiveDelay": 7000
         },
         {
