@@ -1,5 +1,16 @@
 ## v1.3-mustang.15
 
+<!-- UNIVERSAL_TEST_V1401_START -->
+## v1.4.0-universal-test.1 - universal test prerelease
+
+- Added install-time multi-profile selection while keeping `id=pixel-10-pro-xl-thermal-fix` unchanged.
+- Kept the stable update channel on `https://raw.githubusercontent.com/Lycidias93/pixel-10-pro-xl-thermal-fix/main/update.json` unchanged.
+- Preserved the verified Mustang profile from `v1.3-mustang.15` without runtime-scope changes.
+- Added a Pixel 10 Pro / `blazer` beta profile from local original/upstream profile data.
+- Added hard target guards: `mustang` stable build check, `blazer` Android 16 beta check, all other devices abort.
+- Marked `blazer` as not live-boot verified by this fork and recommended AshLooper or equivalent bootloop protection.
+<!-- UNIVERSAL_TEST_V1401_END -->
+
 - Stable Mustang tooling/support release.
 - Runtime thermal scope unchanged from `v1.3-mustang.14`.
 - Debug report ZIP now defaults to `/storage/emulated/0/Download`.
