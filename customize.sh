@@ -40,6 +40,6 @@ mkdir -p "$MODPATH/guard"
 rm -f "$MODPATH/guard/pending_boot" "$MODPATH/guard/fail_count" "$MODPATH/guard/disabled_reason"
 
 ui_print "Target guard PASS"
-ui_print "Bisect v12 scope: live-stock thermal_info_config_throttling.json only"
-ui_print "Changed sensor: throttling VIRTUAL-SKIN set + base VIRTUAL-SKIN-SPEAKER + charge VIRTUAL-SKIN-CHARGE-WIRED/PERSIST PollingDelay 300000ms -> 5000ms"
+ui_print "Stable v13 scope: live-stock throttling/base/charge thermal configs"
+ui_print "Changed sensor: stable throttling/base/charge VIRTUAL-SKIN polling set PollingDelay 300000ms -> 5000ms"
 ui_print "Passive guard: AshLooper remains primary bootloop protection"

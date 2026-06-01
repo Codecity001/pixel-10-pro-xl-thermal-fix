@@ -1,4 +1,13 @@
 
+## v1.3-mustang.13
+
+- Stable cleanup release for Pixel 10 Pro XL / mustang.
+- No runtime thermal scope change versus v1.3-mustang.12.
+- Keeps all verified 300000ms -> 5000ms PollingDelay targets across throttling, base and charge configs.
+- Fixes stale installer text that still said thermal_info_config_throttling.json only.
+- Keeps VIRTUAL-SKIN entries with absent/null PollingDelay untouched.
+
+
 ## v1.3-mustang.12
 
 - Adds both remaining true 300000ms charge thermal config candidates to the stable v1.3-mustang.11 baseline: thermal_info_config_charge.json VIRTUAL-SKIN-CHARGE-WIRED and VIRTUAL-SKIN-CHARGE-PERSIST PollingDelay 300000ms -> 5000ms.

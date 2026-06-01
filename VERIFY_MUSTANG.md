@@ -160,3 +160,14 @@ Adds both remaining true 300000ms charge thermal config sensors to the verified 
 - thermal_info_config_charge.json / VIRTUAL-SKIN-CHARGE-PERSIST: PollingDelay 300000ms -> 5000ms
 
 The module keeps all eight throttling-only VIRTUAL-SKIN targets and the base VIRTUAL-SKIN-SPEAKER target. VIRTUAL-SKIN entries with absent/null PollingDelay are intentionally left untouched. AshLooper remains the primary bootloop protection.
+
+
+## v1.3-mustang.13 - stable Mustang release
+
+Stable cleanup release after verified v1.3-mustang.12 runtime testing. Runtime thermal scope is unchanged from v1.3-mustang.12:
+
+- thermal_info_config_throttling.json: all eight verified VIRTUAL-SKIN* PollingDelay targets set to 5000ms
+- thermal_info_config.json: VIRTUAL-SKIN-SPEAKER set to 5000ms
+- thermal_info_config_charge.json: VIRTUAL-SKIN-CHARGE-WIRED and VIRTUAL-SKIN-CHARGE-PERSIST set to 5000ms
+
+This release only corrects stale installer wording and finalizes stable documentation. Entries with absent/null PollingDelay remain untouched.
