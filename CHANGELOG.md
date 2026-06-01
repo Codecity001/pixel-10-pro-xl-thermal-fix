@@ -1,4 +1,12 @@
 
+## Documentation cleanup - README intro and changelog placement
+
+- Reworked README to start with a short explanation of why this Mustang fork exists.
+- Added credits section.
+- Removed per-version changelog-style sections from README.
+- Kept release history in CHANGELOG.md.
+
+
 ## v1.3-mustang.13
 
 - Stable cleanup release for Pixel 10 Pro XL / mustang.

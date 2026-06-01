@@ -1,55 +1,103 @@
 # Pixel 10 Pro XL Thermal Polling Fix
 
-## Scope
+This repository is my Pixel 10 Pro XL (`mustang`) Android 16 fork of the original Pixel thermal polling fix idea.
 
-This fork is scoped to Pixel 10 Pro XL (`mustang`) on Android 16 build `CP1A.260505.005/15081906`.
+The fork exists because the broad/original overlay approach was not safe on `mustang`: early full-overlay tests could make `/vendor/bin/hw/android.hardware.thermal-service.pixel` abort during ThermalHAL initialization. This fork keeps the practical goal of the original module, but ports it conservatively for Pixel 10 Pro XL by only changing firmware-verified `VIRTUAL-SKIN*` entries that already had a `PollingDelay` of `300000ms`.
 
-## v1.3-mustang.3 minimal live-stock build
+The stable result is `v1.3-mustang.13`: all verified `300000ms -> 5000ms` thermal polling candidates are active, while entries with absent/null `PollingDelay` stay untouched.
 
-`v1.3-mustang.3` is a recovery/bisect build after full-overlay tests caused native crashes in:
+## Credits
+
+- Original thermal polling fix idea/module: credited to the upstream project this fork is based on. If an `upstream` remote is configured later, keep that reference here.
+- Mustang fork, bisect, runtime verification, packaging and release: `Lycidias93`.
+- Bootloop safety during testing: AshLooper remained the primary external bootloop protection.
+
+## Compatibility
+
+Verified target:
 
 ```text
-/vendor/bin/hw/android.hardware.thermal-service.pixel
-Abort message: ThermalHAL could not be initialized properly.
+Device: Pixel 10 Pro XL
+Codename: mustang
+Android: 16
+Build: CP1A.260505.005 / 15081906
+Fingerprint: google/mustang/mustang:16/CP1A.260505.005/15081906:user/release-keys
 ```
 
-This version intentionally narrows the runtime overlay to one firmware-exact file copied from the live device stock config:
+The installer has hard gates for device, Android version and fingerprint. It is not intended as a generic Pixel thermal module.
+
+## Stable runtime scope
+
+Latest stable release: `v1.3-mustang.13`.
+
+Changed values:
 
 ```text
-system/vendor/etc/thermal_info_config_throttling.json
+thermal_info_config_throttling.json:
+- VIRTUAL-SKIN
+- VIRTUAL-SKIN-HINT
+- VIRTUAL-SKIN-CPU-LIGHT-ODPM
+- VIRTUAL-SKIN-CPU-MID
+- VIRTUAL-SKIN-CPU-ODPM
+- VIRTUAL-SKIN-CPU-HIGH
+- VIRTUAL-SKIN-SOC
+- VIRTUAL-SKIN-SOC-EXTREME
+
+thermal_info_config.json:
+- VIRTUAL-SKIN-SPEAKER
+
+thermal_info_config_charge.json:
+- VIRTUAL-SKIN-CHARGE-WIRED
+- VIRTUAL-SKIN-CHARGE-PERSIST
 ```
 
-Only one semantic value is changed:
+All listed entries are changed from:
 
 ```text
-VIRTUAL-SKIN-CPU-LIGHT-ODPM
 PollingDelay: 300000 -> 5000
 ```
 
-The broader overlays are removed from this build:
+Entries with absent/null `PollingDelay` are intentionally not modified.
+
+## Safety model
+
+- Install-time target guard checks `mustang`, Android 16 and the expected firmware fingerprint.
+- The module mounts only the verified vendor thermal JSON overlays.
+- Broad blind overlays are avoided.
+- AshLooper should remain enabled and should not whitelist this thermal module.
+- Manual Magisk action disables this module by creating both `disable` and `skip_mount`.
+
+## Install
+
+Install the latest ZIP from GitHub Releases:
 
 ```text
-system/vendor/etc/thermal_info_config.json
-system/vendor/etc/thermal_info_config_charge.json
+pixel-10-pro-xl-thermal-fix-v1.3-mustang.13.zip
 ```
 
-## Safety
-
-- Install-time gate requires `ro.product.device=mustang`.
-- Install-time gate requires Android 16.
-- Install-time gate requires exact fingerprint `google/mustang/mustang:16/CP1A.260505.005/15081906:user/release-keys`.
-- Boot-time guard disables only on wrong target/fingerprint.
-- AshLooper remains the primary bootloop protection.
-- Manual Magisk action disables this module by creating `disable` and `skip_mount`.
+Then reboot and verify the module state.
 
 ## Expected successful runtime check
 
 ```text
+version=1.3-mustang.13
 disable=absent
 skip_mount=absent
-last_boot_ok=present
-VIRTUAL-SKIN-CPU-LIGHT-ODPM
-PollingDelay=5000
+AshLooper loops=0
+thermal_info_config_throttling.json mounted
+thermal_info_config.json mounted
+thermal_info_config_charge.json mounted
+fresh_thermalhal_tombstone=absent
+```
+
+Expected semantic values:
+
+```text
+throttling VIRTUAL-SKIN* targets = 5000
+base VIRTUAL-SKIN-SPEAKER = 5000
+charge VIRTUAL-SKIN-CHARGE-WIRED = 5000
+charge VIRTUAL-SKIN-CHARGE-PERSIST = 5000
+absent/null PollingDelay entries remain None
 ```
 
 ## Rollback
@@ -62,123 +110,8 @@ su -c 'touch /data/adb/modules/pixel-10-pro-xl-thermal-fix/skip_mount'
 su -c 'reboot'
 ```
 
+If the device cannot boot normally, use your existing Magisk/AshLooper recovery path.
 
-## v1.3-mustang.4 - Pixel 10 Pro XL VIRTUAL-SKIN CPU ODPM bisect
+## Changelog
 
-Adds exactly one additional live-stock thermal throttling overlay change on top of v1.3-mustang.3:
-
-- VIRTUAL-SKIN-CPU-LIGHT-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-ODPM: PollingDelay 300000ms -> 5000ms
-
-No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.
-
-
-## v1.3-mustang.5 - CPU-MID bisect
-
-Adds VIRTUAL-SKIN-CPU-MID to the verified v1.3-mustang.4 baseline. Active target sensors:
-
-- VIRTUAL-SKIN-CPU-LIGHT-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-MID: PollingDelay 300000ms -> 5000ms
-
-No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.
-
-
-## v1.3-mustang.6 - CPU-HIGH bisect
-
-Adds VIRTUAL-SKIN-CPU-HIGH to the verified v1.3-mustang.5 baseline. Active target sensors:
-
-- VIRTUAL-SKIN-CPU-LIGHT-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-MID: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-HIGH: PollingDelay 300000ms -> 5000ms
-
-No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.
-
-
-## v1.3-mustang.7 - VIRTUAL-SKIN bisect
-
-Adds the generic VIRTUAL-SKIN sensor to the verified v1.3-mustang.6 baseline. Active target sensors:
-
-- VIRTUAL-SKIN: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-LIGHT-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-MID: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-HIGH: PollingDelay 300000ms -> 5000ms
-
-No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.
-
-
-## v1.3-mustang.8 - VIRTUAL-SKIN-HINT bisect
-
-Adds VIRTUAL-SKIN-HINT to the verified v1.3-mustang.7 baseline. Active target sensors:
-
-- VIRTUAL-SKIN: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-HINT: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-LIGHT-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-MID: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-HIGH: PollingDelay 300000ms -> 5000ms
-
-No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.
-
-
-## v1.3-mustang.9 - VIRTUAL-SKIN-SOC bisect
-
-Adds VIRTUAL-SKIN-SOC to the verified v1.3-mustang.8 baseline. Active target sensors:
-
-- VIRTUAL-SKIN: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-HINT: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-LIGHT-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-MID: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-HIGH: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-SOC: PollingDelay 300000ms -> 5000ms
-
-No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.
-
-
-## v1.3-mustang.10 - VIRTUAL-SKIN-SOC-EXTREME bisect
-
-Adds VIRTUAL-SKIN-SOC-EXTREME to the verified v1.3-mustang.9 baseline. Active target sensors:
-
-- VIRTUAL-SKIN: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-HINT: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-LIGHT-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-ODPM: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-MID: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-CPU-HIGH: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-SOC: PollingDelay 300000ms -> 5000ms
-- VIRTUAL-SKIN-SOC-EXTREME: PollingDelay 300000ms -> 5000ms
-
-No base thermal overlay and no charge overlay are included. AshLooper remains the primary bootloop protection.
-
-
-## v1.3-mustang.11 - base VIRTUAL-SKIN-SPEAKER bisect
-
-Adds one base thermal config sensor to the verified v1.3-mustang.10 throttling baseline:
-
-- thermal_info_config.json / VIRTUAL-SKIN-SPEAKER: PollingDelay 300000ms -> 5000ms
-
-The module keeps all eight throttling-only VIRTUAL-SKIN targets from v1.3-mustang.10 and does not add thermal_info_config_charge.json. VIRTUAL-SKIN entries with absent/null PollingDelay are intentionally left untouched. AshLooper remains the primary bootloop protection.
-
-
-## v1.3-mustang.12 - charge VIRTUAL-SKIN-CHARGE-WIRED/PERSIST bisect
-
-Adds both remaining true 300000ms charge thermal config sensors to the verified v1.3-mustang.11 baseline:
-
-- thermal_info_config_charge.json / VIRTUAL-SKIN-CHARGE-WIRED: PollingDelay 300000ms -> 5000ms
-- thermal_info_config_charge.json / VIRTUAL-SKIN-CHARGE-PERSIST: PollingDelay 300000ms -> 5000ms
-
-The module keeps all eight throttling-only VIRTUAL-SKIN targets and the base VIRTUAL-SKIN-SPEAKER target. VIRTUAL-SKIN entries with absent/null PollingDelay are intentionally left untouched. AshLooper remains the primary bootloop protection.
-
-
-## v1.3-mustang.13 - stable Mustang release
-
-Stable cleanup release after verified v1.3-mustang.12 runtime testing. Runtime thermal scope is unchanged from v1.3-mustang.12:
-
-- thermal_info_config_throttling.json: all eight verified VIRTUAL-SKIN* PollingDelay targets set to 5000ms
-- thermal_info_config.json: VIRTUAL-SKIN-SPEAKER set to 5000ms
-- thermal_info_config_charge.json: VIRTUAL-SKIN-CHARGE-WIRED and VIRTUAL-SKIN-CHARGE-PERSIST set to 5000ms
-
-This release only corrects stale installer wording and finalizes stable documentation. Entries with absent/null PollingDelay remain untouched.
+Release history belongs in [`CHANGELOG.md`](CHANGELOG.md), not in this README.
