@@ -38,6 +38,39 @@ Expected effect: more responsive thermal awareness and smoother thermal decision
 - Mustang fork, controlled bisect, runtime verification and stable release packaging: [Lycidias93](https://github.com/Lycidias93/pixel-10-pro-xl-thermal-fix).
 - Bootloop safety during testing: [AshLooper](https://github.com/RipperHybrid/AshLooper) by RipperHybrid. AshLooper is not bundled and not required by the ZIP itself, but it is strongly recommended as an external bootloop protection layer while testing ports or new firmware.
 
+
+<!-- UNIVERSAL_TEST_V1402_START -->
+## Universal test release policy
+
+`v1.4.0-universal-test.2` is a public universal test release, not a new universal stable baseline.
+
+Stable verified profile:
+
+```text
+mustang / Pixel 10 Pro XL / Android 16 / CP1A.260505.005 / 15081906
+```
+
+Beta test profile:
+
+```text
+blazer / Pixel 10 Pro / Android 16
+```
+
+The Magisk module ID intentionally remains:
+
+```text
+id=pixel-10-pro-xl-thermal-fix
+```
+
+The stable update channel intentionally remains:
+
+```text
+https://raw.githubusercontent.com/Lycidias93/pixel-10-pro-xl-thermal-fix/main/update.json
+```
+
+That means this test ZIP can be installed manually, while the normal update channel stays conservative. Unknown devices abort during install. The `blazer` profile is not live-boot verified by this fork yet; use AshLooper or equivalent bootloop protection and do not whitelist this thermal module in AshLooper.
+<!-- UNIVERSAL_TEST_V1402_END -->
+
 ## Supported device
 
 This release is intentionally narrow.
