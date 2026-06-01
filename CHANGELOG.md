@@ -1,3 +1,11 @@
+## v1.3-mustang.14
+
+- Stable minor release with no runtime thermal scope change versus `v1.3-mustang.13`.
+- Bundles `tools/pixel_thermal_debug_report.py` for sanitized compatibility reports from new Mustang firmwares or other Pixel 10-series devices.
+- Adds a public README verify command without project-internal `cgprep`/`cgrun` tooling.
+- Adds explicit AshLooper credit and GitHub link as the external bootloop protection used during testing.
+- Keeps older `v1.3-mustang.*` releases as historical prerelease/bisect/test releases.
+
 ## Release archive note
 
 - `v1.3-mustang.13` is the current stable Mustang release.

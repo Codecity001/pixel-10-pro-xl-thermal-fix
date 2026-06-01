@@ -2,6 +2,10 @@
 
 Stable Magisk module for Pixel 10 Pro XL (`mustang`) on Android 16.
 
+Project: <https://github.com/Lycidias93/pixel-10-pro-xl-thermal-fix>
+Releases: <https://github.com/Lycidias93/pixel-10-pro-xl-thermal-fix/releases>
+Issues / compatibility reports: <https://github.com/Lycidias93/pixel-10-pro-xl-thermal-fix/issues>
+
 ## Why this fork exists
 
 This fork exists because the original thermal polling idea was useful, but the first direct Pixel 10 Pro XL port was too broad for `mustang` and caused the native Pixel ThermalHAL to abort during boot.
@@ -10,9 +14,11 @@ The goal of this fork is therefore not to blindly patch every thermal file. It p
 
 ## Credits
 
-- Original thermal polling fix idea and upstream inspiration: upstream project (`error: No such remote 'upstream'`).
+- Original thermal polling fix idea and upstream inspiration: original module author / upstream project.
 - Mustang fork, controlled bisect, runtime verification and stable release packaging: Lycidias93.
-- Bootloop safety during testing: AshLooper remains the primary external bootloop protection.
+- External bootloop protection used during testing: AshLooper by RipperHybrid, <https://github.com/RipperHybrid/AshLooper>.
+
+AshLooper is not bundled with this module. It remains an external safety layer and should not whitelist this thermal module during testing.
 
 ## Supported device
 
@@ -23,7 +29,7 @@ Device: Pixel 10 Pro XL
 Codename: mustang
 Android: 16
 Verified build: CP1A.260505.005 / 15081906
-Stable release: v1.3-mustang.13
+Stable release: v1.3-mustang.14
 ```
 
 The installer checks the device and Android target before installing.
@@ -31,19 +37,19 @@ The installer checks the device and Android target before installing.
 ## Main features
 
 - Magisk module for Pixel 10 Pro XL / `mustang`.
-- Stable `v1.3-mustang.13` runtime scope verified after reboot.
+- Stable `v1.3-mustang.14` release with the same runtime thermal scope as `v1.3-mustang.13`.
 - Reduces verified `VIRTUAL-SKIN*` thermal polling delays from `300000ms` to `5000ms`.
 - Uses stock-derived live-device thermal JSON overlays.
 - Keeps entries with missing/null `PollingDelay` untouched.
 - Includes install-time target guard.
 - Includes passive boot-time sanity guard.
-- Keeps AshLooper as the primary bootloop protection.
-- Provides manual disable action through Magisk action script.
-- Keeps detailed release history in `CHANGELOG.md`, not in this README.
+- Keeps AshLooper as the recommended external bootloop protection during testing.
+- Bundles a sanitized compatibility debug report tool for new Mustang firmwares or other Pixel 10-series devices.
+- Keeps changelog and historical bisect details out of the README; see `CHANGELOG.md`.
 
 ## Runtime scope
 
-`v1.3-mustang.13` changes only proven `PollingDelay=300000` candidates.
+`v1.3-mustang.14` changes only proven `PollingDelay=300000` candidates. The runtime thermal scope is unchanged from `v1.3-mustang.13`.
 
 ### `thermal_info_config_throttling.json`
 
@@ -114,14 +120,14 @@ At boot, Android ThermalHAL reads the overlaid JSON files. The expected result i
 - The installer is device/build scoped.
 - The runtime scope was built through controlled bisecting.
 - ThermalHAL crash checks were used after reboot.
-- AshLooper is expected to remain installed and active during testing.
+- AshLooper is recommended as external bootloop protection during testing.
 - This module should not be added to the AshLooper whitelist.
 - `disable` and `skip_mount` must remain absent for normal operation.
 
 Expected healthy state:
 
 ```text
-version=1.3-mustang.13
+version=1.3-mustang.14
 disable=absent
 skip_mount=absent
 AshLooper loops=0
@@ -135,7 +141,7 @@ Download the latest stable release ZIP from GitHub Releases and install it in Ma
 Latest stable:
 
 ```text
-v1.3-mustang.13
+v1.3-mustang.14
 ```
 
 ## Verify
@@ -143,8 +149,8 @@ v1.3-mustang.13
 After installing and rebooting, check:
 
 ```text
-version=1.3-mustang.13
-versionCode=101313
+version=1.3-mustang.14
+versionCode=101314
 disable=absent
 skip_mount=absent
 ```
@@ -158,6 +164,32 @@ The three overlay mounts should be present:
 ```
 
 The selected `VIRTUAL-SKIN*` targets should show `PollingDelay=5000`, and there should be no fresh ThermalHAL tombstone.
+
+### Simple verify command
+
+Run from a root-capable shell or Termux:
+
+```sh
+su -c 'mod=/data/adb/modules/pixel-10-pro-xl-thermal-fix; echo "== module =="; grep -E "^(id|version|versionCode|description)=" "$mod/module.prop"; test ! -e "$mod/disable" && echo "disable=absent" || echo "FAIL disable=present"; test ! -e "$mod/skip_mount" && echo "skip_mount=absent" || echo "FAIL skip_mount=present"; echo "== mounts =="; grep -F "pixel-10-pro-xl-thermal-fix/system/vendor/etc/thermal_info_config_throttling.json" /proc/self/mountinfo >/dev/null && echo "throttling_mount=present" || echo "FAIL throttling_mount=absent"; grep -F "pixel-10-pro-xl-thermal-fix/system/vendor/etc/thermal_info_config.json" /proc/self/mountinfo >/dev/null && echo "base_mount=present" || echo "FAIL base_mount=absent"; grep -F "pixel-10-pro-xl-thermal-fix/system/vendor/etc/thermal_info_config_charge.json" /proc/self/mountinfo >/dev/null && echo "charge_mount=present" || echo "FAIL charge_mount=absent"; echo "== AshLooper =="; grep -E "^loops=|^disable=|^threshold=|^boot=|^whitelist=" /data/adb/modules/AshLooper/settings.prop 2>/dev/null || echo "AshLooper status not readable"; echo "== expected =="; echo "version=1.3-mustang.14"; echo "disable=absent"; echo "skip_mount=absent"; echo "all three mounts present"; echo "AshLooper loops=0"'
+```
+
+## Compatibility report for new firmware or other Pixel 10-series devices
+
+Use this before requesting support for a new Pixel 10 Pro XL firmware or another Pixel 10-series device.
+
+This does not patch anything. It only collects a sanitized compatibility report with device identity, build fingerprint, thermal config hashes and the `VIRTUAL-SKIN*` `PollingDelay` map.
+
+```sh
+pkg install -y python
+mkdir -p "$HOME/pixel-thermal-debug"
+cd "$HOME/pixel-thermal-debug"
+curl -fsSLO https://raw.githubusercontent.com/Lycidias93/pixel-10-pro-xl-thermal-fix/main/tools/pixel_thermal_debug_report.py
+python3 pixel_thermal_debug_report.py
+```
+
+Upload the generated `pixel_thermal_debug_*.zip` to a GitHub issue or XDA post.
+
+Do not request support without this report. Device name alone is not enough; thermal configs can change between firmwares.
 
 ## Rollback
 
@@ -173,7 +205,7 @@ Or remove the module from Magisk and reboot.
 
 ## Release policy
 
-- `v1.3-mustang.13` is the current stable release.
+- `v1.3-mustang.14` is the current stable release.
 - Earlier `v1.3-mustang.*` builds are historical bisect/test releases.
 - Historical builds are kept for audit and rollback context, but should not be preferred for normal installation.
 - Full release history belongs in `CHANGELOG.md`, not in this README.
