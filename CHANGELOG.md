@@ -1,3 +1,9 @@
+## Release archive note
+
+- `v1.3-mustang.13` is the current stable Mustang release.
+- Earlier `v1.3-mustang.*` releases are historical bisect/test builds and are kept for audit, rollback context and troubleshooting.
+- Do not prefer older bisect builds for normal installation unless explicitly debugging a regression.
+
 
 ## Documentation cleanup - README intro and changelog placement
 

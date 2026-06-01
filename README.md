@@ -1,104 +1,163 @@
 # Pixel 10 Pro XL Thermal Polling Fix
 
-This repository is my Pixel 10 Pro XL (`mustang`) Android 16 fork of the original Pixel thermal polling fix idea.
+Stable Magisk module for Pixel 10 Pro XL (`mustang`) on Android 16.
 
-The fork exists because the broad/original overlay approach was not safe on `mustang`: early full-overlay tests could make `/vendor/bin/hw/android.hardware.thermal-service.pixel` abort during ThermalHAL initialization. This fork keeps the practical goal of the original module, but ports it conservatively for Pixel 10 Pro XL by only changing firmware-verified `VIRTUAL-SKIN*` entries that already had a `PollingDelay` of `300000ms`.
+## Why this fork exists
 
-The stable result is `v1.3-mustang.13`: all verified `300000ms -> 5000ms` thermal polling candidates are active, while entries with absent/null `PollingDelay` stay untouched.
+This fork exists because the original thermal polling idea was useful, but the first direct Pixel 10 Pro XL port was too broad for `mustang` and caused the native Pixel ThermalHAL to abort during boot.
+
+The goal of this fork is therefore not to blindly patch every thermal file. It provides a verified, device-specific Mustang port that changes only the proven `PollingDelay=300000` `VIRTUAL-SKIN*` candidates that survived install, reboot and post-boot ThermalHAL checks.
 
 ## Credits
 
-- Original thermal polling fix idea/module: credited to the upstream project this fork is based on. If an `upstream` remote is configured later, keep that reference here.
-- Mustang fork, bisect, runtime verification, packaging and release: `Lycidias93`.
-- Bootloop safety during testing: AshLooper remained the primary external bootloop protection.
+- Original thermal polling fix idea and upstream inspiration: upstream project (`error: No such remote 'upstream'`).
+- Mustang fork, controlled bisect, runtime verification and stable release packaging: Lycidias93.
+- Bootloop safety during testing: AshLooper remains the primary external bootloop protection.
 
-## Compatibility
+## Supported device
 
-Verified target:
+This release is intentionally narrow.
 
 ```text
 Device: Pixel 10 Pro XL
 Codename: mustang
 Android: 16
-Build: CP1A.260505.005 / 15081906
-Fingerprint: google/mustang/mustang:16/CP1A.260505.005/15081906:user/release-keys
+Verified build: CP1A.260505.005 / 15081906
+Stable release: v1.3-mustang.13
 ```
 
-The installer has hard gates for device, Android version and fingerprint. It is not intended as a generic Pixel thermal module.
+The installer checks the device and Android target before installing.
 
-## Stable runtime scope
+## Main features
 
-Latest stable release: `v1.3-mustang.13`.
+- Magisk module for Pixel 10 Pro XL / `mustang`.
+- Stable `v1.3-mustang.13` runtime scope verified after reboot.
+- Reduces verified `VIRTUAL-SKIN*` thermal polling delays from `300000ms` to `5000ms`.
+- Uses stock-derived live-device thermal JSON overlays.
+- Keeps entries with missing/null `PollingDelay` untouched.
+- Includes install-time target guard.
+- Includes passive boot-time sanity guard.
+- Keeps AshLooper as the primary bootloop protection.
+- Provides manual disable action through Magisk action script.
+- Keeps detailed release history in `CHANGELOG.md`, not in this README.
 
-Changed values:
+## Runtime scope
+
+`v1.3-mustang.13` changes only proven `PollingDelay=300000` candidates.
+
+### `thermal_info_config_throttling.json`
 
 ```text
-thermal_info_config_throttling.json:
-- VIRTUAL-SKIN
-- VIRTUAL-SKIN-HINT
-- VIRTUAL-SKIN-CPU-LIGHT-ODPM
-- VIRTUAL-SKIN-CPU-MID
-- VIRTUAL-SKIN-CPU-ODPM
-- VIRTUAL-SKIN-CPU-HIGH
-- VIRTUAL-SKIN-SOC
-- VIRTUAL-SKIN-SOC-EXTREME
-
-thermal_info_config.json:
-- VIRTUAL-SKIN-SPEAKER
-
-thermal_info_config_charge.json:
-- VIRTUAL-SKIN-CHARGE-WIRED
-- VIRTUAL-SKIN-CHARGE-PERSIST
+VIRTUAL-SKIN
+VIRTUAL-SKIN-HINT
+VIRTUAL-SKIN-CPU-LIGHT-ODPM
+VIRTUAL-SKIN-CPU-MID
+VIRTUAL-SKIN-CPU-ODPM
+VIRTUAL-SKIN-CPU-HIGH
+VIRTUAL-SKIN-SOC
+VIRTUAL-SKIN-SOC-EXTREME
 ```
 
-All listed entries are changed from:
+### `thermal_info_config.json`
+
+```text
+VIRTUAL-SKIN-SPEAKER
+```
+
+### `thermal_info_config_charge.json`
+
+```text
+VIRTUAL-SKIN-CHARGE-WIRED
+VIRTUAL-SKIN-CHARGE-PERSIST
+```
+
+All listed targets are set to:
 
 ```text
 PollingDelay: 300000 -> 5000
 ```
 
-Entries with absent/null `PollingDelay` are intentionally not modified.
+## What is intentionally not changed
+
+The module does not set missing/null `PollingDelay` entries to `5000`.
+
+Examples intentionally left untouched:
+
+```text
+VIRTUAL-SKIN-PREDICTION-MODEL
+VIRTUAL-SKIN-SPEAKER-SUB-0
+VIRTUAL-SKIN-SPEAKER-SUB-1
+VIRTUAL-SKIN-SUB-0..7
+VIRTUAL-SKIN-LEGACY
+VIRTUAL-SKIN-MODEL
+VIRTUAL-SKIN-CHARGE
+```
+
+These entries are likely derived/model/formula sensors or helper sensors. Changing them without a real existing `PollingDelay` value would be a different and much riskier modification.
+
+## How it works
+
+The module overlays selected vendor thermal configuration JSON files through Magisk:
+
+```text
+/vendor/etc/thermal_info_config_throttling.json
+/vendor/etc/thermal_info_config.json
+/vendor/etc/thermal_info_config_charge.json
+```
+
+The files are copied from the live stock device baseline and only the verified target sensor `PollingDelay` values are changed. This avoids mixing incompatible thermal configs from another device, build or firmware generation.
+
+At boot, Android ThermalHAL reads the overlaid JSON files. The expected result is that the selected `VIRTUAL-SKIN*` sensors are polled more frequently while the rest of the thermal model stays stock.
 
 ## Safety model
 
-- Install-time target guard checks `mustang`, Android 16 and the expected firmware fingerprint.
-- The module mounts only the verified vendor thermal JSON overlays.
-- Broad blind overlays are avoided.
-- AshLooper should remain enabled and should not whitelist this thermal module.
-- Manual Magisk action disables this module by creating both `disable` and `skip_mount`.
+- The installer is device/build scoped.
+- The runtime scope was built through controlled bisecting.
+- ThermalHAL crash checks were used after reboot.
+- AshLooper is expected to remain installed and active during testing.
+- This module should not be added to the AshLooper whitelist.
+- `disable` and `skip_mount` must remain absent for normal operation.
 
-## Install
-
-Install the latest ZIP from GitHub Releases:
-
-```text
-pixel-10-pro-xl-thermal-fix-v1.3-mustang.13.zip
-```
-
-Then reboot and verify the module state.
-
-## Expected successful runtime check
+Expected healthy state:
 
 ```text
 version=1.3-mustang.13
 disable=absent
 skip_mount=absent
 AshLooper loops=0
-thermal_info_config_throttling.json mounted
-thermal_info_config.json mounted
-thermal_info_config_charge.json mounted
 fresh_thermalhal_tombstone=absent
 ```
 
-Expected semantic values:
+## Install
+
+Download the latest stable release ZIP from GitHub Releases and install it in Magisk.
+
+Latest stable:
 
 ```text
-throttling VIRTUAL-SKIN* targets = 5000
-base VIRTUAL-SKIN-SPEAKER = 5000
-charge VIRTUAL-SKIN-CHARGE-WIRED = 5000
-charge VIRTUAL-SKIN-CHARGE-PERSIST = 5000
-absent/null PollingDelay entries remain None
+v1.3-mustang.13
 ```
+
+## Verify
+
+After installing and rebooting, check:
+
+```text
+version=1.3-mustang.13
+versionCode=101313
+disable=absent
+skip_mount=absent
+```
+
+The three overlay mounts should be present:
+
+```text
+/vendor/etc/thermal_info_config_throttling.json
+/vendor/etc/thermal_info_config.json
+/vendor/etc/thermal_info_config_charge.json
+```
+
+The selected `VIRTUAL-SKIN*` targets should show `PollingDelay=5000`, and there should be no fresh ThermalHAL tombstone.
 
 ## Rollback
 
@@ -110,8 +169,11 @@ su -c 'touch /data/adb/modules/pixel-10-pro-xl-thermal-fix/skip_mount'
 su -c 'reboot'
 ```
 
-If the device cannot boot normally, use your existing Magisk/AshLooper recovery path.
+Or remove the module from Magisk and reboot.
 
-## Changelog
+## Release policy
 
-Release history belongs in [`CHANGELOG.md`](CHANGELOG.md), not in this README.
+- `v1.3-mustang.13` is the current stable release.
+- Earlier `v1.3-mustang.*` builds are historical bisect/test releases.
+- Historical builds are kept for audit and rollback context, but should not be preferred for normal installation.
+- Full release history belongs in `CHANGELOG.md`, not in this README.
