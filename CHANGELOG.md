@@ -1,3 +1,13 @@
+## v1.3-mustang.15
+
+- Stable Mustang tooling/support release.
+- Runtime thermal scope unchanged from `v1.3-mustang.14`.
+- Debug report ZIP now defaults to `/storage/emulated/0/Download`.
+- Added `--out-dir` support for custom debug report locations.
+- Added debug report schema manifest, file hashes and stronger sanitizer metadata.
+- README now explains daily-use expectations, public verify command, support matrix and compatibility report workflow.
+- Added AshLooper GitHub credit and checksum release asset.
+
 ## v1.3-mustang.14
 
 - Stable minor release with no runtime thermal scope change versus `v1.3-mustang.13`.

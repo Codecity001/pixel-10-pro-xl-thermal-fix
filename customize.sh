@@ -41,5 +41,5 @@ rm -f "$MODPATH/guard/pending_boot" "$MODPATH/guard/fail_count" "$MODPATH/guard/
 
 ui_print "Target guard PASS"
 ui_print "Stable v13 scope: live-stock throttling/base/charge thermal configs"
-ui_print "Changed sensor: stable throttling/base/charge VIRTUAL-SKIN polling set PollingDelay 300000ms -> 5000ms; bundled debug report tool for compatibility requests"
+ui_print "Changed sensor: stable throttling/base/charge VIRTUAL-SKIN polling set PollingDelay 300000ms -> 5000ms; bundled debug report tool for compatibility requests; debug ZIP defaults to Download"
 ui_print "Passive guard: AshLooper remains primary bootloop protection"

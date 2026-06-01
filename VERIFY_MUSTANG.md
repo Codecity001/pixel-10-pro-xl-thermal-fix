@@ -171,3 +171,17 @@ Stable cleanup release after verified v1.3-mustang.12 runtime testing. Runtime t
 - thermal_info_config_charge.json: VIRTUAL-SKIN-CHARGE-WIRED and VIRTUAL-SKIN-CHARGE-PERSIST set to 5000ms
 
 This release only corrects stale installer wording and finalizes stable documentation. Entries with absent/null PollingDelay remain untouched.
+
+
+## v1.3-mustang.15 verify notes
+
+`v1.3-mustang.15` is a tooling/support release. Runtime thermal scope is unchanged from `v1.3-mustang.14`.
+
+Additional expected checks:
+
+```text
+debug_report_default_out_dir=/storage/emulated/0/Download
+debug_report_manifest=present
+debug_report_sanitizer_status=pass
+zip_sha256_asset=present
+```
