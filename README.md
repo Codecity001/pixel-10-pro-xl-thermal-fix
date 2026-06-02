@@ -47,6 +47,16 @@ This fork avoids blind patching. It changes only proven `PollingDelay=300000` `V
 In daily use, the intended difference is more responsive thermal skin-sensor polling. Selected `VIRTUAL-SKIN*` sensors are checked every `5000ms` instead of every `300000ms`, so Android can notice relevant skin/thermal changes sooner during charging, navigation, camera use, gaming, hotspot use or other sustained loads. This is not an overclock, benchmark unlock, cooling bypass or guaranteed FPS tweak. The stock thermal policy remains in charge.
 
 <!-- README_CREDITS_UNIVERSAL_20260601_START -->
+<!-- EXTERNAL_INSPIRATION_BOUNDARY_20260602_START -->
+## External inspiration boundary
+
+- teoweed / teozazaa: external Tensor thermal tweak reviewed for release-hardening and support-scope ideas only.
+- no code reuse from the external ZIP or thread.
+- no value reuse from the external ZIP or thread.
+- no service.sh bind-mount model reuse.
+- no live text patching model reuse.
+<!-- EXTERNAL_INSPIRATION_BOUNDARY_20260602_END -->
+
 ## Credits
 
 - Original thermal polling fix idea and upstream inspiration: `marx161`. The module metadata intentionally keeps the upstream credit as `based on marx161`.
@@ -340,3 +350,43 @@ If the device cannot boot normally, use your external bootloop protection layer 
 - Blazer remains beta until first live install, reboot, mount and ThermalHAL verification.
 - Historical builds are kept for audit and rollback context, but should not be preferred for normal installation.
 - Full release history belongs in `CHANGELOG.md`, not in this README.
+
+<!-- UNIVERSAL_FIRST_V141_RC1_START -->
+## Universal-first release
+- Version: `1.4.1-universal.1` / `1014101`
+- Release model: universal-first manual release.
+- Stable module ID remains `pixel-10-pro-xl-thermal-fix` for migration safety.
+- Mustang remains the verified profile.
+- Blazer remains beta/pending live verification.
+- No thermal polling values are changed by this support/verification release.
+- No `service.sh` bind mount model and no live runtime text patching are used.
+- Adds install-time `install-state.txt` and read-only post-boot `health.log`.
+
+Credits:
+- `marx161` remains credited for the original thermal polling idea.
+- `teoweed` / `teozazaa` is credited as external Tensor thermal tweak analysis inspiration only. No code, bind-mount model, live runtime text patching, or polling values are reused.
+<!-- UNIVERSAL_FIRST_V141_RC1_END -->
+
+<!-- UNIVERSAL_FIRST_RC_SCOPE_1.4.1-universal.1_START -->
+## Universal-first release scope
+
+This release changes the release model and support/verification evidence only.
+
+- No polling values are changed by this release.
+- No bind-mount model is used.
+- No live text patching is used.
+- The active Magisk overlay is materialized at install time from the selected device profile.
+- `mustang` remains the verified profile.
+- `blazer` remains beta/pending until a real install, reboot, mount and ThermalHAL report is available.
+- Credits include `marx161`, `teoweed / teozazaa`, RipperHybrid/AshLooper and Lycidias93, with `teoweed / teozazaa` credited for external analysis inspiration only.
+<!-- UNIVERSAL_FIRST_RC_SCOPE_1.4.1-universal.1_END -->
+
+<!-- UNIVERSAL_FINAL_STATUS_20260602_START -->
+## Universal-first final status
+
+- Mustang verified.
+- Blazer beta/pending.
+- No polling values changed by this release.
+- External teoweed / teozazaa analysis credit is inspiration only: no code reuse, no value reuse, no service.sh bind-mount model reuse, and no live text patching.
+- Runtime model: install-time profile materialization only; no bind mount and no runtime text patching.
+<!-- UNIVERSAL_FINAL_STATUS_20260602_END -->

@@ -1,34 +1,80 @@
 #!/system/bin/sh
 MODDIR=${0%/*}
-GUARDDIR="$MODDIR/guard"
-LOG="$GUARDDIR/bootguard.log"
-mkdir -p "$GUARDDIR"
+LOG="$MODDIR/health.log"
 
-log_line() {
-  echo "$(date -Is 2>/dev/null || date) $*" >> "$LOG"
-}
-
-i=0
-while [ "$i" -lt 240 ]; do
-  if [ "$(getprop sys.boot_completed 2>/dev/null)" = "1" ]; then
-    rm -f "$GUARDDIR/pending_boot" "$GUARDDIR/fail_count"
-    date -Is > "$GUARDDIR/last_boot_ok" 2>/dev/null || date > "$GUARDDIR/last_boot_ok"
-    log_line "BOOT_COMPLETED passive_guard_ok"
-    break
-  fi
-  i=$((i + 1))
-  sleep 1
+boot_wait=0
+while [ "$(getprop sys.boot_completed 2>/dev/null)" != "1" ] && [ "$boot_wait" -lt 120 ]; do
+  sleep 2
+  boot_wait=$((boot_wait + 2))
 done
 
-if [ "$(getprop sys.boot_completed 2>/dev/null)" != "1" ]; then
-  log_line "BOOT_COMPLETED_TIMEOUT passive_no_self_disable waited=${i}s"
-fi
+# Read-only health evidence. This service never changes thermal values,
+# never bind-mounts, and never patches runtime files.
+sleep 60
 
 {
-  echo "timestamp=$(date -Is 2>/dev/null || date)"
-  echo "device=$(getprop ro.product.device 2>/dev/null)"
-  echo "android=$(getprop ro.build.version.release 2>/dev/null)"
-  echo "fingerprint=$(getprop ro.build.fingerprint 2>/dev/null)"
-  echo "scope=thermal_info_config_throttling.json:all_8_vskin;thermal_info_config.json:VIRTUAL-SKIN-SPEAKER;thermal_info_config_charge.json:VIRTUAL-SKIN-CHARGE-WIRED,VIRTUAL-SKIN-CHARGE-PERSIST"
-  grep -A20 -B5 "VIRTUAL-SKIN-CPU-LIGHT-ODPM" /vendor/etc/thermal_info_config_throttling.json 2>/dev/null | grep -E "Name|PollingDelay" || true
-} > "$GUARDDIR/last_verify.txt"
+  echo "timestamp=$(date +%s 2>/dev/null || echo unknown)"
+  echo "module_dir=$MODDIR"
+  echo "boot_completed=$(getprop sys.boot_completed 2>/dev/null || echo unknown)"
+  echo "health_log_model=read_only_no_runtime_patch"
+  echo "mount_check=best_effort_interactive_verify_is_authoritative"
+  echo
+  echo "== module =="
+  if [ -r "$MODDIR/module.prop" ]; then
+    cat "$MODDIR/module.prop"
+  else
+    echo "module_prop=missing"
+  fi
+  echo
+  echo "== install-state =="
+  if [ -r "$MODDIR/install-state.txt" ]; then
+    cat "$MODDIR/install-state.txt"
+  else
+    echo "install_state=missing"
+  fi
+  echo
+  echo "== flags =="
+  [ ! -e "$MODDIR/disable" ] && echo "disable=absent" || echo "disable=present"
+  [ ! -e "$MODDIR/skip_mount" ] && echo "skip_mount=absent" || echo "skip_mount=present"
+  [ ! -e "$MODDIR/remove" ] && echo "remove=absent" || echo "remove=present"
+  echo
+  echo "== overlay-files =="
+  for f in thermal_info_config_throttling.json thermal_info_config.json thermal_info_config_charge.json; do
+    if [ -s "$MODDIR/system/vendor/etc/$f" ]; then
+      echo "module_file=present:$f"
+      if command -v sha256sum >/dev/null 2>&1; then
+        sha256sum "$MODDIR/system/vendor/etc/$f" | sed "s#  .*/#  #"
+      fi
+    else
+      echo "module_file=missing:$f"
+    fi
+  done
+  echo
+  echo "== active-vendor-files =="
+  for f in thermal_info_config_throttling.json thermal_info_config.json thermal_info_config_charge.json; do
+    if [ -s "/vendor/etc/$f" ]; then
+      echo "vendor_file=present:$f"
+      if command -v sha256sum >/dev/null 2>&1; then
+        sha256sum "/vendor/etc/$f" | sed "s#  .*/#  #"
+      fi
+    else
+      echo "vendor_file=missing:$f"
+    fi
+  done
+  echo
+  echo "== mounts-best-effort =="
+  for f in thermal_info_config_throttling.json thermal_info_config.json thermal_info_config_charge.json; do
+    if grep -F "$MODDIR/system/vendor/etc/$f" /proc/self/mountinfo >/dev/null 2>&1; then
+      echo "mount_best_effort=present:$f"
+    else
+      echo "mount_best_effort=not_seen:$f"
+    fi
+  done
+  echo
+  echo "== tombstone quick check =="
+  find /data/tombstones /data/system/dropbox -maxdepth 1 -type f 2>/dev/null | xargs -r grep -l "thermal\|Thermal" 2>/dev/null | tail -10
+  echo
+  echo "health_log_complete=yes"
+} > "$LOG" 2>&1
+
+exit 0
