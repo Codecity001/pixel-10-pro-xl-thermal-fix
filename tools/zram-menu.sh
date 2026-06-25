@@ -15,7 +15,9 @@ choose_download() {
 
 msg() {
   echo "$*"
-  echo "$*" >> "$LOG" 2>/dev/null || true
+  if [ -n "${LOG:-}" ] && [ "$LOG" != "/dev/null" ]; then
+    echo "$*" >> "$LOG" 2>/dev/null || true
+  fi
 }
 
 cfg_set() {
@@ -60,9 +62,10 @@ enable_zram() {
   cfg_set ZRAM_RESTART_MMD 1
   cfg_set ZRAM_RISK_ACK explicit_user_enable
   if [ -s "$MODDIR/tools/apply-zram-100p.sh" ]; then
-    local zram_dbg="$(cfg_get ZRAM_DEBUG)"
-    [ -z "$zram_dbg" ] && zram_dbg="$(cfg_get zram_debug)"
-    if [ "$zram_dbg" = "1" ]; then
+    local dbg="${DEBUG_MODE:-}"
+    [ -z "$dbg" ] && dbg="$(cfg_get DEBUG_MODE)"
+    [ -z "$dbg" ] && dbg="$(cfg_get debug_mode)"
+    if [ "$dbg" = "1" ]; then
       MODDIR="$MODDIR" sh "$MODDIR/tools/apply-zram-100p.sh" "$MODE" || true
     else
       MODDIR="$MODDIR" sh "$MODDIR/tools/apply-zram-100p.sh" "$MODE" >/dev/null 2>&1 || true
@@ -73,9 +76,10 @@ enable_zram() {
 
 disable_zram() {
   if [ -s "$MODDIR/tools/disable-zram-100p.sh" ]; then
-    local zram_dbg="$(cfg_get ZRAM_DEBUG)"
-    [ -z "$zram_dbg" ] && zram_dbg="$(cfg_get zram_debug)"
-    if [ "$zram_dbg" = "1" ]; then
+    local dbg="${DEBUG_MODE:-}"
+    [ -z "$dbg" ] && dbg="$(cfg_get DEBUG_MODE)"
+    [ -z "$dbg" ] && dbg="$(cfg_get debug_mode)"
+    if [ "$dbg" = "1" ]; then
       sh "$MODDIR/tools/disable-zram-100p.sh" || true
     else
       sh "$MODDIR/tools/disable-zram-100p.sh" >/dev/null 2>&1 || true
@@ -102,24 +106,12 @@ keep_zram() {
 
 DL="$(choose_download)"
 TS="$(date +%Y%m%d_%H%M%S 2>/dev/null || echo now)"
-LOG="$DL/pixel_thermal_zram_menu_${TS}.txt"
-mkdir -p "$DL" 2>/dev/null || true
+TEMP_LOG="$DL/pixel_thermal_zram_menu_${TS}.txt"
+LOG="/dev/null"
 
-{
-  echo "debug_type=pixel_thermal_zram_menu"
-  echo "time=$(date -Is 2>/dev/null || date)"
-  echo "mode=$MODE"
-  echo "module=$MODDIR"
-  echo "config=$CONFIG_FILE"
-  echo
-  echo "== before =="
-  [ -r "$CONFIG_FILE" ] && grep -E '^(ENABLE_ZRAM_100P|ZRAM_RESTART_MMD|ZRAM_RISK_ACK|ZRAM_REINIT_ACK)=' "$CONFIG_FILE" || true
-  echo
-} > "$LOG" 2>&1
-
-choose_zram_debug() {
+choose_debug_mode() {
   msg "----------------------------------------"
-  msg "  ZRAM installer debug logging"
+  msg "  Pixel Thermal Debug Mode"
   msg "  Press [Volume Up] to ENABLE (verbose)"
   msg "  Press [Volume Down] to SKIP (silent)"
   msg "  Timeout (15s) defaults to silent"
@@ -127,22 +119,34 @@ choose_zram_debug() {
 
   local dbg_choice="$(read_volume_choice)"
   
-  {
-    echo "dbg_choice=$dbg_choice"
-  } >> "$LOG" 2>&1
-
   if [ "$dbg_choice" = "up" ]; then
-    cfg_set ZRAM_DEBUG 1
-    cfg_set zram_debug 1
-    msg "- Debug logging: ENABLED"
+    DEBUG_MODE=1
+    cfg_set DEBUG_MODE 1
+    cfg_set debug_mode 1
+    msg "- Debug Mode: ENABLED (Verbose logging active)"
+    LOG="$TEMP_LOG"
+    mkdir -p "$DL" 2>/dev/null || true
+    {
+      echo "debug_type=pixel_thermal_zram_menu"
+      echo "time=$(date -Is 2>/dev/null || date)"
+      echo "mode=$MODE"
+      echo "module=$MODDIR"
+      echo "config=$CONFIG_FILE"
+      echo
+      echo "== before =="
+      [ -r "$CONFIG_FILE" ] && grep -E '^(ENABLE_ZRAM_100P|ZRAM_RESTART_MMD|ZRAM_RISK_ACK|ZRAM_REINIT_ACK|DEBUG_MODE|debug_mode)=' "$CONFIG_FILE" || true
+      echo "dbg_choice=up"
+      echo
+    } > "$LOG" 2>&1
   else
-    cfg_set ZRAM_DEBUG 0
-    cfg_set zram_debug 0
-    msg "- Debug logging: DISABLED"
+    DEBUG_MODE=0
+    cfg_set DEBUG_MODE 0
+    cfg_set debug_mode 0
+    msg "- Debug Mode: DISABLED (Silent mode active)"
   fi
 }
 
-choose_zram_debug
+choose_debug_mode
 
 msg "----------------------------------------"
 msg "  Optional ZRAM 100% configuration"
@@ -153,9 +157,11 @@ msg "----------------------------------------"
 
 choice="$(read_volume_choice)"
 
-{
-  echo "choice=$choice"
-} >> "$LOG" 2>&1
+if [ "$LOG" != "/dev/null" ]; then
+  {
+    echo "choice=$choice"
+  } >> "$LOG" 2>&1
+fi
 
 case "$choice" in
   up) enable_zram ;;
@@ -163,10 +169,12 @@ case "$choice" in
   *) keep_zram ;;
 esac
 
-{
-  echo
-  echo "== after =="
-  [ -r "$CONFIG_FILE" ] && grep -E '^(ENABLE_ZRAM_100P|ZRAM_RESTART_MMD|ZRAM_RISK_ACK|ZRAM_REINIT_ACK)=' "$CONFIG_FILE" || true
-  echo "RESULT: PIXEL_THERMAL_ZRAM_MENU_DONE choice=$choice"
-} >> "$LOG" 2>&1
+if [ "$LOG" != "/dev/null" ]; then
+  {
+    echo
+    echo "== after =="
+    [ -r "$CONFIG_FILE" ] && grep -E '^(ENABLE_ZRAM_100P|ZRAM_RESTART_MMD|ZRAM_RISK_ACK|ZRAM_REINIT_ACK|DEBUG_MODE|debug_mode)=' "$CONFIG_FILE" || true
+    echo "RESULT: PIXEL_THERMAL_ZRAM_MENU_DONE choice=$choice"
+  } >> "$LOG" 2>&1
+fi
 
