@@ -120,10 +120,10 @@ choose_debug_mode() {
   local dbg_choice="$(read_volume_choice)"
   
   if [ "$dbg_choice" = "up" ]; then
+    msg "selected: enable"
     DEBUG_MODE=1
     cfg_set DEBUG_MODE 1
     cfg_set debug_mode 1
-    msg "- Debug Mode: ENABLED (Verbose logging active)"
     LOG="$TEMP_LOG"
     mkdir -p "$DL" 2>/dev/null || true
     {
@@ -139,10 +139,10 @@ choose_debug_mode() {
       echo
     } > "$LOG" 2>&1
   else
+    msg "selected: disable"
     DEBUG_MODE=0
     cfg_set DEBUG_MODE 0
     cfg_set debug_mode 0
-    msg "- Debug Mode: DISABLED (Silent mode active)"
   fi
 }
 
@@ -164,9 +164,18 @@ if [ "$LOG" != "/dev/null" ]; then
 fi
 
 case "$choice" in
-  up) enable_zram ;;
-  down) disable_zram ;;
-  *) keep_zram ;;
+  up)
+    msg "selected: enable"
+    enable_zram
+    ;;
+  down)
+    msg "selected: disable"
+    disable_zram
+    ;;
+  *)
+    msg "selected: timeout (disable)"
+    keep_zram
+    ;;
 esac
 
 if [ "$LOG" != "/dev/null" ]; then
