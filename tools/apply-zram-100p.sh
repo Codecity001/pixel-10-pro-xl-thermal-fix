@@ -30,30 +30,15 @@ fi
 prop_get() { getprop "$1" 2>/dev/null || true; }
 prop_set() {
   k="$1"; v="$2"
-  case "$k" in
-    persist.*)
-      if command -v resetprop >/dev/null 2>&1; then
-        resetprop "$k" "$v" >/dev/null 2>&1 || setprop "$k" "$v" 2>/dev/null || true
-      elif [ -x /data/adb/ksu/bin/resetprop ]; then
-        /data/adb/ksu/bin/resetprop "$k" "$v" >/dev/null 2>&1 || setprop "$k" "$v" 2>/dev/null || true
-      elif [ -x /data/adb/magisk/resetprop ]; then
-        /data/adb/magisk/resetprop "$k" "$v" >/dev/null 2>&1 || setprop "$k" "$v" 2>/dev/null || true
-      else
-        setprop "$k" "$v" 2>/dev/null || true
-      fi
-      ;;
-    *)
-      if command -v resetprop >/dev/null 2>&1; then
-        resetprop -n "$k" "$v" >/dev/null 2>&1 || setprop "$k" "$v" 2>/dev/null || true
-      elif [ -x /data/adb/ksu/bin/resetprop ]; then
-        /data/adb/ksu/bin/resetprop -n "$k" "$v" >/dev/null 2>&1 || setprop "$k" "$v" 2>/dev/null || true
-      elif [ -x /data/adb/magisk/resetprop ]; then
-        /data/adb/magisk/resetprop -n "$k" "$v" >/dev/null 2>&1 || setprop "$k" "$v" 2>/dev/null || true
-      else
-        setprop "$k" "$v" 2>/dev/null || true
-      fi
-      ;;
-  esac
+  if command -v resetprop >/dev/null 2>&1; then
+    resetprop -n "$k" "$v" >/dev/null 2>&1 || setprop "$k" "$v" 2>/dev/null || true
+  elif [ -x /data/adb/ksu/bin/resetprop ]; then
+    /data/adb/ksu/bin/resetprop -n "$k" "$v" >/dev/null 2>&1 || setprop "$k" "$v" 2>/dev/null || true
+  elif [ -x /data/adb/magisk/resetprop ]; then
+    /data/adb/magisk/resetprop -n "$k" "$v" >/dev/null 2>&1 || setprop "$k" "$v" 2>/dev/null || true
+  else
+    setprop "$k" "$v" 2>/dev/null || true
+  fi
 }
 
 keys='mm.zram.maintenance.first_delay_seconds mm.zram.maintenance.periodic_delay_seconds mmd.zram.writeback.max_idle_seconds mmd.zram.comp_algorithm mmd.zram.enabled mmd.zram.size vendor.zram.size persist.device_config.vendor_system_native_boot.zram_size persist.vendor.boot.zram.size'
@@ -101,23 +86,10 @@ prop_set persist.vendor.boot.zram.size "100p"
 
 restart_requested="${ZRAM_RESTART_MMD:-1}"
 if [ "$restart_requested" = "1" ]; then
-  {
-    echo
-    echo "== mmd restart =="
-    echo "restart_model=stop_then_start"
-    if command -v stop >/dev/null 2>&1; then
-      stop mmd 2>/dev/null || setprop ctl.stop mmd 2>/dev/null || true
-    else
-      setprop ctl.stop mmd 2>/dev/null || true
-    fi
-    sleep 1
-    if command -v start >/dev/null 2>&1; then
-      start mmd 2>/dev/null || setprop ctl.start mmd 2>/dev/null || true
-    else
-      setprop ctl.start mmd 2>/dev/null || true
-    fi
-    sleep 3
-  } >> "$LOG" 2>&1
+  echo
+  echo "== mmd restart =="
+  echo "restart_model=stop_then_start"
+  stop mmd && start mmd
 fi
 
 {
