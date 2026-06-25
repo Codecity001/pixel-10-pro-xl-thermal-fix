@@ -6,7 +6,8 @@ if [ -f "$CONFIG_FILE" ]; then
   . "$CONFIG_FILE" 2>/dev/null || true
 fi
 
-prop_set() { resetprop -n "$1" "$2" 2>/dev/null || setprop "$1" "$2" 2>/dev/null; }
+MODDIR="${MODDIR:-/data/adb/modules/pixel-10-pro-xl-thermal-fix}"
+prop_set() { "$MODDIR/tools/resetprop-rs" -n "$1" "$2"; }
 
 echo "=== Apply ZRAM Start ==="
 echo "Time: $(date -Is 2>/dev/null || date)"

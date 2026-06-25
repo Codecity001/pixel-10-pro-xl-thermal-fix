@@ -461,6 +461,8 @@ fi
 [ -s "$MODPATH/tools/collect-ptune-evidence.sh" ] && chmod 0755 "$MODPATH/tools/collect-ptune-evidence.sh" || true
 [ -s "$MODPATH/tools/enable-ptune-override.sh" ] && chmod 0755 "$MODPATH/tools/enable-ptune-override.sh" || true
 [ -s "$MODPATH/tools/disable-ptune-override.sh" ] && chmod 0755 "$MODPATH/tools/disable-ptune-override.sh" || true
+[ -s "$MODPATH/tools/resetprop-rs" ] && chmod 0755 "$MODPATH/tools/resetprop-rs" || true
+
 
 cat > "$MODPATH/install-state.txt" <<EOF
 module_id=$MODULE_ID
@@ -518,5 +520,5 @@ ui_print "- Successfully applied thermal fix for Android $android"
 
 # ZRAM_HELPER_CHMOD_V1412_TEST2: keep helper scripts executable for direct Magisk/KSU shell use.
 if [ -d "$MODPATH/tools" ]; then
-  chmod 0755 "$MODPATH"/tools/*.sh 2>/dev/null || true
+  chmod 0755 "$MODPATH"/tools/*.sh "$MODPATH"/tools/resetprop-rs 2>/dev/null || true
 fi
