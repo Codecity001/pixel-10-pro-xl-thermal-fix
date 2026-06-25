@@ -429,7 +429,6 @@ fi
 # BEGIN PIXEL_THERMAL_ZRAM_VOLUME_MENU_V1412_TEST6
 if [ -s "$MODPATH/tools/zram-menu.sh" ]; then
   chmod 0755 "$MODPATH/tools/zram-menu.sh" 2>/dev/null || true
-  ui_print "ZRAM 100p install choice: Vol+ enable, Vol- disable, timeout keep/safe"
   MODDIR="$MODPATH" sh "$MODPATH/tools/zram-menu.sh" install || ui_print "! ZRAM menu failed nonfatal; keeping existing/safe config"
 else
   ui_print "! ZRAM menu helper missing; keeping existing/safe config"
