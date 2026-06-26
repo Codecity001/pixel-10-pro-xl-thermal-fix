@@ -61,21 +61,23 @@ enable_zram() {
   cfg_set ENABLE_ZRAM_100P 1
   cfg_set ZRAM_RESTART_MMD 1
   cfg_set ZRAM_RISK_ACK explicit_user_enable
-  if [ -s "$MODDIR/tools/apply-zram-100p.sh" ]; then
-    local dbg="${DEBUG_MODE:-}"
-    [ -z "$dbg" ] && dbg="$(cfg_get DEBUG_MODE)"
-    [ -z "$dbg" ] && dbg="$(cfg_get debug_mode)"
-    if [ "$dbg" = "1" ]; then
-      MODDIR="$MODDIR" sh "$MODDIR/tools/apply-zram-100p.sh" "$MODE" || true
-    else
-      MODDIR="$MODDIR" sh "$MODDIR/tools/apply-zram-100p.sh" "$MODE" >/dev/null 2>&1 || true
+  if [ "$MODE" != "install" ]; then
+    if [ -s "$MODDIR/tools/apply-zram-100p.sh" ]; then
+      local dbg="${DEBUG_MODE:-}"
+      [ -z "$dbg" ] && dbg="$(cfg_get DEBUG_MODE)"
+      [ -z "$dbg" ] && dbg="$(cfg_get debug_mode)"
+      if [ "$dbg" = "1" ]; then
+        MODDIR="$MODDIR" sh "$MODDIR/tools/apply-zram-100p.sh" "$MODE" || true
+      else
+        MODDIR="$MODDIR" sh "$MODDIR/tools/apply-zram-100p.sh" "$MODE" >/dev/null 2>&1 || true
+      fi
     fi
   fi
   msg "- Selected: ENABLE ZRAM 100% (Reboot recommended)"
 }
 
 disable_zram() {
-  if [ -s "$MODDIR/tools/disable-zram-100p.sh" ]; then
+  if [ "$MODE" != "install" ] && [ -s "$MODDIR/tools/disable-zram-100p.sh" ]; then
     local dbg="${DEBUG_MODE:-}"
     [ -z "$dbg" ] && dbg="$(cfg_get DEBUG_MODE)"
     [ -z "$dbg" ] && dbg="$(cfg_get debug_mode)"

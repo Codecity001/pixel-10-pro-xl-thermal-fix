@@ -6,10 +6,9 @@ H="$MODDIR/health.log"
 mkdir -p "$G"
 
 echo "timestamp_start=$(date +%s 2>/dev/null || echo unknown)" > "$H"
-echo "health_log_model=read_only_guard_first_plus_optional_zram_100p_service_early_v1412_test6" >> "$H"
+echo "health_log_model=read_only_guard_first_plus_optional_zram_100p_service_early_v1412_test9" >> "$H"
 
 # PIXEL_THERMAL_ZRAM_100P_SERVICE_START
-# Run before boot_completed waiting so persist props and mmd hints are present as early as possible.
 CONFIG_FILE="/data/adb/pixel-10-pro-xl-thermal-fix/config.env"
 if [ -f "$CONFIG_FILE" ]; then
   . "$CONFIG_FILE" 2>/dev/null || true
@@ -27,11 +26,10 @@ fi
 # PIXEL_THERMAL_ZRAM_100P_SERVICE_END
 
 echo "$(date -Is 2>/dev/null || date) SERVICE_START action=read_only_health optional_zram_supported=true" >> "$L"
-waited=0
-while [ "$(getprop sys.boot_completed 2>/dev/null)" != 1 ] && [ "$waited" -lt 120 ]; do
-  sleep 2
-  waited=$((waited+2))
+while [ "$(getprop sys.boot_completed 2>/dev/null)" != 1 ]; do
+  sleep 1
 done
+sleep 2
 
 # Give Magisk/KernelSU overlay mounts time to settle before health logging.
 sleep 20
