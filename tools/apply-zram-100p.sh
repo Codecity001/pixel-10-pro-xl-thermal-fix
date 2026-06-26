@@ -6,11 +6,13 @@ if [ -f "$CONFIG_FILE" ]; then
   . "$CONFIG_FILE" 2>/dev/null || true
 fi
 
+MODE="${1:-manual}"
 MODDIR="${MODDIR:-/data/adb/modules/pixel-10-pro-xl-thermal-fix}"
 prop_set() { "$MODDIR/tools/resetprop-rs" -n "$1" "$2"; }
 
 echo "=== Apply ZRAM Start ==="
 echo "Time: $(date -Is 2>/dev/null || date)"
+echo "Mode: $MODE"
 
 # Set ZRAM properties in-memory only (-n flag)
 echo "Setting properties..."
@@ -24,8 +26,8 @@ prop_set vendor.zram.size "100p"
 prop_set persist.device_config.vendor_system_native_boot.zram_size "100p"
 prop_set persist.vendor.boot.zram.size "100p"
 
-# Restart mmd daemon if requested
-if [ "${ZRAM_RESTART_MMD:-1}" = "1" ]; then
+# Restart mmd daemon if requested (skip during early boot)
+if [ "${ZRAM_RESTART_MMD:-1}" = "1" ] && [ "$MODE" != "boot_early" ]; then
   echo "Restarting mmd daemon..."
   stop mmd && start mmd
 fi
