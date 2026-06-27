@@ -21,8 +21,8 @@ A17_STABLE_CP2A_PROFILE_SOURCE_INCREMENTAL="15430684"
 A17_STABLE_CP2A_SOURCE_REPORT_SHA256="a17_pixel10_thermal_ptune_magisk_stable_v3_factory_extract"
 
 ui_print "----------------------------------------"
-ui_print "  Pixel 10 Thermal Polling Fix"
-ui_print "  Universal test installer"
+ui_print "  Pixel 10 Thermal & Memory Control"
+ui_print "  A17 Thermal Throttle Fix profile installer"
 ui_print "----------------------------------------"
 ui_print "SELinux read-only ThermalHAL overlay policy included"
 ui_print "Prerelease test; stable updateJson remains 1.4.12-universal.1"
@@ -179,6 +179,15 @@ config_get() {
   [ -r "$CONFIG_FILE" ] || return 0
   grep -E "^${key}=" "$CONFIG_FILE" 2>/dev/null | tail -n 1 | sed "s/^${key}=//" | tr -d '\r'
 }
+# BEGIN PIXEL_THERMAL_INSTALL_OPTIONS_MENU_V1413_TEST17
+if [ -s "$MODPATH/tools/install-options-menu.sh" ]; then
+  chmod 0755 "$MODPATH/tools/menu-cycle.sh" "$MODPATH/tools/install-options-menu.sh" 2>/dev/null || true
+  MODULE_ID="$MODULE_ID" MODDIR="$MODPATH" sh "$MODPATH/tools/install-options-menu.sh" install || ui_print "! Install options menu failed nonfatal; using current config/defaults"
+else
+  ui_print "! Install options menu helper missing; using current config/defaults"
+fi
+# END PIXEL_THERMAL_INSTALL_OPTIONS_MENU_V1413_TEST17
+
 PTUNE_GUARD_MODE="$(config_get PTUNE_GUARD_MODE)"
 [ -n "$PTUNE_GUARD_MODE" ] || PTUNE_GUARD_MODE="strict"
 case "$PTUNE_GUARD_MODE" in strict|active_only|off) ;; *) ui_print "! Invalid PTUNE_GUARD_MODE=$PTUNE_GUARD_MODE, using strict"; PTUNE_GUARD_MODE="strict" ;; esac
@@ -400,6 +409,16 @@ if [ ! -s "$profile_dir/thermal_info_config_throttling.json" ]; then
 fi
 
 # BEGIN PIXEL_THERMAL_OUTDOOR_PROFILE_MENU_V1413_TEST1
+[ -s "$MODPATH/tools/profile-matrix-test9.sh" ] && . "$MODPATH/tools/profile-matrix-test9.sh"
+if command -v profile_matrix_base >/dev/null 2>&1; then
+  matrix_profile="$(profile_matrix_base "$device" "$build_id" 2>/dev/null || true)"
+  if [ -n "$matrix_profile" ] && [ -s "$MODPATH/profiles/$matrix_profile/system/vendor/etc/thermal_info_config_throttling.json" ]; then
+    profile="$matrix_profile"
+    profile_dir="$MODPATH/profiles/$profile/system/vendor/etc"
+    ui_print "- A17 profile: $device / $build_id"
+  fi
+fi
+
 base_profile="$profile"
 if [ -s "$MODPATH/tools/thermal-outdoor-menu.sh" ]; then
   chmod 0755 "$MODPATH/tools/thermal-outdoor-menu.sh" 2>/dev/null || true
@@ -407,28 +426,34 @@ if [ -s "$MODPATH/tools/thermal-outdoor-menu.sh" ]; then
 else
   ui_print "! Thermal outdoor menu helper missing; keeping stock profile"
 fi
+
 THERMAL_OUTDOOR_PROFILE="$(config_get THERMAL_OUTDOOR_PROFILE)"
 [ -n "$THERMAL_OUTDOOR_PROFILE" ] || THERMAL_OUTDOOR_PROFILE="stock"
-if [ "$THERMAL_OUTDOOR_PROFILE" = "outdoor-g4-adapted" ] || [ "$THERMAL_OUTDOOR_PROFILE" = "outdoor-g4-adapted-plus" ]; then
-  outdoor_profile="${base_profile}-${THERMAL_OUTDOOR_PROFILE}"
-  outdoor_profile_dir="$MODPATH/profiles/$outdoor_profile/system/vendor/etc"
-  if [ -s "$outdoor_profile_dir/thermal_info_config_throttling.json" ]; then
-    profile="$outdoor_profile"
-    profile_dir="$outdoor_profile_dir"
-    case "$THERMAL_OUTDOOR_PROFILE" in
-      outdoor-g4-adapted-plus) outdoor_state_token="outdoor_g4_adapted_plus_test" ;;
-      *) outdoor_state_token="outdoor_g4_adapted_test" ;;
-    esac
-    profile_state="${profile_state}_${outdoor_state_token}"
-    build_state="${build_state}_${outdoor_state_token}"
-    ui_print "- Thermal Outdoor Profile: $THERMAL_OUTDOOR_PROFILE"
-  else
-    ui_print "! Thermal Outdoor Profile missing for $outdoor_profile; keeping stock"
-    THERMAL_OUTDOOR_PROFILE="stock_missing_profile"
-  fi
-else
-  ui_print "- Thermal Outdoor Profile: stock"
-fi
+
+case "$THERMAL_OUTDOOR_PROFILE" in
+  outdoor-safe|outdoor-plus|outdoor-extended)
+    outdoor_profile="${base_profile}-${THERMAL_OUTDOOR_PROFILE}"
+    outdoor_profile_dir="$MODPATH/profiles/$outdoor_profile/system/vendor/etc"
+    if [ -s "$outdoor_profile_dir/thermal_info_config_throttling.json" ] && [ -s "$outdoor_profile_dir/thermal_info_config.json" ] && [ -s "$outdoor_profile_dir/thermal_info_config_charge.json" ]; then
+      profile="$outdoor_profile"
+      profile_dir="$outdoor_profile_dir"
+      case "$THERMAL_OUTDOOR_PROFILE" in
+        outdoor-safe) outdoor_state_token="outdoor_safe_test20" ;;
+        outdoor-plus) outdoor_state_token="outdoor_plus_test20" ;;
+        outdoor-extended) outdoor_state_token="outdoor_extended_test20" ;;
+      esac
+      profile_state="${profile_state}_${outdoor_state_token}"
+      build_state="${build_state}_${outdoor_state_token}"
+      ui_print "- Thermal: $THERMAL_OUTDOOR_PROFILE"
+    else
+      ui_print "! Thermal Outdoor Profile missing for $outdoor_profile; keeping stock"
+      THERMAL_OUTDOOR_PROFILE="stock_missing_profile"
+    fi
+  ;;
+  *)
+    ui_print "- Thermal Outdoor Profile: stock"
+  ;;
+esac
 # END PIXEL_THERMAL_OUTDOOR_PROFILE_MENU_V1413_TEST1
 
 active_dir="$MODPATH/system/vendor/etc"
@@ -437,12 +462,21 @@ for f in thermal_info_config_throttling.json thermal_info_config.json thermal_in
 [ -r /vendor/etc/thermal_info_config_throttling.json ] || thermal_abort "! Stock thermal throttling config not readable"
 grep -q "VIRTUAL-SKIN" /vendor/etc/thermal_info_config_throttling.json || thermal_abort "! Expected stock thermal marker missing"
 
-ui_print "- Selected Profile: $profile"
+ui_print "- Thermal: ${THERMAL_OUTDOOR_PROFILE:-stock}"
 ui_print "- Materializing active thermal overlay..."
 
 rm -rf "$active_dir"; mkdir -p "$active_dir"
 cp -fp "$profile_dir"/*.json "$active_dir"/
 chmod 0644 "$active_dir"/*.json 2>/dev/null || true
+
+# BEGIN PIXEL_THERMAL_POLLING_MODE_V1413_TEST17
+if [ -s "$MODPATH/tools/apply-polling-mode.sh" ]; then
+  chmod 0755 "$MODPATH/tools/apply-polling-mode.sh" 2>/dev/null || true
+  BASE_PROFILE="$base_profile" ACTIVE_DIR="$active_dir" MODDIR="$MODPATH" CONFIG_FILE="$CONFIG_FILE" sh "$MODPATH/tools/apply-polling-mode.sh" install || ui_print "! Polling mode helper failed nonfatal; keeping materialized profile polling"
+else
+  ui_print "! Polling mode helper missing; keeping materialized profile polling"
+fi
+# END PIXEL_THERMAL_POLLING_MODE_V1413_TEST17
 
 # BEGIN PIXEL_THERMAL_ZRAM_FSTAB_PRESERVE_V1412_TEST4
 zram_fstab_src=""
@@ -532,9 +566,29 @@ active_overlay_dir=system/vendor/etc
 zram_fstab_template=tools/fstab.zram.100p
 zram_fstab_materialized=$([ -s "$active_dir/fstab.zram.100p" ] && echo yes || echo no)
 zram_feature=optional_volume_key_menu_v1412_stable
-thermal_outdoor_feature=optional_volume_key_menu_v1413_test4_plus
+zram_apply_stage=boot_early
+zram_apply_helper=tools/apply-zram-100p.sh
+zram_resetprop_required=yes
+zram_resetprop_executable=$([ -x "$MODPATH/tools/resetprop-rs" ] && echo yes || echo no)
+zram_resetprop_mode=resetprop-rs_-n
+zram_mmd_restart_policy=outside_boot_early_only
+zram_backup_state_model=none_in_memory_only_props
+thermal_outdoor_feature=optional_full_options_menu_v1413_test20
 thermal_outdoor_profile=$THERMAL_OUTDOOR_PROFILE
 thermal_outdoor_target=$(config_get THERMAL_OUTDOOR_TARGET)
+thermal_settings_mode=$(config_get THERMAL_SETTINGS_MODE)
+thermal_safety_level=$(config_get THERMAL_SAFETY_LEVEL)
+thermal_conflict=$(config_get THERMAL_CONFLICT)
+thermal_conflict_path=$(config_get THERMAL_CONFLICT_PATH)
+thermal_max_profile=$(config_get THERMAL_MAX_PROFILE)
+thermal_polling_mode=$(config_get THERMAL_POLLING_MODE)
+thermal_polling_effective=$(config_get THERMAL_POLLING_EFFECTIVE)
+thermal_polling_conflict=$(config_get THERMAL_POLLING_CONFLICT)
+ptune_override_menu=$(config_get PTUNE_OVERRIDE_MENU)
+last_thermal_outdoor_profile=$(config_get LAST_THERMAL_OUTDOOR_PROFILE)
+last_thermal_polling_mode=$(config_get LAST_THERMAL_POLLING_MODE)
+last_thermal_safety_level=$(config_get LAST_THERMAL_SAFETY_LEVEL)
+last_ptune_override=$(config_get LAST_PTUNE_OVERRIDE)
 
 expected_thermal_files=3
 polling_values_changed_by_this_release=source_profile_or_optional_outdoor_g4_adapted_test

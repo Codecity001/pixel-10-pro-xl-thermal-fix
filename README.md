@@ -1,3 +1,182 @@
+## 1.4.13-universal-test.20 prerelease: compact installer help
+
+Test20 supersedes Test19.
+
+- Keeps the Test19 Debug Logging default fix.
+- Keeps the Test18 ZRAM cleanup.
+- Adds one-line compact help text to each installer cycle menu.
+- Shortens thermal confirmation labels for Magisk UI readability.
+- Removes a stale fresh-default debug reset that could contradict the Verbose default seed.
+- No thermal profile, polling, ZRAM, or pTune behavior changes.
+
+## 1.4.13-universal-test.19 prerelease: Debug default fix
+
+Test19 supersedes Test18.
+
+- Keeps the Test18 ZRAM cleanup.
+- Fixes the installer's Debug Logging menu so fresh test installs show Verbose as the initial/default choice.
+- Keeps remembered Silent reusable only when the remembered settings path is explicitly used.
+- Keeps the full Android 17 Pixel 10 profile matrix and full installer options menu.
+
+## 1.4.13-universal-test.18 prerelease: ZRAM cleanup
+
+Test18 supersedes Test17.
+
+ZRAM cleanup changes:
+
+- Keeps the Test17 full installer menu and Android 17 Pixel 10 profile matrix.
+- Makes Debug Logging default to Verbose for test builds.
+- Simplifies `tools/apply-zram-100p.sh` while keeping debug output.
+- Requires executable `tools/resetprop-rs` before applying ZRAM props.
+- Uses `resetprop-rs -n` for in-memory-only ZRAM properties.
+- Logs boot-early ZRAM application explicitly in `install-state.txt`.
+- Restarts `mmd` only outside `boot_early`.
+- Removes backup/restore state assumptions for in-memory-only props.
+
+## 1.4.13-universal-test.17 prerelease: full installer options menu
+
+Test17 supersedes Test16.
+
+It keeps the full Android 17 Pixel 10 device/build profile matrix and compact 30 second cycle menus.
+
+Installer UX and safety changes:
+
+- Adds a remembered settings prompt at the start of install.
+- Adds Safety Level: Normal or Strict.
+- Adds a short conflict scan for foreign thermal overlays, polling drift, and pTune presence.
+- Adds Polling Fix selection: Mod values or Stock values.
+- Adds pTune Override selection: ON or OFF before the pTune guard runs.
+- Keeps Thermal Profile selection: Stock, Outdoor Safe, Outdoor Plus, Outdoor Extended.
+- Keeps Debug Logging and ZRAM 100% cycle menus.
+- Adds a shared compact volume-cycle menu helper.
+- Keeps Volume Up to cycle, Volume Down to select, 30 second timeout to keep shown option, and no Power button usage.
+
+## 1.4.13-universal-test.16 prerelease: faster installer key response
+
+Test16 supersedes Test15.
+
+It keeps the full Android 17 Pixel 10 device/build profile matrix and compact 30 second cycle menus.
+
+Installer UX changes:
+
+- Keeps permissive Volume Up/Down event matching for Magisk/getevent compatibility.
+- Reduces debounce from 1.20s to 0.45s.
+- Removes the extra pre-read sleep from menu input handling.
+- Keeps Volume Up to cycle and Volume Down to select.
+- Keeps Timeout to keep/select the shown option.
+- Power button is not used.
+
+## 1.4.13-universal-test.15 prerelease: key detection compatibility fix
+
+Test15 supersedes Test14.
+
+It keeps the full Android 17 Pixel 10 device/build profile matrix and compact 30s cycle menus.
+
+Installer UX changes:
+
+- Keeps the 30 second interaction timeout.
+- Keeps compact narrow-screen friendly menus.
+- Keeps Volume Up to cycle and Volume Down to select.
+- Keeps Timeout to keep/select the shown option.
+- Power button is not used.
+- Changes key input detection from strict DOWN-only matching to permissive Volume Up/Down matching for Magisk/getevent compatibility.
+- Adds a longer 1.20s debounce delay to prevent one physical keypress being counted twice.
+
+## 1.4.13-universal-test.14 prerelease: compact 30s cycle menus
+
+Test14 supersedes Test13.
+
+It keeps the full Android 17 Pixel 10 device/build profile matrix and active outdoor safe/plus/extended choices.
+
+Installer UX changes:
+
+- Increases interactive timeout to 30 seconds.
+- Keeps DOWN-only key detection and debounce.
+- Uses compact narrow-screen friendly menu text.
+- Shows all options once, then only prints the current selection while cycling.
+- Uses the same cycle/confirm model for Thermal profile, Debug logging, and ZRAM 100%.
+- Volume Up cycles through options.
+- Volume Down confirms the shown option.
+- Timeout keeps/confirms the shown option.
+- Power button is not used.
+
+## 1.4.13-universal-test.13 prerelease: debounced cycle menus
+
+Test13 supersedes Test12.
+
+It keeps the full Android 17 Pixel 10 device/build profile matrix and active outdoor safe/plus/extended choices.
+
+Installer UX changes:
+
+- Uses DOWN-only key detection for Volume Up / Volume Down.
+- Ignores key-release events.
+- Adds a short debounce delay after each keypress.
+- Uses the same cycle/confirm model for all interactive prompts:
+  - Thermal Throttle Fix Profile
+  - Pixel Thermal Debug Logging
+  - Optional ZRAM 100% Profile
+- Volume Up cycles through all options.
+- Volume Down confirms the selected option.
+- Timeout confirms the selected option.
+- Power button is not used.
+
+## 1.4.13-universal-test.12 prerelease: clean Thermal Throttle Fix profile menu
+
+Test12 supersedes Test11.
+
+It keeps the full Android 17 Pixel 10 device/build profile matrix and active outdoor safe/plus/extended choices, but replaces the installer UX with a cleaner Thermal Throttle Fix profile selector.
+
+Selection model:
+
+- All options are shown up front.
+- Volume Up cycles through every option.
+- Volume Down confirms the shown option.
+- Timeout confirms the shown option.
+- Power button is not used.
+
+Profiles:
+
+- Stock / Factory Thermal
+- Outdoor Safe Throttle Fix
+- Outdoor Plus Throttle Fix
+- Outdoor Extended Throttle Fix
+
+## 1.4.13-universal-test.11 prerelease: cycle/confirm outdoor selection
+
+Test11 supersedes Test10.
+
+It keeps the full Android 17 Pixel 10 device/build profile matrix and active outdoor safe/plus/extended choices, but replaces the previous staged outdoor menu with a clearer volume-key cycle/confirm menu.
+
+Outdoor selection:
+
+- Volume Up cycles: Stock → Safe → Plus → Extended
+- Volume Down confirms the shown option
+- Timeout selects Stock/default
+- Power button is not used
+
+## 1.4.13-universal-test.10 prerelease: volume-only outdoor selection
+
+Test10 supersedes Test9.
+
+It keeps the full Android 17 Pixel 10 device/build profile matrix and active outdoor safe/plus/extended choices, but removes Power button use from the outdoor installer menu.
+
+Outdoor selection is now volume-key-only:
+
+- Volume Up / Volume Down / Timeout only
+- No Power button selection path
+
+## 1.4.13-universal-test.9 prerelease: full A17 profile matrix
+
+Test9 generates a complete Android 17 Pixel 10 profile matrix for `frankel`, `blazer`, `mustang`, and `rango` across CP2A, CP21, and CP31.
+
+Each device/build pair has base, outdoor-safe, outdoor-plus, and outdoor-extended profiles.
+
+Safe, Plus, and Extended are active install-time choices.
+
+The generator preserves vendor JSON shape exactly and only changes `VIRTUAL-SKIN` and `VIRTUAL-SKIN-HINT` threshold values for outdoor variants.
+
+This is a prerelease and must not be merged/stabilized until external runtime validation passes.
+
 ## 1.4.13-universal-test.6: module display-name refresh
 
 The visible Magisk module name is now `Pixel 10 Thermal & Memory Control`.

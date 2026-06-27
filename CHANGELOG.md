@@ -1,3 +1,127 @@
+## 1.4.13-universal-test.20
+
+- Supersedes `1.4.13-universal-test.19`.
+- Adds compact one-line help text to installer cycle menus.
+- Shortens thermal confirmation labels for installer readability.
+- Keeps Test19 Debug Logging default behavior.
+- Keeps Test18 ZRAM cleanup behavior.
+- Removes a stale fresh-default debug reset.
+
+## 1.4.13-universal-test.19
+
+- Supersedes `1.4.13-universal-test.18`.
+- Keeps Test18 ZRAM cleanup behavior.
+- Fixes Debug Logging default selection for fresh test installs so Verbose is shown first.
+- Keeps remembered Silent reusable when using remembered settings.
+
+## 1.4.13-universal-test.18
+
+- Supersedes `1.4.13-universal-test.17`.
+- Keeps Test17 full installer options and profile matrix.
+- Makes Debug Logging default to Verbose for test builds.
+- Cleans up `tools/apply-zram-100p.sh` while preserving debug diagnostics.
+- Adds a hard executable check for `tools/resetprop-rs`.
+- Documents boot-early ZRAM application in `install-state.txt`.
+- Uses `mmd` restart only outside `boot_early`.
+- Documents that no backup state is needed for in-memory-only ZRAM props.
+
+## 1.4.13-universal-test.17
+
+- Supersedes `1.4.13-universal-test.16`.
+- Keeps the full Android 17 Pixel 10 device/build profile matrix.
+- Adds remembered settings at the start of install.
+- Adds Safety Level Normal/Strict.
+- Adds a short conflict scan for foreign thermal overlays, polling drift, and pTune presence.
+- Adds Polling Fix selection: Mod values or Stock values.
+- Adds pTune Override ON/OFF selection before the pTune guard is evaluated.
+- Adds shared compact cycle menu helper used by installer menus.
+- Stores long details in config/install-state instead of printing long paths in the installer.
+
+## 1.4.13-universal-test.16
+
+- Supersedes `1.4.13-universal-test.15`.
+- Keeps the full Android 17 Pixel 10 device/build profile matrix.
+- Keeps compact 30s cycle menus for Thermal, Debug, and ZRAM.
+- Keeps permissive Volume Up/Down event matching for Magisk/getevent compatibility.
+- Reduces debounce from 1.20s to 0.45s to make selection feel responsive again.
+- Removes the extra pre-read sleep from menu input handling.
+- Power button is not used.
+
+## 1.4.13-universal-test.15
+
+- Supersedes `1.4.13-universal-test.14`.
+- Keeps the full Android 17 Pixel 10 device/build profile matrix.
+- Keeps compact 30s cycle menus for Thermal, Debug, and ZRAM.
+- Replaces strict DOWN-only key matching with permissive Volume Up/Down event matching for Magisk/getevent compatibility.
+- Raises debounce to 1.20s to avoid double-counting one physical keypress.
+- Power button is not used.
+
+## 1.4.13-universal-test.14
+
+- Supersedes `1.4.13-universal-test.13`.
+- Keeps the full Android 17 Pixel 10 device/build profile matrix.
+- Keeps Safe, Plus, and Extended active install-time choices.
+- Raises installer interaction timeout to 30 seconds.
+- Keeps DOWN-only key detection and debounce.
+- Reworks Thermal, Debug, and ZRAM prompts into compact narrow-screen friendly menus.
+- Shows all options once and only prints the current selection during cycling.
+- Power button is not used.
+
+## 1.4.13-universal-test.13
+
+- Supersedes `1.4.13-universal-test.12`.
+- Keeps the full Android 17 Pixel 10 device/build profile matrix.
+- Keeps Safe, Plus, and Extended active install-time choices.
+- Adds DOWN-only key detection for installer menu input.
+- Ignores key-release events and adds debounce delay to avoid double-cycling.
+- Applies the same cycle/confirm UX to Thermal profile, Debug logging, and ZRAM 100% prompts.
+- Cleans up outdoor state/source labels to test13 naming.
+- Power button is not used.
+
+## 1.4.13-universal-test.12
+
+- Supersedes `1.4.13-universal-test.11`.
+- Keeps the full Android 17 Pixel 10 device/build profile matrix.
+- Keeps Safe, Plus, and Extended active install-time choices.
+- Replaces the outdoor menu with a cleaner Thermal Throttle Fix profile selector.
+- Shows all four options up front.
+- Volume Up cycles through Stock, Safe, Plus, and Extended.
+- Volume Down confirms the shown option.
+- Timeout confirms the shown option.
+- Power button is not used.
+- Cleans up profile naming and installer labels.
+
+## 1.4.13-universal-test.11
+
+- Supersedes `1.4.13-universal-test.10`.
+- Keeps the full Android 17 Pixel 10 device/build profile matrix.
+- Keeps Safe, Plus, and Extended active install-time choices.
+- Replaces the staged outdoor menu with a cycle/confirm menu.
+- Volume Up cycles Stock → Safe → Plus → Extended.
+- Volume Down confirms the shown option.
+- Timeout selects Stock/default.
+- Power button is not used.
+- Cleans up installer labels from older Thermal Polling/Test9 wording.
+
+## 1.4.13-universal-test.10
+
+- Supersedes `1.4.13-universal-test.9`.
+- Keeps the full Android 17 Pixel 10 device/build profile matrix.
+- Keeps Safe, Plus, and Extended active install-time choices.
+- Changes the outdoor installer menu to volume-key-only selection.
+- Removes Power button use from outdoor profile selection.
+- Keeps factory JSON shape preservation and VIRTUAL-SKIN / VIRTUAL-SKIN-HINT-only outdoor threshold policy unchanged.
+
+## 1.4.13-universal-test.9
+
+- Adds full Android 17 Pixel 10 device/build profile matrix for `frankel`, `blazer`, `mustang`, and `rango` across CP2A, CP21, and CP31 factory vendor sources.
+- Generates base, outdoor-safe, outdoor-plus, and outdoor-extended profiles for every device/build pair.
+- Offers Safe, Plus, and Extended as active install-time choices.
+- Preserves vendor JSON shape: sensor order, threshold array length, hysteresis array length, and NAN positions.
+- Safe/Plus/Extended only adjust `VIRTUAL-SKIN` and `VIRTUAL-SKIN-HINT` thresholds.
+- Keeps USB, charge, battery, speaker, shutdown, emergency, CP2A ZRAM, and resetprop-rs ZRAM paths unchanged.
+- Supersedes Test8 after external mustang CP31 bootloop report.
+
 ## 1.4.13-universal-test.6
 
 - Renames the visible Magisk module name from `Pixel 10 Thermal Polling Fix` to `Pixel 10 Thermal & Memory Control`.
