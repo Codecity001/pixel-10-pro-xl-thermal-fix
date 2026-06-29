@@ -1,5 +1,13 @@
 # [MOD][MAGISK][Pixel 10 Pro/XL][A17] Thermal Polling/Throttle Fix + Memory Control – ZRAM 100%
 
+## 1.4.13-universal-test.27 prerelease: install overlay helper refactor
+
+- Refactors install-time profile/outdoor overlay materialization into `tools/install-thermal-overlay.sh`.
+- Keeps Test26 debug/compat token cleanup, Test25 ZRAM install helper, Outdoor Extended, polling mod, and pTune Override OFF behavior unchanged.
+- Runtime PASS: Pixel 10 Pro XL / mustang / Android 17 CP2A.260605.012 / 15430684 / Outdoor Extended / ZRAM 16 GiB.
+- Tester/PASS scope: local mustang Test27 install/pre-reboot and post-reboot runtime verification PASS; Test26 PASS scope and existing external tester credits remain preserved.
+- Credits preserved: Harish / Codecity001, JoshuaDoes, Allen Chang, Jiggs, maicol07, and existing CREDITS.md acknowledgements.
+
 ## 1.4.13-universal-test.26 prerelease: debug/compat token cleanup
 
 - Runtime PASS: Pixel 10 Pro XL / mustang / Android 17 CP2A.260605.012 / 15430684 / Outdoor Extended / ZRAM 16 GiB.
