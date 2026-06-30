@@ -1,3 +1,13 @@
+## 1.4.13-universal-test.29 prerelease: Profile layout mapping audit
+
+- Adds a read-only profile layout mapping helper for the proposed `profiles/device/family/variant` structure.
+- Harish / Codecity001 profile layout concept credited as mockup reference and reimplemented on current Test28 main.
+- Runtime PASS: Pixel 10 Pro XL / mustang / Android 17 CP2A.260605.012 / 15430684, Test29 post-reboot verified.
+- Test29 final verify: Harish credit active, mapping helper active, G4 legacy preserve PASS, ZRAM runtime PASS, thermal tombstone index empty or absent.
+- Preserves Test28 Use last settings short-circuit and no-saved Fresh defaults guard.
+- Preserves Test27 install thermal overlay helper boundaries; no runtime resolver switch in this slice.
+- TensorConservative stays research-only; no sysfs/procfs writes are added.
+- Runtime PASS: pending for Test29 until install and post-reboot verification.
 ## 1.4.13-universal-test.28 prerelease: Use-last short-circuit
 
 - Makes "Use last settings" apply remembered Outdoor, polling, pTune override, debug, and ZRAM choices without showing the follow-up install menus.
