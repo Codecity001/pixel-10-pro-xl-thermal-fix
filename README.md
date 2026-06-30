@@ -1,3 +1,32 @@
+# Stable 1.5
+
+Stable release: 1.5-universal.1
+Since last public stable: 1.4.12-universal.1
+
+## Highlights
+
+- Verified Test25-Test29 cleanup chain promoted to stable.
+- ZRAM 100p install and runtime path retained and verified.
+- Use-last install flow keeps previous settings without repeated option menus.
+- Thermal overlay and ZRAM setup are cleaner and easier to verify.
+- Harish / Codecity001 profile-layout mapping audit added as read-only helper and documentation.
+
+## Verified profile
+
+- Pixel 10 Pro XL / mustang / Android 17 CP2A.260605.012.
+- Outdoor Extended, polling mod, pTune Override OFF, ZRAM 100p.
+- Post-reboot: ZRAM runtime PASS and thermal tombstone index empty or absent.
+
+## Credits
+
+- Harish / Codecity001, JoshuaDoes, Allen Chang, Jiggs, maicol07, and existing CREDITS.md acknowledgements.
+
+## Not included
+
+- No TensorConservative sysfs/procfs writes.
+- No direct profile resolver layout switch.
+- No new runtime tuning beyond the verified Test25-Test29 chain.
+
 ## 1.4.13-universal-test.29 prerelease: Profile layout mapping audit
 
 - Adds a read-only profile layout mapping helper for the proposed `profiles/device/family/variant` structure.
