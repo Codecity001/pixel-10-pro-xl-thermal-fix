@@ -136,7 +136,7 @@ This helper is read-only; it does not delete, disable, enable, mount, or patch a
 
 ## Prerelease manager status
 
-`v1.5.1-universal-test.1` adds a test status line for module managers:
+`v1.5.1-universal-test.2` adds a test status line for module managers:
 
 ```text
 Polling: 🟢 Thermal: 🟢 ZRAM: 🟢 | Action: status/cycle/debug

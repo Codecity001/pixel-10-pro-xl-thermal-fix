@@ -1,7 +1,7 @@
 id=pixel-10-pro-xl-thermal-fix
 name=Pixel 10 Thermal & Memory Control
-version=1.5.1-universal-test.1
-versionCode=1016101
+version=1.5.1-universal-test.2
+versionCode=1016102
 author=Lycidias93, based on marx161
 description=Polling: ⚪ Thermal: ⚪ ZRAM: ⚪ | Action: status/cycle/debug
 updateJson=https://raw.githubusercontent.com/Lycidias93/pixel-10-pro-xl-thermal-fix/main/update.json

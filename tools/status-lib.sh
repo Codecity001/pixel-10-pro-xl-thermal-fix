@@ -74,8 +74,14 @@ status_collect() {
   zram_prop_enabled="$(prop_get mmd.zram.enabled)"
   zram_mod_fstab=no
   zram_vendor_fstab=no
+  zram_swap_active=no
+  zram_runtime_active=no
   [ -s "$MODDIR/system/vendor/etc/fstab.zram.100p" ] && zram_mod_fstab=yes
   [ -r "/vendor/etc/fstab.zram.100p" ] && zram_vendor_fstab=yes
+  grep -E '(^|[[:space:]])/dev/block/zram[0-9]+[[:space:]]' /proc/swaps 2>/dev/null | tail -n 1 >/dev/null && zram_swap_active=yes
+  if { [ "$zram_prop_vendor" = "100p" ] || [ "$zram_prop_mmd" = "100%" ]; } && [ "$zram_prop_enabled" = "true" ] && [ "$zram_swap_active" = "yes" ]; then
+    zram_runtime_active=yes
+  fi
   zram_apply_fail=no
   grep -E "ZRAM_APPLY_FAIL|SERVICE_ZRAM result=apply_failed" "$MODDIR/health.log" "$MODDIR/guard/bootguard.log" 2>/dev/null | tail -n 1 >/dev/null && zram_apply_fail=yes
 
@@ -131,12 +137,15 @@ status_collect() {
   zram_state="disabled"
   case "$zram_enabled:$zram_ack" in
     1:explicit_user_enable)
-      if [ "$zram_apply_fail" = "yes" ]; then
+      if [ "$zram_runtime_active" = "yes" ]; then
+        zram_icon="$OK"
+        zram_state="runtime_active"
+      elif [ "$zram_apply_fail" = "yes" ]; then
         zram_icon="$BAD"
         zram_state="enabled_but_apply_failed"
       elif [ "$zram_prop_vendor" = "100p" ] || [ "$zram_prop_mmd" = "100%" ]; then
-        zram_icon="$OK"
-        zram_state="runtime_props_active"
+        zram_icon="$WARN"
+        zram_state="runtime_props_set_swap_waiting"
       elif [ "$zram_mod_fstab" = "yes" ]; then
         zram_icon="$WARN"
         zram_state="enabled_needs_reboot_or_runtime_apply"
@@ -173,6 +182,8 @@ status_collect() {
     printf '%s\n' "ZRAM_VENDOR_PROP=$zram_prop_vendor"
     printf '%s\n' "ZRAM_MMD_PROP=$zram_prop_mmd"
     printf '%s\n' "ZRAM_MMD_ENABLED=$zram_prop_enabled"
+    printf '%s\n' "ZRAM_SWAP_ACTIVE=$zram_swap_active"
+    printf '%s\n' "ZRAM_RUNTIME_ACTIVE=$zram_runtime_active"
     printf '%s\n' "MODULE_OVERLAY_READY=$overlay_ready"
     printf '%s\n' "ACTIVE_VENDOR_MATCH=$active_match"
     printf '%s\n' "SAFE_TO_REBOOT=$safe_to_reboot"
