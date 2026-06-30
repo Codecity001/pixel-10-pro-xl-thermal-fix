@@ -1,3 +1,12 @@
+## 1.4.13-universal-test.28 prerelease: Use-last short-circuit
+
+- Makes "Use last settings" apply remembered Outdoor, polling, pTune override, debug, and ZRAM choices without showing the follow-up install menus.
+- Keeps Test27 install thermal overlay helper, Test26 debug/compat token cleanup, Test25 ZRAM install helper, Outdoor Extended, polling mod, and pTune Override OFF behavior unchanged when those were the remembered choices.
+- Runtime PASS: Pixel 10 Pro XL / mustang / Android 17 CP2A.260605.012 / 15430684, rebuilt ZIP post-reboot verified.
+- Test28 final verify: no-saved guard active, saved Use-last short-circuit active, Outdoor Extended, polling mod, pTune Override OFF, ZRAM runtime PASS, thermal tombstone index empty or absent.
+- If no saved values exist and Use last is selected, Test28 visibly falls back to Fresh defaults instead of inventing a last profile.
+- Credits preserved: Harish / Codecity001, JoshuaDoes, Allen Chang, Jiggs, maicol07, and existing CREDITS.md acknowledgements.
+
 # [MOD][MAGISK][Pixel 10 Pro/XL][A17] Thermal Polling/Throttle Fix + Memory Control – ZRAM 100%
 
 ## 1.4.13-universal-test.27 prerelease: install overlay helper refactor
