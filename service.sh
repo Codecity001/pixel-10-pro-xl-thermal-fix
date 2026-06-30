@@ -49,4 +49,8 @@ sleep 20
   echo health_log_complete=yes
 } >> "$H" 2>&1
 
+if [ -s "$MODDIR/tools/status-lib.sh" ]; then
+  sh "$MODDIR/tools/status-lib.sh" update >> "$H" 2>&1 || true
+fi
+
 exit 0

@@ -1,5 +1,13 @@
 # Stable 1.5
 
+## v1.5.1-universal-test.1
+
+- Prerelease: dynamic manager Ampel status for Polling, Thermal and ZRAM.
+- Adds Action dashboard for diagnostics, cycle/reconfigure, manual debug ZIP and Exit.
+- Updates module metadata to `1.5.1-universal-test.1` / `1016101`.
+- Keeps stable public `update.json` on `1.5-universal.1`.
+
+
 Stable release: 1.5-universal.1
 Since last public stable: 1.4.12-universal.1
 
