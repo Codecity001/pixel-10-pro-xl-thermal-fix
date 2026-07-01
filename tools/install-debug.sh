@@ -100,9 +100,9 @@ thermal_save_install_debug() {
     echo "== recent thermal logcat =="
     logcat -d -t 300 2>/dev/null | grep -i -E "thermal|ThermalHAL|android.hardware.thermal|pixel-10-pro-xl-thermal-fix|Magisk|KernelSU|SukiSU|APatch" || true
   } > "$THERMAL_INSTALL_DEBUG_LOG" 2>&1 || true
-  ui_print "Install debug autosave:"
-  ui_print "$(basename "$THERMAL_INSTALL_DEBUG_LOG")"
-  ui_print "In Download folder"
+   ui_print "Install debug autosave:"
+   ui_print "Saved"
+   ui_print "In Download folder"
 }
 
 thermal_collect_debug_on_fail() {

@@ -1,4 +1,4 @@
-## v1.5.1-universal-test.5
+## v1.5.1-universal-test.6
 
 - Prerelease final hardening:
   - combined manager Ampel/value description

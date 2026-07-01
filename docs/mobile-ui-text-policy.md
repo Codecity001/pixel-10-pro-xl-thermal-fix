@@ -25,3 +25,11 @@ Rules:
 - Preferred format:
   `P:🟢 mod | T:🟢 outdoor-ext | Z:🟢 100p | Action: settings/debug`
 - Keep it wrap-friendly rather than using literal multiline `module.prop`.
+
+
+## Root menu naming
+
+- Root Action menu exits with `Exit`.
+- Submenus return with `Back`.
+- pTune override belongs in Advanced only.
+- Risky pTune override must be blocked for disabled or known-bad pTune states.
