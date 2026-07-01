@@ -9,12 +9,20 @@ sha_file(){ sha256sum "$1" 2>/dev/null | awk '{print $1}'; }
 
 ready=yes
 match=yes
-for f in thermal_info_config_throttling.json thermal_info_config.json thermal_info_config_charge.json; do
-  [ -s "$M/system/vendor/etc/$f" ] || ready=no
+checked=0
+for p in "$M"/system/vendor/etc/thermal_info_config*.json; do
+  [ -f "$p" ] || continue
+  checked=$((checked + 1))
+  f="${p##*/}"
+  [ -s "$p" ] || ready=no
   a="$(sha_file "/vendor/etc/$f")"
-  o="$(sha_file "$M/system/vendor/etc/$f")"
-  [ -n "$a" ] && [ "$a" = "$o" ] || match=no
+  o="$(sha_file "$p")"
+  [ -n "$a" ] && [ -n "$o" ] && [ "$a" = "$o" ] || match=no
 done
+if [ "$checked" -eq 0 ] 2>/dev/null; then
+  ready=no
+  match=no
+fi
 
 pany=""
 pact=""
@@ -146,6 +154,7 @@ fi
   printf '%s\n' "PROFILE_STALE_AFTER_OTA=$profile_stale_after_ota"
   printf '%s\n' "REINSTALL_REQUIRED=$reinstall_required"
   printf '%s\n' "MODULE_OVERLAY_READY=$ready"
+  printf '%s\n' "THERMAL_CHECKED_FILES=$checked"
   printf '%s\n' "ACTIVE_VENDOR_MATCH=$match"
   printf '%s\n' "ROOT_IMPL=$root_impl"
   printf '%s\n' "META_BACKEND_PRESENT=$meta_backend"

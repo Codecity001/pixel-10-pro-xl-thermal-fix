@@ -4,11 +4,20 @@ MODDIR="${MODDIR:-/data/adb/modules/$ID}"
 CONFIG_DIR="/data/adb/$ID"
 CONFIG_FILE="$CONFIG_DIR/config.env"
 
-[ -s "$MODDIR/tools/menu-cycle.sh" ] && . "$MODDIR/tools/menu-cycle.sh"
+MENU_CYCLE_AVAILABLE=0
+[ -s "$MODDIR/tools/menu-cycle.sh" ] && . "$MODDIR/tools/menu-cycle.sh" && MENU_CYCLE_AVAILABLE=1
 
 msg() {
   if command -v ui_print >/dev/null 2>&1; then ui_print "$*"; else echo "$*"; fi
 }
+
+if [ "$MENU_CYCLE_AVAILABLE" != "1" ]; then
+  msg "! Action menu unavailable"
+  if [ -s "$MODDIR/tools/status-lib.sh" ]; then
+    sh "$MODDIR/tools/status-lib.sh" print || true
+  fi
+  exit 0
+fi
 
 cfg_get() {
   k="$1"

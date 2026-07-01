@@ -1,3 +1,12 @@
+## v1.5.1-universal-test.5
+
+- Prerelease final hardening:
+  - combined manager Ampel/value description
+  - dynamic thermal overlay file checks
+  - ZRAM runtime proof via active swap plus non-zero disksize
+  - graceful missing menu-cycle fallback
+  - split visible installer autosave/result lines
+
 # Stable 1.5
 
 ## v1.5.1-universal-test.4

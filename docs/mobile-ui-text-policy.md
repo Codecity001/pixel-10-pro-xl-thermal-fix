@@ -17,3 +17,11 @@ Rules:
 - Settings menu must expose `Back`.
 - Completed actions must return to the parent menu.
 - Debug ZIP creation must show status/progress before work starts.
+
+
+## Manager description policy
+
+- Combine each Ampel with its active value.
+- Preferred format:
+  `P:🟢 mod | T:🟢 outdoor-ext | Z:🟢 100p | Action: settings/debug`
+- Keep it wrap-friendly rather than using literal multiline `module.prop`.

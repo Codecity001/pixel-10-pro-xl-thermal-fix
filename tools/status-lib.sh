@@ -76,10 +76,19 @@ status_collect() {
   zram_vendor_fstab=no
   zram_swap_active=no
   zram_runtime_active=no
+  zram_disk_size=0
+  zram_disk_positive=no
   [ -s "$MODDIR/system/vendor/etc/fstab.zram.100p" ] && zram_mod_fstab=yes
   [ -r "/vendor/etc/fstab.zram.100p" ] && zram_vendor_fstab=yes
   grep -E '(^|[[:space:]])/dev/block/zram[0-9]+[[:space:]]' /proc/swaps 2>/dev/null | tail -n 1 >/dev/null && zram_swap_active=yes
-  if { [ "$zram_prop_vendor" = "100p" ] || [ "$zram_prop_mmd" = "100%" ]; } && [ "$zram_prop_enabled" = "true" ] && [ "$zram_swap_active" = "yes" ]; then
+  if [ -r /sys/block/zram0/disksize ]; then
+    zram_disk_size="$(cat /sys/block/zram0/disksize 2>/dev/null | tr -d '\r' | head -n 1)"
+  fi
+  case "$zram_disk_size" in
+    ''|0|*[!0-9]*) zram_disk_positive=no ;;
+    *) zram_disk_positive=yes ;;
+  esac
+  if [ "$zram_swap_active" = "yes" ] && [ "$zram_disk_positive" = "yes" ]; then
     zram_runtime_active=yes
   fi
   zram_apply_fail=no
@@ -164,7 +173,23 @@ status_collect() {
     ;;
   esac
 
-  desc="description=Polling: $polling_icon Thermal: $thermal_icon ZRAM: $zram_icon | Action: status/cycle/debug"
+  polling_value="$polling_effective"
+  [ -n "$polling_value" ] || polling_value="$polling_mode"
+  [ -n "$polling_value" ] || polling_value="unknown"
+  thermal_value="$thermal_profile"
+  case "$thermal_value" in
+    outdoor-extended) thermal_value="outdoor-ext" ;;
+    outdoor-plus) thermal_value="outdoor-plus" ;;
+    outdoor-safe) thermal_value="outdoor-safe" ;;
+    ''|stock|stock_profile_selected) thermal_value="stock" ;;
+  esac
+  if [ "$zram_enabled" = "1" ]; then
+    zram_value="100p"
+    [ "$zram_runtime_active" = "yes" ] || zram_value="100p-pending"
+  else
+    zram_value="off"
+  fi
+  desc="description=P:$polling_icon $polling_value | T:$thermal_icon $thermal_value | Z:$zram_icon $zram_value | Action: settings/debug"
 
   {
     printf '%s\n' "POLLING_ICON=$polling_icon"
@@ -184,10 +209,14 @@ status_collect() {
     printf '%s\n' "ZRAM_MMD_ENABLED=$zram_prop_enabled"
     printf '%s\n' "ZRAM_SWAP_ACTIVE=$zram_swap_active"
     printf '%s\n' "ZRAM_RUNTIME_ACTIVE=$zram_runtime_active"
+    printf '%s\n' "ZRAM_DISKSIZE=$zram_disk_size"
     printf '%s\n' "MODULE_OVERLAY_READY=$overlay_ready"
     printf '%s\n' "ACTIVE_VENDOR_MATCH=$active_match"
     printf '%s\n' "SAFE_TO_REBOOT=$safe_to_reboot"
     printf '%s\n' "VENDOR_OVERLAY_BACKEND_WARN=$vendor_warn"
+    printf '%s\n' "POLLING_VALUE=$polling_value"
+    printf '%s\n' "THERMAL_VALUE=$thermal_value"
+    printf '%s\n' "ZRAM_VALUE=$zram_value"
     printf '%s\n' "MANAGER_DESCRIPTION=$desc"
   } > "$STATUS_FILE" 2>/dev/null || true
 
