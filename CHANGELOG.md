@@ -1,6 +1,6 @@
 # Stable 1.5
 
-## v1.5.1-universal-test.3
+## v1.5.1-universal-test.4
 
 - Mobile UI text cleanup: compact Action status, `Settings` menu label, short debug hint and UI text guard.
 
@@ -8,7 +8,7 @@
 
 - Prerelease: dynamic manager Ampel status for Polling, Thermal and ZRAM.
 - Adds Action dashboard for diagnostics, settings/reconfigure, manual debug ZIP and Exit.
-- Updates module metadata to `1.5.1-universal-test.3` / `1016103`.
+- Updates module metadata to `1.5.1-universal-test.4` / `1016104`.
 - Keeps stable public `update.json` on `1.5-universal.1`.
 
 

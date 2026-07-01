@@ -9,3 +9,11 @@ Rules:
 - Avoid semicolon chains and long combined lines.
 - Use `Settings`, not `Cycle`, for user-facing menus.
 - Long technical details belong in logs/debug ZIPs, not the manager view.
+
+
+## Action navigation policy
+
+- Action root menu must expose `Back`.
+- Settings menu must expose `Back`.
+- Completed actions must return to the parent menu.
+- Debug ZIP creation must show status/progress before work starts.

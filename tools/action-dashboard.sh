@@ -45,12 +45,24 @@ current_base_profile() {
   strip_outdoor_suffix "$p"
 }
 
+variant_exists() {
+  base="$1"
+  variant="$2"
+  case "$variant" in
+    stock|base) return 0 ;;
+    outdoor-safe|outdoor-plus|outdoor-extended)
+      [ -s "$MODDIR/profiles/$base-$variant/system/vendor/etc/thermal_info_config_throttling.json" ]
+    ;;
+    *) return 1 ;;
+  esac
+}
+
 selected_variant_profile() {
   base="$1"
   choice="$(cfg_get THERMAL_OUTDOOR_PROFILE)"
   case "$choice" in
     outdoor-safe|outdoor-plus|outdoor-extended)
-      if [ -s "$MODDIR/profiles/$base-$choice/system/vendor/etc/thermal_info_config_throttling.json" ]; then
+      if variant_exists "$base" "$choice"; then
         echo "$base-$choice"
       else
         echo "$base"
@@ -58,43 +70,6 @@ selected_variant_profile() {
     ;;
     *) echo "$base" ;;
   esac
-}
-
-rematerialize_thermal_overlay() {
-  base="$(current_base_profile)"
-  if [ "$base" = "unknown" ] || [ ! -d "$MODDIR/profiles/$base/system/vendor/etc" ]; then
-    msg "! Cannot determine base profile."
-    msg "! Reinstall or collect debug ZIP."
-    return 1
-  fi
-
-  selected="$(selected_variant_profile "$base")"
-  profile_dir="$MODDIR/profiles/$selected/system/vendor/etc"
-  active_dir="$MODDIR/system/vendor/etc"
-
-  for f in thermal_info_config.json thermal_info_config_charge.json thermal_info_config_throttling.json; do
-    if [ ! -s "$profile_dir/$f" ]; then
-      msg "! Missing profile file: $profile_dir/$f"
-      return 1
-    fi
-  done
-
-  mkdir -p "$active_dir" "$MODDIR/guard" 2>/dev/null || true
-  rm -f "$active_dir"/thermal_info_config*.json 2>/dev/null || true
-  cp -fp "$profile_dir"/thermal_info_config*.json "$active_dir"/ || return 1
-  chmod 0644 "$active_dir"/thermal_info_config*.json 2>/dev/null || true
-
-  if [ -s "$MODDIR/tools/apply-polling-mode.sh" ]; then
-    BASE_PROFILE="$base" ACTIVE_DIR="$active_dir" MODDIR="$MODDIR" CONFIG_FILE="$CONFIG_FILE" sh "$MODDIR/tools/apply-polling-mode.sh" action 2>/dev/null || true
-  fi
-
-  printf '%s\n' "$selected" > "$MODDIR/guard/selected_profile" 2>/dev/null || true
-  printf '%s\n' "yes" > "$MODDIR/guard/action_cycle_pending_reboot" 2>/dev/null || true
-  msg "- Profile materialized"
-  msg "- $selected"
-  msg "- Reboot recommended"
-  msg "- Vendor mount refresh"
-  return 0
 }
 
 refresh_status() {
@@ -116,122 +91,303 @@ show_status() {
   msg "----------------------------------------"
 }
 
-full_diagnostics() {
-  show_status
-  msg ""
-  msg "== compat-check =="
-  if [ -s "$MODDIR/tools/compat-check.sh" ]; then
-    sh "$MODDIR/tools/compat-check.sh" 2>/dev/null || true
-  else
-    msg "compat-check missing"
+ui_menu3() {
+  _title="$1"
+  _label0="$2"
+  _label1="$3"
+  _label2="$4"
+  _idx="${5:-0}"
+  _steps=0
+  case "$_idx" in 0|1|2) ;; *) _idx=0 ;; esac
+  mc_head "$_title"
+  mc_msg "1 $_label0"
+  mc_msg "2 $_label1"
+  mc_msg "3 $_label2"
+  mc_foot
+  while [ "$_steps" -le 12 ]; do
+    _pos=$(( _idx + 1 ))
+    case "$_idx" in
+      0) _label="$_label0" ;;
+      1) _label="$_label1" ;;
+      *) _label="$_label2" ;;
+    esac
+    mc_msg "Current $_pos/3: $_label"
+    _key="$(mc_read_key)"
+    case "$_key" in
+      up) _idx=$(( (_idx + 1) % 3 )); _steps=$(( _steps + 1 )) ;;
+      down) UI_INDEX="$_idx"; UI_REASON="volume_down"; UI_STEPS="$_steps"; return 0 ;;
+      timeout) UI_INDEX="$_idx"; UI_REASON="timeout"; UI_STEPS="$_steps"; return 0 ;;
+    esac
+  done
+  UI_INDEX="$_idx"; UI_REASON="max_steps"; UI_STEPS="$_steps"; return 0
+}
+
+ui_menu5() {
+  _title="$1"
+  _label0="$2"
+  _label1="$3"
+  _label2="$4"
+  _label3="$5"
+  _label4="$6"
+  _idx="${7:-0}"
+  _steps=0
+  case "$_idx" in 0|1|2|3|4) ;; *) _idx=0 ;; esac
+  mc_head "$_title"
+  mc_msg "1 $_label0"
+  mc_msg "2 $_label1"
+  mc_msg "3 $_label2"
+  mc_msg "4 $_label3"
+  mc_msg "5 $_label4"
+  mc_foot
+  while [ "$_steps" -le 15 ]; do
+    _pos=$(( _idx + 1 ))
+    case "$_idx" in
+      0) _label="$_label0" ;;
+      1) _label="$_label1" ;;
+      2) _label="$_label2" ;;
+      3) _label="$_label3" ;;
+      *) _label="$_label4" ;;
+    esac
+    mc_msg "Current $_pos/5: $_label"
+    _key="$(mc_read_key)"
+    case "$_key" in
+      up) _idx=$(( (_idx + 1) % 5 )); _steps=$(( _steps + 1 )) ;;
+      down) UI_INDEX="$_idx"; UI_REASON="volume_down"; UI_STEPS="$_steps"; return 0 ;;
+      timeout) UI_INDEX="$_idx"; UI_REASON="timeout"; UI_STEPS="$_steps"; return 0 ;;
+    esac
+  done
+  UI_INDEX="$_idx"; UI_REASON="max_steps"; UI_STEPS="$_steps"; return 0
+}
+
+rematerialize_thermal_overlay() {
+  base="$(current_base_profile)"
+  if [ "$base" = "unknown" ] || [ ! -d "$MODDIR/profiles/$base/system/vendor/etc" ]; then
+    msg "! Cannot determine profile."
+    msg "! Run Debug ZIP."
+    return 1
   fi
-  msg ""
-  msg "== config =="
-  cat "$CONFIG_FILE" 2>/dev/null || true
-  msg ""
-  msg "== health =="
-  tail -n 120 "$MODDIR/health.log" 2>/dev/null || true
-  msg ""
-  msg "== zram props =="
-  for k in mmd.zram.enabled mmd.zram.size vendor.zram.size persist.vendor.boot.zram.size persist.device_config.vendor_system_native_boot.zram_size; do
-    msg "$k=$(getprop "$k" 2>/dev/null || true)"
+
+  selected="$(selected_variant_profile "$base")"
+  profile_dir="$MODDIR/profiles/$selected/system/vendor/etc"
+  active_dir="$MODDIR/system/vendor/etc"
+
+  for f in thermal_info_config.json thermal_info_config_charge.json thermal_info_config_throttling.json; do
+    if [ ! -s "$profile_dir/$f" ]; then
+      msg "! Missing profile file."
+      msg "$f"
+      return 1
+    fi
+  done
+
+  mkdir -p "$active_dir" "$MODDIR/guard" 2>/dev/null || true
+  rm -f "$active_dir"/thermal_info_config*.json 2>/dev/null || true
+  cp -fp "$profile_dir"/thermal_info_config*.json "$active_dir"/ || return 1
+  chmod 0644 "$active_dir"/thermal_info_config*.json 2>/dev/null || true
+
+  if [ -s "$MODDIR/tools/apply-polling-mode.sh" ]; then
+    BASE_PROFILE="$base" ACTIVE_DIR="$active_dir" MODDIR="$MODDIR" CONFIG_FILE="$CONFIG_FILE" sh "$MODDIR/tools/apply-polling-mode.sh" action 2>/dev/null || true
+  fi
+
+  printf '%s\n' "$selected" > "$MODDIR/guard/selected_profile" 2>/dev/null || true
+  printf '%s\n' "yes" > "$MODDIR/guard/action_cycle_pending_reboot" 2>/dev/null || true
+  msg "- Profile saved"
+  msg "- Reboot recommended"
+  msg "- Vendor mount refresh"
+  return 0
+}
+
+set_polling() {
+  cur="$(cfg_get THERMAL_POLLING_MODE)"
+  case "$cur" in stock) idx=1 ;; *) idx=0 ;; esac
+  ui_menu3 "Polling" "Mod values" "Stock values" "Back" "$idx"
+  [ "$UI_REASON" = "timeout" ] && return 0
+  case "$UI_INDEX" in
+    0)
+      cfg_set THERMAL_POLLING_MODE mod
+      cfg_set LAST_THERMAL_POLLING_MODE mod
+      msg "- Polling: mod"
+    ;;
+    1)
+      cfg_set THERMAL_POLLING_MODE stock
+      cfg_set LAST_THERMAL_POLLING_MODE stock
+      msg "- Polling: stock"
+    ;;
+    *) msg "Back."; return 0 ;;
+  esac
+  rematerialize_thermal_overlay || true
+  refresh_status
+  show_status
+  msg "Back to Settings."
+}
+
+set_thermal_choice() {
+  choice="$1"
+  case "$choice" in
+    outdoor-safe)
+      cfg_set THERMAL_OUTDOOR_PROFILE outdoor-safe
+      cfg_set THERMAL_OUTDOOR_TARGET outdoor_safe
+      cfg_set THERMAL_OUTDOOR_RISK_ACK explicit_user_enable
+      cfg_set THERMAL_OUTDOOR_PROFILE_SOURCE action_settings_menu
+    ;;
+    outdoor-plus)
+      cfg_set THERMAL_OUTDOOR_PROFILE outdoor-plus
+      cfg_set THERMAL_OUTDOOR_TARGET outdoor_plus
+      cfg_set THERMAL_OUTDOOR_RISK_ACK explicit_user_enable
+      cfg_set THERMAL_OUTDOOR_PROFILE_SOURCE action_settings_menu
+    ;;
+    outdoor-extended)
+      cfg_set THERMAL_OUTDOOR_PROFILE outdoor-extended
+      cfg_set THERMAL_OUTDOOR_TARGET outdoor_extended
+      cfg_set THERMAL_OUTDOOR_RISK_ACK explicit_user_enable_extended
+      cfg_set THERMAL_OUTDOOR_PROFILE_SOURCE action_settings_menu
+    ;;
+    *)
+      cfg_set THERMAL_OUTDOOR_PROFILE stock
+      cfg_set THERMAL_OUTDOOR_TARGET stock
+      cfg_set THERMAL_OUTDOOR_RISK_ACK disabled_or_stock_selected
+      cfg_set THERMAL_OUTDOOR_PROFILE_SOURCE action_settings_menu
+      choice=stock
+    ;;
+  esac
+  cfg_set LAST_THERMAL_OUTDOOR_PROFILE "$choice"
+}
+
+set_thermal() {
+  base="$(current_base_profile)"
+  if [ "$base" = "unknown" ]; then
+    msg "! Base profile unknown."
+    msg "Run Debug ZIP."
+    return 0
+  fi
+  cur="$(cfg_get THERMAL_OUTDOOR_PROFILE)"
+  case "$cur" in
+    outdoor-safe) idx=1 ;;
+    outdoor-plus) idx=2 ;;
+    outdoor-extended) idx=3 ;;
+    *) idx=0 ;;
+  esac
+  ui_menu5 "Thermal" "Stock" "Outdoor Safe" "Outdoor Plus" "Outdoor Ext" "Back" "$idx"
+  [ "$UI_REASON" = "timeout" ] && return 0
+  case "$UI_INDEX" in
+    0) choice=stock ;;
+    1) choice=outdoor-safe ;;
+    2) choice=outdoor-plus ;;
+    3) choice=outdoor-extended ;;
+    *) msg "Back."; return 0 ;;
+  esac
+  if ! variant_exists "$base" "$choice"; then
+    msg "! Profile missing."
+    msg "Using Stock"
+    choice=stock
+  fi
+  cfg_set THERMAL_SETTINGS_MODE action_settings
+  set_thermal_choice "$choice"
+  msg "- Thermal: $choice"
+  rematerialize_thermal_overlay || true
+  refresh_status
+  show_status
+  msg "Back to Settings."
+}
+
+set_zram() {
+  cur="$(cfg_get ENABLE_ZRAM_100P)"
+  case "$cur" in 1) idx=0 ;; *) idx=1 ;; esac
+  ui_menu3 "ZRAM 100%" "Enabled" "Disabled" "Back" "$idx"
+  [ "$UI_REASON" = "timeout" ] && return 0
+  case "$UI_INDEX" in
+    0)
+      cfg_set ENABLE_ZRAM_100P 1
+      cfg_set ZRAM_RESTART_MMD 1
+      cfg_set ZRAM_RISK_ACK explicit_user_enable
+      cfg_set LAST_ZRAM_100P enabled
+      msg "- ZRAM: enabled"
+      if [ -s "$MODDIR/tools/apply-zram-100p.sh" ]; then
+        msg "- Applying runtime props"
+        MODDIR="$MODDIR" sh "$MODDIR/tools/apply-zram-100p.sh" manual >/dev/null 2>&1 || true
+      fi
+    ;;
+    1)
+      cfg_set ENABLE_ZRAM_100P 0
+      cfg_set ZRAM_RESTART_MMD 0
+      cfg_set ZRAM_RISK_ACK disabled_by_user
+      cfg_set LAST_ZRAM_100P disabled
+      msg "- ZRAM: disabled"
+      msg "- Reboot recommended"
+    ;;
+    *) msg "Back."; return 0 ;;
+  esac
+  refresh_status
+  show_status
+  msg "Back to Settings."
+}
+
+settings_loop() {
+  while :; do
+    mc_cycle4 "Settings" "Polling" "Thermal" "ZRAM" "Back" 0
+    [ "$MC_REASON" = "timeout" ] && return 0
+    case "$MC_INDEX" in
+      0) set_polling ;;
+      1) set_thermal ;;
+      2) set_zram ;;
+      *) msg "Back."; return 0 ;;
+    esac
   done
 }
 
-cycle_polling() {
-  cur="$(cfg_get THERMAL_POLLING_MODE)"
-  case "$cur" in stock) idx=1 ;; *) idx=0 ;; esac
-  mc_cycle2 "Polling Fix" "Mod values" "Stock values" "$idx"
-  if [ "$MC_INDEX" = "1" ]; then
-    cfg_set THERMAL_POLLING_MODE stock
-    cfg_set LAST_THERMAL_POLLING_MODE stock
-    msg "- Polling selected: stock"
-  else
-    cfg_set THERMAL_POLLING_MODE mod
-    cfg_set LAST_THERMAL_POLLING_MODE mod
-    msg "- Polling selected: mod"
-  fi
-  rematerialize_thermal_overlay || true
-  refresh_status
-  show_status
-}
-
-cycle_thermal() {
-  base="$(current_base_profile)"
-  if [ "$base" = "unknown" ]; then
-    msg "! Base profile unknown. Run debug ZIP."
-    return 1
-  fi
-  cfg_set THERMAL_SETTINGS_MODE action_cycle
-  if [ -s "$MODDIR/tools/thermal-outdoor-menu.sh" ]; then
-    BASE_PROFILE="$base" MODDIR="$MODDIR" CONFIG_FILE="$CONFIG_FILE" sh "$MODDIR/tools/thermal-outdoor-menu.sh" action || true
-  else
-    msg "! Thermal outdoor menu missing."
-    return 1
-  fi
-  rematerialize_thermal_overlay || true
-  refresh_status
-  show_status
-}
-
-cycle_zram() {
-  if [ -s "$MODDIR/tools/zram-menu.sh" ]; then
-    MODDIR="$MODDIR" sh "$MODDIR/tools/zram-menu.sh" action || true
-  else
-    msg "! ZRAM menu missing."
-    return 1
-  fi
-
-  if [ "$(cfg_get ENABLE_ZRAM_100P)" = "1" ] && [ -s "$MODDIR/tools/apply-zram-100p.sh" ]; then
-    msg ""
-    msg "- Applying ZRAM runtime props now..."
-    MODDIR="$MODDIR" sh "$MODDIR/tools/apply-zram-100p.sh" manual || true
-  else
-    msg ""
-    msg "- ZRAM disabled or helper missing."
-    msg "- Reboot recommended"
-  msg "- Stock ZRAM after reboot"
-  fi
-  refresh_status
-  show_status
-}
-
 debug_zip() {
+  show_status
+  msg "Creating debug ZIP..."
   if [ -s "$MODDIR/tools/collect-debug.sh" ]; then
-    out="$(sh "$MODDIR/tools/collect-debug.sh" 2>/dev/null | grep -E 'Created:|pixel_thermal_debug_.*zip' | tail -n 1 || true)"
+    out="$(sh "$MODDIR/tools/collect-debug.sh" 2>&1 || true)"
+    path="$(printf '%s\n' "$out" | sed -n 's/^Created: //p' | tail -n 1)"
+    [ -n "$path" ] || path="$(printf '%s\n' "$out" | grep -E '/sdcard/Download/pixel_thermal_debug_.*\.zip|/storage/emulated/0/Download/pixel_thermal_debug_.*\.zip' | tail -n 1)"
     msg "Debug ZIP created"
-    [ -n "$out" ] && msg "$out"
+    if [ -n "$path" ]; then
+      dir="${path%/*}"
+      file="${path##*/}"
+      msg "Folder: $dir"
+      msg "File:"
+      msg "$file"
+    fi
     msg "Upload ZIP + install log."
   else
     msg "! collect-debug missing"
   fi
+  refresh_status
+  show_status
+  msg "Back to Action."
 }
 
-cycle_menu() {
-  mc_cycle4 "Settings" "Polling" "Thermal" "ZRAM" "Back" 0
-  case "$MC_INDEX" in
-    0) cycle_polling ;;
-    1) cycle_thermal ;;
-    2) cycle_zram ;;
-    *) msg "Back." ;;
-  esac
+action_loop() {
+  while :; do
+    refresh_status
+    show_status
+    mc_cycle4 "Action" "Status" "Settings" "Debug ZIP" "Back" 0
+    [ "$MC_REASON" = "timeout" ] && exit 0
+    case "$MC_INDEX" in
+      0)
+        show_status
+        msg "Back to Action."
+      ;;
+      1)
+        settings_loop
+      ;;
+      2)
+        debug_zip
+      ;;
+      *)
+        msg "Back."
+        exit 0
+      ;;
+    esac
+  done
 }
-
-refresh_status
-show_status
 
 if ! command -v getevent >/dev/null 2>&1; then
-  full_diagnostics
+  refresh_status
+  show_status
   exit 0
 fi
 
-mc_cycle4 "Action" "Status" "Settings" "Debug ZIP" "Exit" 0
-case "$MC_INDEX" in
-  0) full_diagnostics ;;
-  1) cycle_menu ;;
-  2) debug_zip ;;
-  *) msg "Exit." ;;
-esac
-
-refresh_status
+action_loop
 exit 0
