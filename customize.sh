@@ -6,8 +6,8 @@ if [ -r "$MODULE_PROP" ]; then
   MODULE_VERSION="$(sed -n 's/^version=//p' "$MODULE_PROP" | head -n 1)"
   MODULE_VERSION_CODE="$(sed -n 's/^versionCode=//p' "$MODULE_PROP" | head -n 1)"
 fi
-[ -n "$MODULE_VERSION" ] || MODULE_VERSION="1.5.1-universal-test.2"
-[ -n "$MODULE_VERSION_CODE" ] || MODULE_VERSION_CODE="1016102"
+[ -n "$MODULE_VERSION" ] || MODULE_VERSION="1.5.1-universal-test.3"
+[ -n "$MODULE_VERSION_CODE" ] || MODULE_VERSION_CODE="1016103"
 A16_PROFILE_SOURCE_BUILD="CP1A.260505.005"
 A17_CP31_PROFILE_SOURCE_BUILD="CP31.260508.005"
 A17_CP31_PROFILE_SOURCE_INCREMENTAL="15421345"
@@ -24,8 +24,9 @@ ui_print "----------------------------------------"
 ui_print "  Pixel 10 Thermal & Memory Control"
 ui_print "  A17 Thermal Throttle Fix profile installer"
 ui_print "----------------------------------------"
-ui_print "SELinux read-only ThermalHAL overlay policy included"
-ui_print "Prerelease 1.5.1 test.2; stable updateJson remains 1.5-universal.1"
+ui_print "SELinux read-only policy"
+ui_print "Prerelease: 1.5.1 test.3"
+ui_print "Stable channel: 1.5"
 
 model="$(getprop ro.product.model)"
 device="$(getprop ro.product.device)"
@@ -56,7 +57,8 @@ if [ -s "$MODPATH/tools/install-debug.sh" ]; then
   chmod 0755 "$MODPATH/tools/install-debug.sh" 2>/dev/null || true
   . "$MODPATH/tools/install-debug.sh"
 else
-  ui_print "! Install debug helper missing; autosave disabled"
+  ui_print "! Install debug missing"
+ui_print "! Autosave disabled"
   thermal_save_install_debug() { :; }
   thermal_collect_debug_on_fail() { :; }
   thermal_abort() { abort "$*"; }
@@ -66,7 +68,8 @@ fi
 
 
 ui_print "- Device: $model ($device)"
-ui_print "- Android: $android (SDK $android_sdk) | Build: $build_id"
+ui_print "- Android: $android (SDK $android_sdk)"
+ui_print "- Build: $build_id"
 ui_print "- Root: $root_impl"
 
 
@@ -83,7 +86,8 @@ if [ -s "$MODPATH/tools/install-options-menu.sh" ]; then
   chmod 0755 "$MODPATH/tools/menu-cycle.sh" "$MODPATH/tools/install-options-menu.sh" 2>/dev/null || true
   MODULE_ID="$MODULE_ID" MODDIR="$MODPATH" sh "$MODPATH/tools/install-options-menu.sh" install || ui_print "! Install options menu failed nonfatal; using current config/defaults"
 else
-  ui_print "! Install options menu helper missing; using current config/defaults"
+  ui_print "! Options menu missing"
+ui_print "! Using current/defaults"
 fi
 # END PIXEL_THERMAL_INSTALL_OPTIONS_MENU_V1413_TEST17
 
@@ -97,8 +101,9 @@ fi
 # END PIXEL_THERMAL_PTUNE_GUARD_HELPER_V1413_TEST22
 
 if [ -n "$PTUNE_INSTALLED_PATH" ] && [ "$PTUNE_OVERRIDE_ALLOWED" = "1" ]; then
-  ui_print "! OVERRIDE: Thermal overlay allowed while pTune is installed"
-  ui_print "! Risk_ack accepted: I_UNDERSTAND_BOOTLOOP_RISK"
+  ui_print "! OVERRIDE active"
+ui_print "! Thermal allowed with pTune"
+  ui_print "! Risk ack accepted"
   [ "$PTUNE_KNOWN_BAD" = "no" ] || ui_print "! Known bad pTune state: $PTUNE_KNOWN_BAD"
 fi
 case "$android" in
@@ -170,8 +175,11 @@ case "$android" in
         ;;
       *) thermal_abort "! Unsupported Pixel 10 Android 17 device codename: $device" ;;
     esac
-    ui_print "! Android 17 build guard relaxed for test build: build=$build_id incremental=$incremental"
-    ui_print "! Selected profile by Android major + codename only: $profile"
+    ui_print "! A17 relaxed build guard"
+ui_print "! Build: $build_id"
+ui_print "! Inc: $incremental"
+    ui_print "! Profile: A17 + codename"
+ui_print "! Codename: $device"
     ;;
   *) thermal_abort "! Unsupported Android version: $android. This stable build supports Android 16 and guarded Android 17 CP31/CP21/Stable CP2A profiles." ;;
 esac
@@ -200,7 +208,8 @@ if [ -s "$MODPATH/tools/apply-polling-mode.sh" ]; then
   chmod 0755 "$MODPATH/tools/apply-polling-mode.sh" 2>/dev/null || true
   BASE_PROFILE="$base_profile" ACTIVE_DIR="$active_dir" MODDIR="$MODPATH" CONFIG_FILE="$CONFIG_FILE" sh "$MODPATH/tools/apply-polling-mode.sh" install || ui_print "! Polling mode helper failed nonfatal; keeping materialized profile polling"
 else
-  ui_print "! Polling mode helper missing; keeping materialized profile polling"
+  ui_print "! Polling helper missing"
+ui_print "! Keeping profile polling"
 fi
 # END PIXEL_THERMAL_POLLING_MODE_V1413_TEST17
 
@@ -210,7 +219,8 @@ if [ -s "$MODPATH/tools/install-zram.sh" ]; then
   . "$MODPATH/tools/install-zram.sh"
   thermal_install_zram
 else
-  ui_print "! ZRAM install helper missing; keeping existing/safe config"
+  ui_print "! ZRAM helper missing"
+ui_print "! Keeping safe config"
 fi
 # END PIXEL_THERMAL_INSTALL_ZRAM_HELPER_V1413_TEST25
 
@@ -229,7 +239,8 @@ fi
 
 thermal_save_install_debug "success" "install_completed"
 ui_print "- Target validation: PASS"
-ui_print "- Successfully applied thermal fix for Android $android"
+ui_print "- Thermal fix applied"
+ui_print "- Android: $android"
 
 
 # ZRAM_HELPER_CHMOD_V1412_TEST2: keep helper scripts executable for direct Magisk/KSU shell use.

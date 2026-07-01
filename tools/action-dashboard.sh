@@ -90,8 +90,10 @@ rematerialize_thermal_overlay() {
 
   printf '%s\n' "$selected" > "$MODDIR/guard/selected_profile" 2>/dev/null || true
   printf '%s\n' "yes" > "$MODDIR/guard/action_cycle_pending_reboot" 2>/dev/null || true
-  msg "- Profile materialized in module overlay: $selected"
-  msg "- Reboot recommended for mount/vendor activation."
+  msg "- Profile materialized"
+  msg "- $selected"
+  msg "- Reboot recommended"
+  msg "- Vendor mount refresh"
   return 0
 }
 
@@ -187,7 +189,8 @@ cycle_zram() {
   else
     msg ""
     msg "- ZRAM disabled or helper missing."
-    msg "- Reboot recommended to return fully to stock ZRAM behavior."
+    msg "- Reboot recommended"
+  msg "- Stock ZRAM after reboot"
   fi
   refresh_status
   show_status
@@ -195,14 +198,17 @@ cycle_zram() {
 
 debug_zip() {
   if [ -s "$MODDIR/tools/collect-debug.sh" ]; then
-    sh "$MODDIR/tools/collect-debug.sh" || true
+    out="$(sh "$MODDIR/tools/collect-debug.sh" 2>/dev/null | grep -E 'Created:|pixel_thermal_debug_.*zip' | tail -n 1 || true)"
+    msg "Debug ZIP created"
+    [ -n "$out" ] && msg "$out"
+    msg "Upload ZIP + install log."
   else
     msg "! collect-debug missing"
   fi
 }
 
 cycle_menu() {
-  mc_cycle4 "Cycle / Reconfigure" "Polling" "Thermal" "ZRAM" "Back" 0
+  mc_cycle4 "Settings" "Polling" "Thermal" "ZRAM" "Back" 0
   case "$MC_INDEX" in
     0) cycle_polling ;;
     1) cycle_thermal ;;
@@ -219,7 +225,7 @@ if ! command -v getevent >/dev/null 2>&1; then
   exit 0
 fi
 
-mc_cycle4 "Action" "Status" "Cycle" "Debug ZIP" "Exit" 0
+mc_cycle4 "Action" "Status" "Settings" "Debug ZIP" "Exit" 0
 case "$MC_INDEX" in
   0) full_diagnostics ;;
   1) cycle_menu ;;

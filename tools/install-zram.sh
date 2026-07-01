@@ -17,6 +17,7 @@ thermal_install_zram() {
     chmod 0755 "$MODPATH/tools/zram-menu.sh" 2>/dev/null || true
     MODDIR="$MODPATH" sh "$MODPATH/tools/zram-menu.sh" install || ui_print "! ZRAM menu failed nonfatal; keeping existing/safe config"
   else
-    ui_print "! ZRAM menu helper missing; keeping existing/safe config"
+    ui_print "! ZRAM menu missing"
+ui_print "! Keeping safe config"
   fi
 }

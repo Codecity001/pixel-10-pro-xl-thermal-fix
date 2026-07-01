@@ -217,13 +217,57 @@ status_update_description() {
   printf '%s\n' "$desc"
 }
 
+status_word() {
+  case "$1" in
+    active_vendor_match|custom_profile_active|runtime_active|runtime_props_active) echo active ;;
+    configured_needs_reboot_or_manager_refresh|custom_profile_configured_needs_reboot_or_refresh|enabled_needs_reboot_or_runtime_apply|runtime_props_set_swap_waiting) echo pending ;;
+    disabled|stock_profile_selected|stock_values_selected|off_or_stock|stock_or_no_custom_profile) echo off ;;
+    *) echo "$1" ;;
+  esac
+}
+
 status_print() {
   status_collect >/dev/null 2>&1 || true
-  cat "$STATUS_TXT" 2>/dev/null || true
+  get_status_kv() {
+    _k="$1"
+    grep -E "^${_k}=" "$STATUS_FILE" 2>/dev/null | tail -n 1 | sed "s/^${_k}=//"
+  }
+  short_state() {
+    case "$1" in
+      active_vendor_match|custom_profile_active|runtime_active) echo active ;;
+      *pending*|*waiting*|*refresh*|*reboot*) echo pending ;;
+      *failed*|*missing*|*problem*) echo problem ;;
+      stock_profile_selected|stock_values_selected|disabled|off_or_stock|stock_or_no_custom_profile) echo off ;;
+      *) echo "$1" ;;
+    esac
+  }
+  pi="$(get_status_kv POLLING_ICON)"
+  ti="$(get_status_kv THERMAL_ICON)"
+  zi="$(get_status_kv ZRAM_ICON)"
+  ps="$(short_state "$(get_status_kv POLLING_STATE)")"
+  ts="$(short_state "$(get_status_kv THERMAL_STATE)")"
+  zs="$(short_state "$(get_status_kv ZRAM_STATE)")"
+  prof="$(get_status_kv THERMAL_PROFILE)"
+  vendor="$(get_status_kv ACTIVE_VENDOR_MATCH)"
+  reboot="$(get_status_kv SAFE_TO_REBOOT)"
+  overlay="$(get_status_kv MODULE_OVERLAY_READY)"
+  [ "$vendor" = yes ] && vendor=match
+  [ "$reboot" = yes ] && reboot=safe
+  printf '%s\n' "Status"
+  printf '%s\n' "Polling: $pi $ps"
+  printf '%s\n' "Thermal: $ti $ts"
+  printf '%s\n' "ZRAM:    $zi $zs"
   printf '%s\n' ""
-  printf '%s\n' "Legend: 🟢 active, 🟡 configured/waiting, 🔴 problem, ⚪ off"
+  printf '%s\n' "Profile: $prof"
+  printf '%s\n' "Overlay: $overlay"
+  printf '%s\n' "Vendor: $vendor"
+  printf '%s\n' "Reboot: $reboot"
   printf '%s\n' ""
-  grep -E '^(POLLING_|THERMAL_|ZRAM_|MODULE_OVERLAY_READY|ACTIVE_VENDOR_MATCH|SAFE_TO_REBOOT|VENDOR_OVERLAY_BACKEND_WARN)=' "$STATUS_FILE" 2>/dev/null || true
+  printf '%s\n' "Legend"
+  printf '%s\n' "🟢 active"
+  printf '%s\n' "🟡 pending"
+  printf '%s\n' "🔴 problem"
+  printf '%s\n' "⚪ off"
 }
 
 case "${1:-print}" in

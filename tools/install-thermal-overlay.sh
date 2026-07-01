@@ -23,7 +23,7 @@ thermal_install_overlay() {
     chmod 0755 "$MODPATH/tools/thermal-outdoor-menu.sh" 2>/dev/null || true
     BASE_PROFILE="$base_profile" MODDIR="$MODPATH" sh "$MODPATH/tools/thermal-outdoor-menu.sh" install || ui_print "! Thermal outdoor menu failed nonfatal; keeping stock profile"
   else
-    ui_print "! Thermal outdoor menu helper missing; keeping stock profile"
+    ui_print "! Outdoor menu missing"; ui_print "Keeping stock profile"
   fi
 
   THERMAL_OUTDOOR_PROFILE="$(config_get THERMAL_OUTDOOR_PROFILE)"
