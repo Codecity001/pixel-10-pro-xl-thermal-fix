@@ -13,6 +13,10 @@ Reference threads provided by user:
 
 # Credits
 
+## Pixel Thermal 1.5.1 dynamic manager status release line
+
+- **Allen Chang**: Ampel/Action menu idea, Beta 1/QPR1 testing, runtime verification, screenshots, debug logs, and Pixel 10 build-family feedback.
+
 ## Pixel Thermal 1.4.12 ZRAM + log-cleanup release line
 
 - **Harish / Codecity001**: Pixel 10 Pro (`blazer`) install/runtime testing, ZRAM debug logs, reboot verification, issue reports, install-time Volume-key ZRAM selection, Magisk Action UX recommendation, and PR #65 log cleanup/debug-gating for clean silent installs, and outdoor-g4-adapted thermal profile UX/testing direction.
