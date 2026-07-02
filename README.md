@@ -1,10 +1,10 @@
 # Pixel 10 Thermal & Memory Control
 
-**Magisk module for Pixel 10-series thermal profiles and optional ZRAM 100p.**
+**Magisk module for Pixel 10-series thermal profiles, dynamic manager status, Action settings, and optional ZRAM 100p.**
 
-Stable **1.5-universal.1** promotes the verified Test25–Test29 chain: cleaner install flow, safer profile selection, Outdoor Extended, Use-last, ZRAM 100p, and read-only profile layout auditing.
+Stable **1.5.1-universal.1** promotes the verified Test7 dynamic manager Ampel/Action dashboard line on top of Stable 1.5: P/T/Z status with active values, Settings/Debug/Advanced menus, pTune status consistency, profile-matrix verification, and ZRAM 100p runtime proof.
 
-[Download latest release](https://github.com/Lycidias93/pixel-10-pro-xl-thermal-fix/releases/latest) · [Telegram](https://t.me/lycidias93) · [Issues](https://github.com/Lycidias93/pixel-10-pro-xl-thermal-fix/issues) · [Release notes](RELEASE_NOTES_v1.5-universal.1.md) · [Changelog](CHANGELOG.md) · [Credits](CREDITS.md)
+[Download latest release](https://github.com/Lycidias93/pixel-10-pro-xl-thermal-fix/releases/latest) · [Telegram](https://t.me/lycidias93) · [Issues](https://github.com/Lycidias93/pixel-10-pro-xl-thermal-fix/issues) · [Release notes](RELEASE_NOTES_v1.5.1-universal.1.md) · [Changelog](CHANGELOG.md) · [Credits](CREDITS.md)
 
 ---
 
@@ -23,17 +23,17 @@ It is **not** an overclock, benchmark unlock, FPS tweak, or thermal safety bypas
 
 ---
 
-## Stable 1.5 highlights
+## Stable 1.5.1 highlights
 
-| Area | Stable 1.5 |
+| Area | Stable 1.5.1 |
 |---|---|
-| Install UX | Use-last flow reuses previous choices without repeated menus |
-| Safety | Fresh-default fallback when no saved settings exist |
+| Install UX | Use-last flow plus Action dashboard for Status, Settings, Debug ZIP, Advanced and Exit |
+| Safety | Fresh-default fallback, pTune status consistency, and known-bad version/runtime split |
 | Thermal | Outdoor Extended verified and promoted |
 | Memory | Optional ZRAM 100p boot/runtime path verified |
-| Compatibility | Known-bad pTune guard preserved |
-| Refactor | Thermal/ZRAM helper cleanup promoted to stable |
-| Profiles | Harish / Codecity001 profile-layout mapping audit added as read-only helper/docs |
+| Compatibility | Profile Matrix PASS count 67 and dynamic thermal overlay checks |
+| Refactor | Thermal/ZRAM helper cleanup plus manager status/action helpers promoted to stable |
+| Profiles | Harish / Codecity001 profile-layout mapping audit plus Allen Chang Beta 1/QPR1 feedback preserved |
 
 ---
 
@@ -134,17 +134,17 @@ This helper is read-only; it does not delete, disable, enable, mount, or patch a
 
 ---
 
-## Prerelease manager status
+## Manager status and Action dashboard
 
-`v1.5.1-universal-test.7` adds a test status line for module managers:
+`1.5.1-universal.1` adds a verified status line for module managers:
 
 ```text
-Polling: 🟢 Thermal: 🟢 ZRAM: 🟢 | Action: settings/debug
+P:🟢 mod | T:🟢 outdoor-ext | Z:🟢 100p | Action: settings/debug
 ```
 
 The status is refreshed after boot and whenever the module Action is opened. If the manager caches module descriptions, reopen or refresh the manager after using Action.
 
-The Action button opens an extended terminal dashboard with status, diagnostics, settings/reconfigure options for Polling/Thermal/ZRAM, manual debug ZIP creation, and Exit.
+The Action button opens an extended terminal dashboard with Status, Settings for Polling/Thermal/ZRAM, Debug ZIP creation, Advanced pTune status/override guards, and Exit.
 
 ---
 
@@ -163,7 +163,7 @@ The Action button opens an extended terminal dashboard with status, diagnostics,
 
 ## Safety notes
 
-Stable 1.5 intentionally does **not** include:
+Stable 1.5.1 intentionally does **not** include:
 
 - TensorConservative sysfs/procfs writes
 - direct profile resolver layout switching

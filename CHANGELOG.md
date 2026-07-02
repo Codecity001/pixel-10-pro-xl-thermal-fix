@@ -1,3 +1,43 @@
+# Stable 1.5.1
+
+## v1.5.1-universal.1
+
+Stable release: 1.5.1-universal.1
+Since last public stable: 1.5-universal.1
+
+### Manager / Action UX
+
+- Promotes the verified Test7 dynamic manager Ampel/status line:
+  - `P:green mod | T:green outdoor-ext | Z:green 100p | Action: settings/debug`
+- Adds Action dashboard with Status, Settings, Debug ZIP, Advanced and Exit.
+- Adds Settings paths for Polling, Thermal profile and ZRAM.
+- Adds Advanced pTune status and guarded override controls.
+
+### Runtime / compatibility
+
+- ZRAM 100p runtime proof now uses active swap plus non-zero zram0 disksize.
+- Thermal overlay checks are dynamic across present `thermal_info_config*.json` files.
+- Profile Matrix verification passes all included profile directories: count 67.
+- Stable `update.json` now points to 1.5.1-universal.1.
+- pTune reporting now splits known-bad version from runtime-specific block.
+
+### Verified on
+
+- Pixel 10 Pro XL / mustang.
+- Android 17 CP2A.260605.012 / incremental 15430684.
+- Outdoor Extended, polling mod, pTune Override OFF, ZRAM 100p.
+- Test7 after-reboot runtime PASS.
+
+### Compatibility evidence
+
+- mustang / CP31.260618.005 / outdoor-plus / polling mod / ZRAM 100p: runtime PASS using the existing CP31-compatible profile family.
+- Exact CP31.260618.005 stock profile extraction remains pending.
+
+### Credits
+
+- **Allen Chang**: Ampel/Action menu idea, Beta 1/QPR1 testing, runtime verification, screenshots, debug logs, and Pixel 10 build-family feedback.
+- Existing CREDITS.md acknowledgements preserved.
+
 ## v1.5.1-universal-test.7
 
 - Prerelease final hardening:
