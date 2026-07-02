@@ -17,7 +17,8 @@ if [ "$ALLOW_THERMAL_WITH_PTUNE" = "1" ] && [ "$RISK_ACK_PTUNE_THERMAL_COLLISION
   PTUNE_RISK_ACK_STATE="explicit_user_override"
 fi
 if [ "$PTUNE_GUARD_MODE" = "off" ] && [ "$PTUNE_OVERRIDE_ALLOWED" != "1" ]; then
-  ui_print "! PTUNE_GUARD_MODE=off ignored without risk_ack; using strict"
+  ui_print "! pTune off ignored"
+ui_print "! Using strict guard"
   PTUNE_GUARD_MODE="strict"
 fi
 ptune_installed_path() {
@@ -59,10 +60,13 @@ case "$PTUNE_GUARD_MODE" in
   off) PTUNE_CONFLICT_PATH=""; PTUNE_CONFLICT_REASON="guard_off"; PTUNE_CONFLICT_MODE="guard_off" ;;
 esac
 if [ -n "$PTUNE_CONFLICT_PATH" ] && [ "$PTUNE_OVERRIDE_ALLOWED" != "1" ]; then
-  ui_print "! pTune conflict detected: $PTUNE_CONFLICT_PATH"
-  ui_print "! pTune guard mode: $PTUNE_GUARD_MODE -> $PTUNE_CONFLICT_MODE"
+  ui_print "! pTune conflict"
+ui_print "! $PTUNE_CONFLICT_PATH"
+  ui_print "! pTune guard mode"
+ui_print "! $PTUNE_GUARD_MODE -> $PTUNE_CONFLICT_MODE"
   [ "$PTUNE_KNOWN_BAD" = "no" ] || ui_print "! Known bad pTune state: $PTUNE_KNOWN_BAD"
-  ui_print "! Keeping this module scriptable but skip_mounted"
+  ui_print "! Module remains scriptable"
+ui_print "! skip_mount active"
   mkdir -p "$MODPATH/guard"
   rm -f "$MODPATH/disable" "$MODPATH/remove"
   touch "$MODPATH/skip_mount"
@@ -131,6 +135,7 @@ if [ -n "$PTUNE_CONFLICT_PATH" ] && [ "$PTUNE_OVERRIDE_ALLOWED" != "1" ]; then
     printf '%s\n' "ptune_evidence_command=su -c /data/adb/modules/$MODULE_ID/tools/collect-ptune-evidence.sh"
   } > "$MODPATH/install-state.txt"
   thermal_save_install_debug "skip_mount" "$PTUNE_CONFLICT_REASON"
-  ui_print "Module installed with skip_mount only: $PTUNE_CONFLICT_REASON"
+  ui_print "Installed with skip_mount"
+ui_print "$PTUNE_CONFLICT_REASON"
   exit 0
 fi

@@ -54,7 +54,10 @@ apply_last_zram_and_exit() {
   msg "ZRAM: $(cfg_get LAST_ZRAM_100P)"
   msg "No ZRAM menu"
   msg "----------------------------------------"
-  echo "RESULT: PIXEL_THERMAL_ZRAM_MENU_SKIPPED_USE_LAST choice=$zram_choice confirm_reason=use_last_short_circuit steps=0"
+  echo "RESULT: ZRAM_MENU_SKIPPED_USE_LAST"
+  echo "choice=$zram_choice"
+  echo "reason=use_last"
+  echo "steps=0"
   exit 0
 }
 

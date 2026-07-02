@@ -134,6 +134,20 @@ This helper is read-only; it does not delete, disable, enable, mount, or patch a
 
 ---
 
+## Prerelease manager status
+
+`v1.5.1-universal-test.7` adds a test status line for module managers:
+
+```text
+Polling: 🟢 Thermal: 🟢 ZRAM: 🟢 | Action: settings/debug
+```
+
+The status is refreshed after boot and whenever the module Action is opened. If the manager caches module descriptions, reopen or refresh the manager after using Action.
+
+The Action button opens an extended terminal dashboard with status, diagnostics, settings/reconfigure options for Polling/Thermal/ZRAM, manual debug ZIP creation, and Exit.
+
+---
+
 ## Install options
 
 | Option | Meaning |

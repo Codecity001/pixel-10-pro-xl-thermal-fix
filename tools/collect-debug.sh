@@ -70,7 +70,7 @@ make_archive() {
   printf '%s\n' "Pixel Thermal debug package"
   printf '%s\n' "Created: $TS"
   printf '%s\n' "Command: su -c /data/adb/modules/pixel-10-pro-xl-thermal-fix/tools/collect-debug.sh"
-  printf '%s\n' "Upload this ZIP plus the Magisk install log or install screenshot."
+  printf '%s\n' "Upload ZIP + install log."
 } > "$COLLECT/README_UPLOAD_THIS.txt"
 
 collect_file props.txt sh -c 'getprop ro.product.model; getprop ro.product.device; getprop ro.build.version.release; getprop ro.build.version.sdk; getprop ro.build.id; getprop ro.build.version.incremental; getprop ro.build.fingerprint; getprop ro.boot.verifiedbootstate; getprop ro.boot.vbmeta.device_state'
@@ -125,7 +125,7 @@ if [ -s "$ZIP" ]; then
   sha256sum "$ZIP" > "$ZIP.sha256" 2>/dev/null || true
   rm -rf "$WORK" 2>/dev/null || true
   echo "Created: $ZIP"
-  echo "Upload this ZIP plus the Magisk install log or install screenshot."
+  echo "Upload ZIP + install log."
   exit 0
 fi
 

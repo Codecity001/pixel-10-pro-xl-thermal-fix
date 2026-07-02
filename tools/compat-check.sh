@@ -9,12 +9,20 @@ sha_file(){ sha256sum "$1" 2>/dev/null | awk '{print $1}'; }
 
 ready=yes
 match=yes
-for f in thermal_info_config_throttling.json thermal_info_config.json thermal_info_config_charge.json; do
-  [ -s "$M/system/vendor/etc/$f" ] || ready=no
+checked=0
+for p in "$M"/system/vendor/etc/thermal_info_config*.json; do
+  [ -f "$p" ] || continue
+  checked=$((checked + 1))
+  f="${p##*/}"
+  [ -s "$p" ] || ready=no
   a="$(sha_file "/vendor/etc/$f")"
-  o="$(sha_file "$M/system/vendor/etc/$f")"
-  [ -n "$a" ] && [ "$a" = "$o" ] || match=no
+  o="$(sha_file "$p")"
+  [ -n "$a" ] && [ -n "$o" ] && [ "$a" = "$o" ] || match=no
 done
+if [ "$checked" -eq 0 ] 2>/dev/null; then
+  ready=no
+  match=no
+fi
 
 pany=""
 pact=""
@@ -40,9 +48,17 @@ pt_inst=no; [ -n "$pany" ] && pt_inst=yes
 pt_en=no; [ -n "$pact" ] && pt_en=yes
 
 known=no
+known_version=no
+known_runtime=no
 if [ -n "$pany" ]; then
   vc="$(grep -E '^versionCode=' "$pany/module.prop" 2>/dev/null | sed 's/^versionCode=//')"
-  [ "$(getprop ro.product.device)" = mustang ] && [ "$(getprop ro.build.id)" = CP1A.260505.005 ] && [ "$vc" = 200 ] && known=yes_versionCode_200_thermalhal_bootloop_on_mustang_cp1a_260505_005
+  if [ "$vc" = 200 ]; then
+    known=yes_versionCode_200
+    known_version=yes_versionCode_200
+  fi
+  if [ "$(getprop ro.product.device)" = mustang ] && [ "$(getprop ro.build.id)" = CP1A.260505.005 ] && [ "$vc" = 200 ]; then
+    known_runtime=yes_thermalhal_bootloop_on_mustang_cp1a_260505_005
+  fi
 fi
 
 mode="$(getcfg PTUNE_GUARD_MODE)"; [ -n "$mode" ] || mode=strict
@@ -131,6 +147,8 @@ fi
   printf '%s\n' "PTUNE_STATE=$pstate"
   printf '%s\n' "PTUNE_PATH=${pany:-none}"
   printf '%s\n' "PTUNE_KNOWN_BAD=$known"
+  printf '%s\n' "PTUNE_KNOWN_BAD_VERSION=$known_version"
+  printf '%s\n' "PTUNE_KNOWN_BAD_RUNTIME=$known_runtime"
   printf '%s\n' "CONFIG_FILE=$CFG"
   printf '%s\n' "PTUNE_GUARD_MODE=$mode"
   printf '%s\n' "ALLOW_THERMAL_WITH_PTUNE=${allow:-0}"
@@ -146,6 +164,7 @@ fi
   printf '%s\n' "PROFILE_STALE_AFTER_OTA=$profile_stale_after_ota"
   printf '%s\n' "REINSTALL_REQUIRED=$reinstall_required"
   printf '%s\n' "MODULE_OVERLAY_READY=$ready"
+  printf '%s\n' "THERMAL_CHECKED_FILES=$checked"
   printf '%s\n' "ACTIVE_VENDOR_MATCH=$match"
   printf '%s\n' "ROOT_IMPL=$root_impl"
   printf '%s\n' "META_BACKEND_PRESENT=$meta_backend"
