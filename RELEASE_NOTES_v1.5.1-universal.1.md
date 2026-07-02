@@ -34,10 +34,28 @@ Stable 1.5.1 promotes the verified Test7 dynamic manager status and Action dashb
 - Manager card: `P:green mod | T:green outdoor-ext | Z:green 100p | Action: settings/debug`
 - Profile Matrix: PASS count 67
 
-## Compatibility evidence
+## Runtime and factory-basis status
 
-- `mustang / CP31.260618.005 / outdoor-plus / polling mod / ZRAM 100p` has runtime PASS using the existing CP31-compatible profile family.
-- This is runtime-compatible evidence, not an exact CP31.260618.005 stock profile extraction.
+Stable 1.5.1 remains intentionally honest:
+
+- Runtime-proven on **mustang**.
+- Factory-basis covered for all G5 Pixel 10 devices.
+- Runtime feedback is still needed for **frankel**, **blazer**, and **rango**.
+
+Runtime PASS:
+
+- `mustang / CP2A.260605.012 / outdoor-extended / polling mod / ZRAM 100p`
+- `mustang / CP31.260618.005 / outdoor-plus / polling mod / ZRAM 100p`
+
+Factory-basis PASS:
+
+- `frankel / CP31.260618.005`
+- `blazer / CP31.260618.005`
+- `mustang / CP31.260618.005`
+- `rango / CP31.260618.005`
+
+`CP31.260618.005` is the real QPR1 Beta 6 factory basis for frankel, blazer, mustang and rango.
+Do not describe older CP31 profile sources as the current QPR1 basis.
 
 ## Credits
 

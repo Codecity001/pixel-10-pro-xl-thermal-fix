@@ -25,8 +25,11 @@ ui_print "  Pixel 10 Thermal & Memory Control"
 ui_print "  A17 Thermal Throttle Fix profile installer"
 ui_print "----------------------------------------"
 ui_print "SELinux read-only policy"
-ui_print "Prerelease: $MODULE_VERSION"
-ui_print "Stable channel: 1.5"
+case "$MODULE_VERSION" in
+  *-test.*) ui_print "Prerelease: $MODULE_VERSION" ;;
+  *) ui_print "Release: $MODULE_VERSION" ;;
+esac
+ui_print "Stable channel: 1.5.1"
 
 model="$(getprop ro.product.model)"
 device="$(getprop ro.product.device)"
