@@ -33,3 +33,10 @@ Rules:
 - Submenus return with `Back`.
 - pTune override belongs in Advanced only.
 - Risky pTune override must be blocked for disabled or known-bad pTune states.
+
+
+## pTune consistency policy
+
+- Advanced pTune status and compat-check must not contradict each other.
+- Known-bad version and runtime-specific block are separate fields.
+- Override ON remains blocked for known-bad versionCode 200.

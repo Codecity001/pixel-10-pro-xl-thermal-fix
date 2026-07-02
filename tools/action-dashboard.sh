@@ -236,7 +236,14 @@ ptune_dir() {
 }
 
 ptune_enabled() { d="$1"; [ -n "$d" ] || return 1; [ ! -e "$d/disable" ] && [ ! -e "$d/remove" ]; }
-ptune_known_bad() { d="$1"; [ -n "$d" ] || return 1; grep -q '^versionCode=200$' "$d/module.prop" 2>/dev/null; }
+ptune_version_code() { d="$1"; [ -n "$d" ] || return 0; grep -E '^versionCode=' "$d/module.prop" 2>/dev/null | tail -n 1 | sed 's/^versionCode=//'; }
+ptune_known_bad() { d="$1"; [ "$(ptune_version_code "$d")" = 200 ]; }
+ptune_runtime_bad() {
+  d="$1"
+  [ "$(ptune_version_code "$d")" = 200 ] || return 1
+  [ "$(getprop ro.product.device 2>/dev/null)" = mustang ] || return 1
+  [ "$(getprop ro.build.id 2>/dev/null)" = CP1A.260505.005 ]
+}
 
 ptune_status() {
   d="$(ptune_dir 2>/dev/null || true)"
@@ -244,7 +251,10 @@ ptune_status() {
   if [ -z "$d" ]; then msg "pTune: not installed"; return 0; fi
   msg "pTune: installed"
   if ptune_enabled "$d"; then msg "State: active"; else msg "State: disabled"; fi
-  if ptune_known_bad "$d"; then msg "Known bad: yes"; else msg "Known bad: no"; fi
+  vc="$(ptune_version_code "$d")"
+  [ -n "$vc" ] && msg "VersionCode: $vc"
+  if ptune_known_bad "$d"; then msg "Bad version: yes"; else msg "Bad version: no"; fi
+  if ptune_runtime_bad "$d"; then msg "Runtime block: yes"; else msg "Runtime block: no"; fi
   msg "Override: $(cfg_get PTUNE_OVERRIDE_MENU)"
 }
 

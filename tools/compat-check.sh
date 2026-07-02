@@ -48,9 +48,17 @@ pt_inst=no; [ -n "$pany" ] && pt_inst=yes
 pt_en=no; [ -n "$pact" ] && pt_en=yes
 
 known=no
+known_version=no
+known_runtime=no
 if [ -n "$pany" ]; then
   vc="$(grep -E '^versionCode=' "$pany/module.prop" 2>/dev/null | sed 's/^versionCode=//')"
-  [ "$(getprop ro.product.device)" = mustang ] && [ "$(getprop ro.build.id)" = CP1A.260505.005 ] && [ "$vc" = 200 ] && known=yes_versionCode_200_thermalhal_bootloop_on_mustang_cp1a_260505_005
+  if [ "$vc" = 200 ]; then
+    known=yes_versionCode_200
+    known_version=yes_versionCode_200
+  fi
+  if [ "$(getprop ro.product.device)" = mustang ] && [ "$(getprop ro.build.id)" = CP1A.260505.005 ] && [ "$vc" = 200 ]; then
+    known_runtime=yes_thermalhal_bootloop_on_mustang_cp1a_260505_005
+  fi
 fi
 
 mode="$(getcfg PTUNE_GUARD_MODE)"; [ -n "$mode" ] || mode=strict
@@ -139,6 +147,8 @@ fi
   printf '%s\n' "PTUNE_STATE=$pstate"
   printf '%s\n' "PTUNE_PATH=${pany:-none}"
   printf '%s\n' "PTUNE_KNOWN_BAD=$known"
+  printf '%s\n' "PTUNE_KNOWN_BAD_VERSION=$known_version"
+  printf '%s\n' "PTUNE_KNOWN_BAD_RUNTIME=$known_runtime"
   printf '%s\n' "CONFIG_FILE=$CFG"
   printf '%s\n' "PTUNE_GUARD_MODE=$mode"
   printf '%s\n' "ALLOW_THERMAL_WITH_PTUNE=${allow:-0}"
