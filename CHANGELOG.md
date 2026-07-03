@@ -1,3 +1,18 @@
+# v1.5.2-universal-test.1
+
+Pre-release test build.
+
+Included:
+
+- CP31.260618.005 alias profiles for all G5 Pixel 10 devices.
+- CP31.260618.005 selector now prefers `cp31260618005`.
+- Legacy `cp31260608007` directories kept as compatibility fallback data.
+- Profile matrix expected count is now `83`.
+- Advanced menu adds status-only `Update Ch`.
+- Verify evidence scope, CP31 hygiene audit, alias verify and selection verify helpers are included.
+- No stable release and no stable `update.json` bump.
+- Runtime claims remain mustang-only until more device logs exist.
+
 # vNext 1.5.2 selector and channel polish
 
 Adds low-complexity vNext polish before `1.5.2-universal-test.1`:

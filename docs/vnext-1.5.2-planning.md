@@ -139,6 +139,8 @@ Known example:
 - `customize.sh` is installer-side evidence, not guaranteed active runtime evidence after reboot.
 - `README.md` may be absent from the active module path after reboot.
 
+Status: `1.5.2-universal-test.1` build started after selector/channel polish.
+
 ## Proposed vNext order
 
 1. Add guard/docs for CP31.260618.005 basis hygiene.

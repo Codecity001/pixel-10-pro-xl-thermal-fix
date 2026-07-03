@@ -14,6 +14,14 @@ thermal_install_overlay() {
     if [ -n "$matrix_profile" ] && [ -s "$MODPATH/profiles/$matrix_profile/system/vendor/etc/thermal_info_config_throttling.json" ]; then
       profile="$matrix_profile"
       profile_dir="$MODPATH/profiles/$profile/system/vendor/etc"
+      case "$build_id" in
+        CP31.*|cp31.*)
+          profile_state="android17_cp31_${device}_matrix_current_alias"
+          build_state="android17_${device}_${build_id}_${incremental}_matrix_current_alias_install"
+          profile_source_build="${A17_CP31_PROFILE_SOURCE_BUILD:-CP31.260618.005}"
+          profile_source_incremental="${A17_CP31_PROFILE_SOURCE_INCREMENTAL:-pending_exact_incremental}"
+        ;;
+      esac
       ui_print "- A17 profile: $device / $build_id"
     fi
   fi
