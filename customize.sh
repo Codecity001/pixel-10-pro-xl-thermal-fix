@@ -6,8 +6,8 @@ if [ -r "$MODULE_PROP" ]; then
   MODULE_VERSION="$(sed -n 's/^version=//p' "$MODULE_PROP" | head -n 1)"
   MODULE_VERSION_CODE="$(sed -n 's/^versionCode=//p' "$MODULE_PROP" | head -n 1)"
 fi
-[ -n "$MODULE_VERSION" ] || MODULE_VERSION="1.5.2-universal-test.1"
-[ -n "$MODULE_VERSION_CODE" ] || MODULE_VERSION_CODE="1016201"
+[ -n "$MODULE_VERSION" ] || MODULE_VERSION="1.5.2-universal-test.2"
+[ -n "$MODULE_VERSION_CODE" ] || MODULE_VERSION_CODE="1016202"
 A16_PROFILE_SOURCE_BUILD="CP1A.260505.005"
 A17_CP31_PROFILE_SOURCE_BUILD="CP31.260618.005"
 A17_CP31_PROFILE_SOURCE_INCREMENTAL="pending_exact_incremental"

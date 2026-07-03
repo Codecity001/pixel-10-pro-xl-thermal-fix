@@ -286,20 +286,26 @@ update_channel_status() {
   esac
 
   msg "Update Channel"
-  msg "Channel: $channel"
+  msg "Installed: $channel"
   [ -n "$version" ] && msg "Version: $version"
   [ -n "$code" ] && msg "Code: $code"
 
   if [ -s "$MODDIR/update.json" ]; then
     json_version="$(grep -E '"version"' "$MODDIR/update.json" 2>/dev/null | head -n 1 | sed 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')"
-    msg "Update JSON: present"
-    [ -n "$json_version" ] && msg "JSON Version: $json_version"
+    json_code="$(grep -E '"versionCode"' "$MODDIR/update.json" 2>/dev/null | head -n 1 | sed 's/.*"versionCode"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/')"
+    [ -n "$json_version" ] && msg "Stable JSON: $json_version"
+    [ -n "$json_code" ] && msg "Stable Code: $json_code"
   else
-    msg "Update JSON: missing"
+    msg "Stable JSON: missing"
   fi
+
+  case "$channel" in
+    Test|Candidate) msg "Test asset: GitHub pre-release" ;;
+    *) msg "Stable asset: update.json" ;;
+  esac
+  msg "Auto switch: off"
   msg "Mode: status only"
 }
-
 advanced_loop() {
   while :; do
     ui_menu5 "Advanced" "pTune Status" "Update Ch" "Override OFF" "Override ON" "Back" 0

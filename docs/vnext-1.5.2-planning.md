@@ -143,6 +143,8 @@ Status: `1.5.2-universal-test.1` build started after selector/channel polish.
 
 Status: `1.5.2-universal-test.1` runtime PASS recorded for mustang / CP2A.260605.012 / outdoor-extended / polling mod / ZRAM 100p.
 
+Status: `1.5.2-universal-test.2` build scope selected: include test1 runtime evidence plus Advanced Update Ch UX polish.
+
 ## Proposed vNext order
 
 1. Add guard/docs for CP31.260618.005 basis hygiene.

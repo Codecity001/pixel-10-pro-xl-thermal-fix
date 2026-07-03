@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 set -eu
+# VERIFY_EVIDENCE_SCOPE_TEST2_MARKER version_152_test2
 # VERIFY_EVIDENCE_SCOPE_TEST1_MARKER runtime_version_152_test1
 
 mode="${1:-runtime}"
@@ -41,6 +42,9 @@ version_scope_check() {
     ;;
     1.5.2-universal-test.1:1016201)
       say "PASS ${prefix}_version_152_test1"
+    ;;
+    1.5.2-universal-test.2:1016202)
+      say "PASS ${prefix}_version_152_test2"
     ;;
     *)
       say "WARN ${prefix}_version_unexpected version=$version code=$code"
