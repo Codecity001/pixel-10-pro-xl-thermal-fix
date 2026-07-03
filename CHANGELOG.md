@@ -50,29 +50,6 @@ Factory-basis PASS:
 
 `CP31.260618.005` is the real QPR1 Beta 6 factory basis for frankel, blazer, mustang and rango.
 
-
-### Runtime and factory-basis status
-
-Stable 1.5.1 remains intentionally honest:
-
-- Runtime-proven on **mustang**.
-- Factory-basis covered for all G5 Pixel 10 devices.
-- Runtime feedback is still needed for **frankel**, **blazer**, and **rango**.
-
-Runtime PASS:
-
-- `mustang / CP2A.260605.012 / outdoor-extended / polling mod / ZRAM 100p`
-- `mustang / CP31.260618.005 / outdoor-plus / polling mod / ZRAM 100p`
-
-Factory-basis PASS:
-
-- `frankel / CP31.260618.005`
-- `blazer / CP31.260618.005`
-- `mustang / CP31.260618.005`
-- `rango / CP31.260618.005`
-
-`CP31.260618.005` is the real QPR1 Beta 6 factory basis for frankel, blazer, mustang and rango.
-
 ### Credits
 
 - **Allen Chang**: Ampel/Action menu idea, Beta 1/QPR1 testing, runtime verification, screenshots, debug logs, and Pixel 10 build-family feedback.
