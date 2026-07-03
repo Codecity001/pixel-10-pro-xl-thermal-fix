@@ -1,3 +1,15 @@
+# Stock factory extract pipeline guard
+
+Adds the first guard/documentation layer for stock-file intake:
+
+- Adds `docs/stock-factory-extract-pipeline.md`.
+- Adds `templates/stock-import-manifest.example.tsv`.
+- Adds `tools/stock-import-manifest-verify.sh`.
+- Adds `tools/stock-factory-import-plan.sh`.
+- No stock files are imported.
+- No runtime claims are added.
+- Stable `update.json` remains unchanged.
+
 # v1.5.2-universal-test.2
 
 Pre-release test build.

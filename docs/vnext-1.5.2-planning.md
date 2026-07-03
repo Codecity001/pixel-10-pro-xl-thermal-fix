@@ -145,6 +145,8 @@ Status: `1.5.2-universal-test.1` runtime PASS recorded for mustang / CP2A.260605
 
 Status: `1.5.2-universal-test.2` build scope selected: include test1 runtime evidence plus Advanced Update Ch UX polish.
 
+Status: stock-file/factory-extract pipeline guard layer added; no stock files imported yet.
+
 ## Proposed vNext order
 
 1. Add guard/docs for CP31.260618.005 basis hygiene.
