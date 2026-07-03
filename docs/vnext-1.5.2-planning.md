@@ -40,6 +40,8 @@ Factory-basis PASS:
 
 ### 1. CP31.260618.005 profile-name hygiene
 
+Status: audit started by `tools/cp31-profile-name-hygiene-audit.sh` and `docs/cp31-profile-name-hygiene-audit.md`.
+
 Current stable has runtime-verified CP31 behavior, but some internal CP31 profile directories still use older `cp31260608007` naming.
 
 vNext should decide deliberately between:
