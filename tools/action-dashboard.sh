@@ -276,14 +276,39 @@ ptune_override_on() {
   esac
 }
 
+update_channel_status() {
+  version="$(sed -n 's/^version=//p' "$MODDIR/module.prop" 2>/dev/null | head -n 1)"
+  code="$(sed -n 's/^versionCode=//p' "$MODDIR/module.prop" 2>/dev/null | head -n 1)"
+  channel="Stable"
+  case "$version" in
+    *test*|*Test*) channel="Test" ;;
+    *candidate*|*Candidate*) channel="Candidate" ;;
+  esac
+
+  msg "Update Channel"
+  msg "Channel: $channel"
+  [ -n "$version" ] && msg "Version: $version"
+  [ -n "$code" ] && msg "Code: $code"
+
+  if [ -s "$MODDIR/update.json" ]; then
+    json_version="$(grep -E '"version"' "$MODDIR/update.json" 2>/dev/null | head -n 1 | sed 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')"
+    msg "Update JSON: present"
+    [ -n "$json_version" ] && msg "JSON Version: $json_version"
+  else
+    msg "Update JSON: missing"
+  fi
+  msg "Mode: status only"
+}
+
 advanced_loop() {
   while :; do
-    mc_cycle4 "Advanced" "pTune Status" "Override OFF" "Override ON" "Back" 0
-    [ "$MC_REASON" = "timeout" ] && return 0
-    case "$MC_INDEX" in
+    ui_menu5 "Advanced" "pTune Status" "Update Ch" "Override OFF" "Override ON" "Back" 0
+    [ "$UI_REASON" = "timeout" ] && return 0
+    case "$UI_INDEX" in
       0) ptune_status; msg "Back to Advanced." ;;
-      1) ptune_override_off; msg "Back to Advanced." ;;
-      2) ptune_override_on; msg "Back to Advanced." ;;
+      1) update_channel_status; msg "Back to Advanced." ;;
+      2) ptune_override_off; msg "Back to Advanced." ;;
+      3) ptune_override_on; msg "Back to Advanced." ;;
       *) msg "Back."; return 0 ;;
     esac
   done

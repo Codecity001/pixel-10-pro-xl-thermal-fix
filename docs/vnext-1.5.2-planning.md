@@ -40,6 +40,8 @@ Factory-basis PASS:
 
 ### 1. CP31.260618.005 profile-name hygiene
 
+Status: current alias selection implemented by `tools/profile-matrix-test9.sh` and verified by `tools/cp31-260618005-selection-verify.sh`.
+
 Status: aliases implemented by `tools/cp31-260618005-alias-verify.sh` and documented in `docs/cp31-260618005-profile-aliases.md`.
 
 Status: audit started by `tools/cp31-profile-name-hygiene-audit.sh` and `docs/cp31-profile-name-hygiene-audit.md`.
@@ -80,6 +82,8 @@ Minimum metadata per device:
 - whether the file is stock-exact or compatibility-derived.
 
 ### 3. Manager update-channel UX
+
+Status: status-only Advanced menu entry implemented by `tools/action-dashboard.sh`.
 
 Add an Advanced status section for update-channel state:
 
