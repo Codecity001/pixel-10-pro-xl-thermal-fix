@@ -1,3 +1,15 @@
+# Boot crash debug and anti-bootloop audit
+
+Added for vNext:
+
+- `tools/boot-crash-log-collect.sh`
+- `tools/anti-bootloop-audit.sh`
+- `docs/boot-crash-debug.md`
+- `docs/anti-bootloop-audit.md`
+- `tools/collect-debug.sh` boot-crash context block
+
+No version bump and no release ZIP change.
+
 # Release reboot verify policy
 
 Every release/pre-release now requires install plus post-reboot runtime verify before being marked complete. Stable `update.json` remains unchanged.
