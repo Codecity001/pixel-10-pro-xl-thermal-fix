@@ -147,6 +147,8 @@ Status: `1.5.2-universal-test.2` build scope selected: include test1 runtime evi
 
 Status: stock-file/factory-extract pipeline guard layer added; no stock files imported yet.
 
+Status: `1.5.2-universal-test.3` selected for Magisk update-path channel switch: stable/test only, no ZIP download.
+
 ## Proposed vNext order
 
 1. Add guard/docs for CP31.260618.005 basis hygiene.
