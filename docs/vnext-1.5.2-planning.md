@@ -161,6 +161,8 @@ Status: `1.5.2-universal-test.3` selected for Magisk update-path channel switch:
 
 Policy: every release/pre-release requires install plus post-reboot runtime verify before it is marked complete. See `docs/release-reboot-verify-policy.md`.
 
+Status: boot-crash debug collection and anti-bootloop audit added as vNext guard layer. Auto self-disable remains audit-only until boot-crash root cause is known.
+
 ## Stable promotion gate for vNext
 
 A future stable can only claim all-G5 runtime support when all G5 devices have green runtime evidence.
