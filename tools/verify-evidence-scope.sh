@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 set -eu
+# VERIFY_EVIDENCE_SCOPE_TEST1_MARKER runtime_version_152_test1
 
 mode="${1:-runtime}"
 target="${2:-/data/adb/modules/pixel-10-pro-xl-thermal-fix}"
@@ -21,12 +22,30 @@ grep_file() {
   pattern="$1"
   file="$2"
   label="$3"
-  if [ -s "$file" ] && grep -q "$pattern" "$file"; then
+  if [ -s "$file" ] && grep -Eq "$pattern" "$file"; then
     say "PASS $label"
     return 0
   fi
   say "WARN $label"
   return 1
+}
+
+version_scope_check() {
+  prefix="$1"
+  prop="$2"
+  version="$(sed -n 's/^version=//p' "$prop" 2>/dev/null | head -n 1)"
+  code="$(sed -n 's/^versionCode=//p' "$prop" 2>/dev/null | head -n 1)"
+  case "$version:$code" in
+    1.5.1-universal.1:1016108)
+      say "PASS ${prefix}_version_151"
+    ;;
+    1.5.2-universal-test.1:1016201)
+      say "PASS ${prefix}_version_152_test1"
+    ;;
+    *)
+      say "WARN ${prefix}_version_unexpected version=$version code=$code"
+    ;;
+  esac
 }
 
 runtime_mode() {
@@ -57,8 +76,7 @@ runtime_mode() {
     say "INFO readme_scope=repo_or_zip_doc_absent_at_runtime"
   fi
 
-  grep_file '^version=1\.5\.1-universal\.1$' "$mod/module.prop" "runtime_version_151" || true
-  grep_file '^versionCode=1016108$' "$mod/module.prop" "runtime_versionCode_1016108" || true
+  version_scope_check runtime "$mod/module.prop"
   grep_file 'Action: settings/debug' "$mod/module.prop" "runtime_action_text" || true
   grep_file 'Runtime-proven on .*mustang' "$mod/CHANGELOG.md" "runtime_doc_honest_mustang" || true
   grep_file 'Factory-basis covered for all G5 Pixel 10 devices' "$mod/CHANGELOG.md" "runtime_doc_factory_basis_all_g5" || true
@@ -85,7 +103,8 @@ repo_mode() {
   exists_file "$repo/docs/vnext-1.5.2-planning.md" || true
   exists_file "$repo/tools/verify-evidence-scope.sh" || true
 
-  grep_file 'Release: [$]MODULE_VERSION' "$repo/customize.sh" "repo_installer_release_wording" || true
+  version_scope_check repo "$repo/module.prop"
+  grep_file '(Release|Prerelease): [$]MODULE_VERSION' "$repo/customize.sh" "repo_installer_release_wording" || true
   grep_file 'Stable channel: 1\.5\.1' "$repo/customize.sh" "repo_installer_stable_channel_151" || true
   grep_file 'Runtime-proven on .*mustang' "$repo/README.md" "repo_readme_honest_mustang" || true
   grep_file 'Factory-basis covered for all G5 Pixel 10 devices' "$repo/README.md" "repo_readme_factory_basis_all_g5" || true
@@ -112,7 +131,8 @@ zip_mode() {
   exists_file "$zip_dir/tools/status-lib.sh" || true
   exists_file "$zip_dir/tools/verify-evidence-scope.sh" || true
 
-  grep_file 'Release: [$]MODULE_VERSION' "$zip_dir/customize.sh" "zip_installer_release_wording" || true
+  version_scope_check zip "$zip_dir/module.prop"
+  grep_file '(Release|Prerelease): [$]MODULE_VERSION' "$zip_dir/customize.sh" "zip_installer_release_wording" || true
   grep_file 'Stable channel: 1\.5\.1' "$zip_dir/customize.sh" "zip_installer_stable_channel_151" || true
   grep_file 'Runtime-proven on .*mustang' "$zip_dir/README.md" "zip_readme_honest_mustang" || true
   grep_file 'Factory-basis covered for all G5 Pixel 10 devices' "$zip_dir/README.md" "zip_readme_factory_basis_all_g5" || true

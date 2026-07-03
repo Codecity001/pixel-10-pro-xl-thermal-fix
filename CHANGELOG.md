@@ -1,3 +1,16 @@
+# v1.5.2-universal-test.1 runtime evidence integration
+
+Adds runtime evidence for the first vNext 1.5.2 test build:
+
+- Runtime PASS recorded for `mustang / CP2A.260605.012 / outdoor-extended / polling mod / ZRAM 100p`.
+- Manager status confirmed as `P:🟢 mod | T:🟢 outdoor-ext | Z:🟢 100p | Action: settings/debug`.
+- Stable `update.json` remains on `1.5.1-universal.1`.
+- CP31.260618.005 selection and alias verify remain PASS in the installed module.
+- Adds `docs/v1.5.2-test1-runtime-mustang-cp2a.md`.
+- Adds robust runtime verifier `tools/runtime-verify-152-test1.sh`.
+- Updates evidence-scope helper to recognize `1.5.2-universal-test.1` without stale 1.5.1 runtime warnings.
+- No stable release and no runtime claim for frankel, blazer or rango.
+
 # v1.5.2-universal-test.1
 
 Pre-release test build.

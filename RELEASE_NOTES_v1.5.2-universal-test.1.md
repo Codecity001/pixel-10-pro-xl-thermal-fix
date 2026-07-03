@@ -50,3 +50,31 @@ Also verify:
 ## Install notes
 
 This is a GitHub pre-release test asset. Stable `update.json` remains on `1.5.1-universal.1`.
+
+## Runtime evidence update
+
+Runtime PASS has been recorded for:
+
+```text
+mustang / Android 17 / CP2A.260605.012 / outdoor-extended / polling mod / ZRAM 100p
+```
+
+Observed after reboot:
+
+```text
+P:🟢 mod | T:🟢 outdoor-ext | Z:🟢 100p | Action: settings/debug
+```
+
+The active CP2A profile is expected for this device/build:
+
+```text
+mustang-android17-cp2a-cp2a260605012-outdoor-extended
+```
+
+CP31.260618.005 selection and alias verification remain included and PASS, but CP31 runtime on-device still needs a CP31 runtime log.
+
+See:
+
+```text
+docs/v1.5.2-test1-runtime-mustang-cp2a.md
+```
