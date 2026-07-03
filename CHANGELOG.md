@@ -1,3 +1,13 @@
+# vNext 1.5.2 CP31.260618.005 profile aliases
+
+Adds low-risk CP31.260618.005 alias directories for G5 Pixel 10 CP31 profiles:
+
+- Keeps legacy `cp31260608007` profile names for compatibility.
+- Adds matching `cp31260618005` aliases for current QPR1 Beta 6 factory-basis naming.
+- Adds `tools/cp31-260618005-alias-verify.sh`.
+- Adds `docs/cp31-260618005-profile-aliases.md`.
+- Keeps runtime claims mustang-only and does not add runtime support claims for frankel, blazer or rango.
+
 # vNext 1.5.2 CP31 profile-name hygiene audit
 
 Adds Workstream 1 audit before CP31 alias work:
