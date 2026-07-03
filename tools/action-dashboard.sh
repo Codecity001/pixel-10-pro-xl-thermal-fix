@@ -277,42 +277,43 @@ ptune_override_on() {
 }
 
 update_channel_status() {
-  version="$(sed -n 's/^version=//p' "$MODDIR/module.prop" 2>/dev/null | head -n 1)"
-  code="$(sed -n 's/^versionCode=//p' "$MODDIR/module.prop" 2>/dev/null | head -n 1)"
-  channel="Stable"
-  case "$version" in
-    *test*|*Test*) channel="Test" ;;
-    *candidate*|*Candidate*) channel="Candidate" ;;
-  esac
-
-  msg "Update Channel"
-  msg "Installed: $channel"
-  [ -n "$version" ] && msg "Version: $version"
-  [ -n "$code" ] && msg "Code: $code"
-
-  if [ -s "$MODDIR/update.json" ]; then
-    json_version="$(grep -E '"version"' "$MODDIR/update.json" 2>/dev/null | head -n 1 | sed 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')"
-    json_code="$(grep -E '"versionCode"' "$MODDIR/update.json" 2>/dev/null | head -n 1 | sed 's/.*"versionCode"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/')"
-    [ -n "$json_version" ] && msg "Stable JSON: $json_version"
-    [ -n "$json_code" ] && msg "Stable Code: $json_code"
+  if [ -s "$MODDIR/tools/update-channel-switch.sh" ]; then
+    sh "$MODDIR/tools/update-channel-switch.sh" status
   else
-    msg "Stable JSON: missing"
+    msg "Update Channel"
+    msg "Switch tool missing"
   fi
-
-  case "$channel" in
-    Test|Candidate) msg "Test asset: GitHub pre-release" ;;
-    *) msg "Stable asset: update.json" ;;
-  esac
-  msg "Auto switch: off"
-  msg "Mode: status only"
 }
+
+update_channel_loop() {
+  while :; do
+    update_channel_status
+    ui_menu3 "Update Ch" "Use Stable" "Use Test" "Back" 2
+    [ "$UI_REASON" = "timeout" ] && return 0
+    case "$UI_INDEX" in
+      0)
+        sh "$MODDIR/tools/update-channel-switch.sh" stable
+        msg "Back to Update Ch."
+      ;;
+      1)
+        sh "$MODDIR/tools/update-channel-switch.sh" test
+        msg "Back to Update Ch."
+      ;;
+      *)
+        msg "Back."
+        return 0
+      ;;
+    esac
+  done
+}
+
 advanced_loop() {
   while :; do
     ui_menu5 "Advanced" "pTune Status" "Update Ch" "Override OFF" "Override ON" "Back" 0
     [ "$UI_REASON" = "timeout" ] && return 0
     case "$UI_INDEX" in
       0) ptune_status; msg "Back to Advanced." ;;
-      1) update_channel_status; msg "Back to Advanced." ;;
+      1) update_channel_loop; msg "Back to Advanced." ;;
       2) ptune_override_off; msg "Back to Advanced." ;;
       3) ptune_override_on; msg "Back to Advanced." ;;
       *) msg "Back."; return 0 ;;

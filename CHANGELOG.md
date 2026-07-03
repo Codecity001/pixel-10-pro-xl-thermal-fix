@@ -1,3 +1,19 @@
+# v1.5.2-universal-test.3
+
+Pre-release test build.
+
+Included:
+
+- Adds a Magisk update-path channel switch in `Advanced > Update Ch`.
+- Supports stable and test/pre-release channels only.
+- Adds `update-prerelease.json`.
+- Adds `tools/update-channel-switch.sh`.
+- Adds `tools/update-channel-verify.sh`.
+- Adds `docs/update-channel-switch.md`.
+- Switch changes only active `module.prop` `updateJson=`.
+- No ZIP download and no automatic install.
+- Stable `update.json` remains on `1.5.1-universal.1`.
+
 # Stock factory extract pipeline guard
 
 Adds the first guard/documentation layer for stock-file intake:
