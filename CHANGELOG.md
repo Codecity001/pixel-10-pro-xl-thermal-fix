@@ -1,3 +1,13 @@
+# vNext 1.5.2 verify evidence scope
+
+Adds installer-vs-runtime verify polish:
+
+- New `tools/verify-evidence-scope.sh`.
+- New `docs/installer-vs-runtime-verify.md`.
+- Runtime checks no longer treat missing `customize.sh` or `README.md` in `/data/adb/modules/...` as a failure.
+- ZIP/install-only, runtime and repo/docs evidence are explicitly separated.
+- Stale QPR1 basis claims remain hard failures.
+
 # vNext 1.5.2 planning
 
 Planning document added: `docs/vnext-1.5.2-planning.md`.
