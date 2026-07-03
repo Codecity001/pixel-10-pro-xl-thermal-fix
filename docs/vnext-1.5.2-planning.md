@@ -116,6 +116,8 @@ Each runtime PASS needs:
 
 ### 6. Installer and active-module verify polish
 
+Status: started by `tools/verify-evidence-scope.sh` and `docs/installer-vs-runtime-verify.md`.
+
 Do not rely on installer-only files in the active module path after reboot. Some files may exist in the ZIP and install autosave but not remain under `/data/adb/modules/...`.
 
 Verify scripts should classify files as:
