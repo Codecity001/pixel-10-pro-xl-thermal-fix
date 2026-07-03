@@ -1,3 +1,14 @@
+# vNext 1.5.2 selector and channel polish
+
+Adds low-complexity vNext polish before `1.5.2-universal-test.1`:
+
+- CP31.260618.005 selection now prefers `cp31260618005` aliases.
+- Legacy `cp31260608007` profile directories stay available as compatibility data.
+- Auto-profile metadata now names `CP31.260618.005`.
+- Advanced menu adds status-only `Update Ch`.
+- New `tools/cp31-260618005-selection-verify.sh`.
+- No stable release, no update.json bump, no new runtime claims for untested devices.
+
 # vNext 1.5.2 CP31.260618.005 profile aliases
 
 Adds low-risk CP31.260618.005 alias directories for G5 Pixel 10 CP31 profiles:

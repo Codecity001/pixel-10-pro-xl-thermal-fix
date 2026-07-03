@@ -24,9 +24,9 @@ FINGERPRINT="$(prop ro.build.fingerprint)"
 INCREMENTAL="$(prop ro.build.version.incremental)"
 
 A16_BUILD="CP1A.260505.005"
-A17_CP31_BUILD="CP31.260508.005"
-A17_CP31_INC="15421345"
-A17_CP31_FP="google/mustang_beta/mustang:CinnamonBun/CP31.260508.005/15421345:user/release-keys"
+A17_CP31_BUILD="CP31.260618.005"
+A17_CP31_INC="pending_exact_incremental"
+A17_CP31_FP="pending_exact_fingerprint"
 A17_CP31_QPR1B4_BUILD="CP31.260522.006"
 A17_CP31_QPR1B4_INC="15591510"
 A17_CP31_QPR1B4_FP="google/mustang_beta/mustang:CinnamonBun/CP31.260522.006/15591510:user/release-keys"
@@ -88,6 +88,14 @@ if command -v profile_matrix_base >/dev/null 2>&1; then
   MATRIX_PROFILE="$(profile_matrix_base "$DEVICE" "$BUILD_ID" 2>/dev/null || true)"
   if [ -n "$MATRIX_PROFILE" ] && [ -s "$MODDIR/profiles/$MATRIX_PROFILE/system/vendor/etc/thermal_info_config_throttling.json" ]; then
     PROFILE="$MATRIX_PROFILE"
+    case "$BUILD_ID" in
+      CP31.*|cp31.*)
+        PROFILE_STATE="auto_android17_cp31_${DEVICE}_matrix_current_alias"
+        BUILD_STATE="android17_${DEVICE}_${BUILD_ID}_${INCREMENTAL}_matrix_current_alias_auto_switch"
+        SOURCE_BUILD="$A17_CP31_BUILD"
+        SOURCE_INC="$A17_CP31_INC"
+      ;;
+    esac
     log "AUTO_SWITCH_INFO reason=test9_matrix_profile profile=$PROFILE"
   fi
 fi
@@ -192,7 +200,7 @@ rm -f "$MODDIR/skip_mount" "$G/disabled_reason" "$G/profile_stale_after_ota" "$G
   echo "auto_profile_switch_at=$(date -Is 2>/dev/null || date)"
   echo "profile_materialized=yes"
   echo "expected_thermal_files=3"
-  echo "update_json_channel=stable_update_json_1.4.9-universal.2"
+  echo "update_json_channel=stable_update_json_1.5.1-universal.1"
 } > "$STATE"
 echo materialized > "$G/auto_profile_switch_state"
 echo "$PROFILE" > "$G/selected_profile"
