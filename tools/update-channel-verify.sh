@@ -18,16 +18,16 @@ fail() {
 [ -s "$root/tools/update-channel-switch.sh" ] || fail "switch_tool_missing" 13
 [ -s "$root/tools/action-dashboard.sh" ] || fail "action_dashboard_missing" 14
 
-grep -q '^version=1.5.2-universal-test.3$' "$root/module.prop" || fail "module_version_not_test3" 20
-grep -q '^versionCode=1016203$' "$root/module.prop" || fail "module_code_not_test3" 21
+grep -q '^version=1.5.2-universal-test.4$' "$root/module.prop" || fail "module_version_not_test4" 20
+grep -q '^versionCode=1016204$' "$root/module.prop" || fail "module_code_not_test4" 21
 grep -q 'updateJson=.*update.json$' "$root/module.prop" || fail "module_default_not_stable" 22
 
 grep -q '"version": "1.5.1-universal.1"' "$root/update.json" || fail "stable_version_changed" 30
 grep -q '"versionCode": 1016108' "$root/update.json" || fail "stable_code_changed" 31
 
-grep -q '"version": "1.5.2-universal-test.3"' "$root/update-prerelease.json" || fail "test_version_missing" 40
-grep -q '"versionCode": 1016203' "$root/update-prerelease.json" || fail "test_code_missing" 41
-grep -q 'releases/download/v1.5.2-universal-test.3' "$root/update-prerelease.json" || fail "test_zip_url_missing" 42
+grep -q '"version": "1.5.2-universal-test.4"' "$root/update-prerelease.json" || fail "test_version_missing" 40
+grep -q '"versionCode": 1016204' "$root/update-prerelease.json" || fail "test_code_missing" 41
+grep -q 'releases/download/v1.5.2-universal-test.4' "$root/update-prerelease.json" || fail "test_zip_url_missing" 42
 
 grep -q 'update_channel_loop' "$root/tools/action-dashboard.sh" || fail "menu_loop_missing" 50
 grep -q 'Use Stable' "$root/tools/action-dashboard.sh" || fail "use_stable_missing" 51
