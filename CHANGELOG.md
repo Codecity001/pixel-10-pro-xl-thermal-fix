@@ -1,3 +1,13 @@
+# 1.5.2-universal-test.4
+
+Pre-release test build.
+
+- Adds Bootguard v2 self-only threshold guard.
+- Adds last-good state snapshot and differential helper.
+- Adds Action-menu Debug submenu with Debug ZIP, Boot-Crash TGZ, Bootguard status and clear.
+- Keeps WebUI out of scope until after stable.
+- Keeps stable `update.json` unchanged.
+
 # Bootguard v2 guard pack
 
 Added for vNext:

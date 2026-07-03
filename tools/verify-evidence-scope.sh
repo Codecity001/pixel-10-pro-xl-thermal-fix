@@ -49,6 +49,9 @@ version_scope_check() {
     1.5.2-universal-test.3:1016203)
       say "PASS ${prefix}_version_152_test3"
     ;;
+    1.5.2-universal-test.4:1016204)
+      say "PASS ${prefix}_version_152_test4"
+    ;;
     *)
       say "WARN ${prefix}_version_unexpected version=$version code=$code"
     ;;
