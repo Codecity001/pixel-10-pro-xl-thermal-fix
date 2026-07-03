@@ -1,3 +1,13 @@
+# vNext 1.5.2 CP31 profile-name hygiene audit
+
+Adds Workstream 1 audit before CP31 alias work:
+
+- New `tools/cp31-profile-name-hygiene-audit.sh`.
+- New `docs/cp31-profile-name-hygiene-audit.md`.
+- Documents legacy `cp31260608007` profile names as compatibility names.
+- Recommends adding `cp31260618005` aliases before any hard rename.
+- Keeps Stable 1.5.1 runtime claims mustang-only.
+
 # vNext 1.5.2 verify evidence scope
 
 Adds installer-vs-runtime verify polish:
