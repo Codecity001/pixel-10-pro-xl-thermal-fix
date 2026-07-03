@@ -72,3 +72,8 @@ Suggested next branch:
 ```text
 vnext/cp31-260618005-profile-aliases
 ```
+
+
+## Alias implementation status
+
+Implemented in vNext by adding `cp31260618005` aliases while keeping legacy `cp31260608007` compatibility names.
