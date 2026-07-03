@@ -1,3 +1,14 @@
+# Bootguard v2 guard pack
+
+Added for vNext:
+
+- self-only bootguard with pending boot marker, fail counter and thresholded disable
+- last-good state snapshot and differential helper
+- Action menu debug submenu with boot-crash export and bootguard status/clear
+- Bootguard v2 docs and verify tool
+
+No version bump, no release ZIP change and no WebUI.
+
 # Boot crash debug and anti-bootloop audit
 
 Added for vNext:

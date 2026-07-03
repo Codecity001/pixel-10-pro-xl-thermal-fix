@@ -32,3 +32,7 @@ whether the device boots with the module disabled
 ```
 
 Logs can contain device identifiers and should be reviewed before public posting.
+
+## Action menu
+
+The Action menu exposes debug ZIP export and boot-crash archive export without adding a WebUI.

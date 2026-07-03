@@ -15,7 +15,7 @@ has "$root/tools/collect-debug.sh" "boot_crash_context" && say "PASS collect_deb
 has "$root/tools/boot-crash-log-collect.sh" "logcat_boot_tail" && say "PASS standalone_boot_crash_logcat_present" || say "WARN standalone_boot_crash_logcat_absent"
 has "$root/tools/boot-crash-log-collect.sh" "pstore" && say "PASS standalone_pstore_probe_present" || say "WARN standalone_pstore_probe_absent"
 auto_disable="absent"
-if grep -E 'touch .*/disable|> .*/disable|/disable' "$root/service.sh" >/dev/null 2>&1 && grep -E 'fail_count|pending_boot|boot_fail|bootloop' "$root/service.sh" >/dev/null 2>&1; then
+if grep -E 'touch .*/disable|> .*/disable|/disable' "$root/service.sh" "$root/post-fs-data.sh" "$root/tools/bootguard-lib.sh" >/dev/null 2>&1 && grep -E 'fail_count|pending_boot|boot_fail|bootloop|self_disable' "$root/service.sh" "$root/post-fs-data.sh" "$root/tools/bootguard-lib.sh" >/dev/null 2>&1; then
   auto_disable="present"
 fi
 say "anti_bootloop_auto_disable=$auto_disable"

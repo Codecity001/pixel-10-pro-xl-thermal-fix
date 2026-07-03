@@ -53,4 +53,10 @@ if [ -s "$MODDIR/tools/status-lib.sh" ]; then
   sh "$MODDIR/tools/status-lib.sh" update >> "$H" 2>&1 || true
 fi
 
+# BOOTGUARD_V2_SUCCESS_START
+if [ -s "$MODDIR/tools/bootguard-lib.sh" ]; then
+  MODDIR="$MODDIR" CONFIG_FILE="$CONFIG_FILE" sh "$MODDIR/tools/bootguard-lib.sh" success >> "$H" 2>&1 || true
+fi
+# BOOTGUARD_V2_SUCCESS_END
+
 exit 0
