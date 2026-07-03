@@ -1,3 +1,17 @@
+# v1.5.2-universal-test.2
+
+Pre-release test build.
+
+Included:
+
+- Builds a ZIP from main after v1.5.2 test1 runtime evidence integration.
+- Adds `tools/runtime-verify-152-test2.sh`.
+- Updates `tools/verify-evidence-scope.sh` to recognize `1.5.2-universal-test.2` / `1016202`.
+- Polishes Advanced `Update Ch` status wording.
+- Adds `docs/v1.5.2-test2-update-channel-ux.md`.
+- Keeps stable `update.json` on `1.5.1-universal.1`.
+- Keeps runtime claims honest: mustang runtime PASS, frankel/blazer/rango still need runtime logs.
+
 # v1.5.2-universal-test.1 runtime evidence integration
 
 Adds runtime evidence for the first vNext 1.5.2 test build:
