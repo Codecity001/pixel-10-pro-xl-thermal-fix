@@ -337,16 +337,77 @@ debug_zip() {
   msg "Back to Action."
 }
 
+
+boot_crash_tgz() {
+  show_status
+  msg "Creating boot crash TGZ..."
+  if [ -s "$MODDIR/tools/boot-crash-log-collect.sh" ]; then
+    out="$(sh "$MODDIR/tools/boot-crash-log-collect.sh" 2>&1 || true)"
+    path="$(printf '%s
+' "$out" | sed -n 's/^Created: //p' | tail -n 1)"
+    msg "Boot crash archive done"
+    if [ -n "$path" ]; then file="${path##*/}"; msg "Folder: Download"; msg "File:"; msg "$file"; fi
+    msg "Upload TGZ + install log."
+  else
+    msg "! boot-crash collector missing"
+  fi
+  msg "Back to Debug."
+}
+
+bootguard_status() {
+  msg "Bootguard"
+  if [ -s "$MODDIR/tools/bootguard-lib.sh" ]; then
+    MODDIR="$MODDIR" CONFIG_FILE="$CONFIG_FILE" sh "$MODDIR/tools/bootguard-lib.sh" status || true
+  else
+    msg "! bootguard missing"
+  fi
+  if [ -s "$MODDIR/tools/last-good-diff.sh" ]; then
+    MODDIR="$MODDIR" CONFIG_FILE="$CONFIG_FILE" sh "$MODDIR/tools/last-good-diff.sh" || true
+  fi
+  msg "Back to Debug."
+}
+
+bootguard_clear() {
+  ui_menu3 "Clear Guard" "Keep State" "Clear Count" "Back" 0
+  [ "$UI_REASON" = "timeout" ] && return 0
+  case "$UI_INDEX" in
+    1)
+      if [ -s "$MODDIR/tools/bootguard-lib.sh" ]; then
+        MODDIR="$MODDIR" CONFIG_FILE="$CONFIG_FILE" sh "$MODDIR/tools/bootguard-lib.sh" clear || true
+      fi
+      msg "Counters cleared"
+      msg "Disable preserved"
+    ;;
+    *) msg "No change." ;;
+  esac
+  msg "Back to Debug."
+}
+
+debug_loop() {
+  while :; do
+    ui_menu5 "Debug" "Debug ZIP" "BootCrash TGZ" "Bootguard" "Clear Guard" "Back" 0
+    [ "$UI_REASON" = "timeout" ] && return 0
+    case "$UI_INDEX" in
+      0) debug_zip ;;
+      1) boot_crash_tgz ;;
+      2) bootguard_status ;;
+      3) bootguard_clear ;;
+      *) msg "Back."; return 0 ;;
+    esac
+  done
+}
+
+
 action_loop() {
   first=1
   while :; do
     if [ "$first" = "1" ]; then refresh_status; show_status; first=0; fi
-    ui_menu5 "Action" "Status" "Settings" "Debug ZIP" "Advanced" "Exit" 0
+    ui_menu5 "Action" "Status" "Settings" "Debug" "Advanced" "Exit" 0
     [ "$UI_REASON" = "timeout" ] && exit 0
     case "$UI_INDEX" in
       0) refresh_status; show_status; msg "Back to Action." ;;
       1) settings_loop ;;
-      2) debug_zip ;;
+      2) debug_loop ;;
       3) advanced_loop ;;
       *) msg "Exit."; exit 0 ;;
     esac

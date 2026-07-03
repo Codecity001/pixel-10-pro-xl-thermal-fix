@@ -6,7 +6,7 @@ Current state:
 
 - `service.sh` writes boot health evidence and waits for boot completion.
 - `collect-debug.sh` records module flags, pTune state, mounts and thermal evidence.
-- Automatic self-disable after repeated boot failures is not implemented yet.
+- Bootguard v2 implements self-only thresholded disable for this module.
 
 Decision:
 
@@ -25,3 +25,5 @@ Expected current result:
 ```text
 RESULT: ANTI_BOOTLOOP_AUDIT_DONE auto_disable=absent
 ```
+
+Bootguard v2 is documented in `docs/bootguard-v2.md`.
