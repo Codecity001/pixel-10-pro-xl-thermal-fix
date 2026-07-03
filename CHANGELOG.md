@@ -1,3 +1,7 @@
+# Release reboot verify policy
+
+Every release/pre-release now requires install plus post-reboot runtime verify before being marked complete. Stable `update.json` remains unchanged.
+
 # v1.5.2-universal-test.3
 
 Pre-release test build.
