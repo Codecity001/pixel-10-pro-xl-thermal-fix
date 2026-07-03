@@ -1,3 +1,18 @@
+# vNext 1.5.2 planning
+
+Planning document added: `docs/vnext-1.5.2-planning.md`.
+
+Scope:
+
+- CP31.260618.005 profile-name hygiene.
+- Stock-file and factory-extract pipeline.
+- Manager update-channel UX.
+- Release policy documentation for asset replacement without retag.
+- Runtime test matrix for mustang, blazer, frankel and rango.
+- Installer-vs-runtime verify polish.
+
+Stable 1.5.1 remains final: runtime-proven on mustang, factory-basis covered for all G5 Pixel 10 devices.
+
 # Stable 1.5.1
 
 ## v1.5.1-universal.1
