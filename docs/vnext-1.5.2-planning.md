@@ -159,6 +159,8 @@ Status: `1.5.2-universal-test.3` selected for Magisk update-path channel switch:
 6. Expand to frankel/blazer/rango only with explicit device logs.
 7. Promote stable only after runtime logs and docs are aligned.
 
+Policy: every release/pre-release requires install plus post-reboot runtime verify before it is marked complete. See `docs/release-reboot-verify-policy.md`.
+
 ## Stable promotion gate for vNext
 
 A future stable can only claim all-G5 runtime support when all G5 devices have green runtime evidence.
