@@ -35,3 +35,15 @@ If boot issues occur, keep the module disabled and export debug evidence through
 su -c 'sh /data/adb/modules/pixel-10-pro-xl-thermal-fix/tools/collect-debug.sh'
 su -c 'sh /data/adb/modules/pixel-10-pro-xl-thermal-fix/tools/boot-crash-log-collect.sh'
 ```
+
+## Runtime verification
+
+Runtime PASS has been recorded on `mustang / CP2A.260605.012`.
+
+```text
+RESULT: PIXEL_THERMAL_152_TEST4_RUNTIME_PASS device=mustang build=CP2A.260605.012 version=1.5.2-universal-test.4 profile=mustang-android17-cp2a-cp2a260605012-outdoor-extended polling=mod thermal=outdoor-ext zram=100p bootguard=pass fail_count=0 matrix_count=83 reboot=safe
+```
+
+Bootguard v2 updated `last_good.env`, kept `fail_count=0`, and did not create `disable`, `remove` or `skip_mount` markers.
+
+Runtime feedback is still needed for `frankel`, `blazer` and `rango`.

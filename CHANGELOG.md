@@ -1,5 +1,6 @@
 # 1.5.2-universal-test.4
 
+- Runtime PASS recorded on `mustang / CP2A.260605.012`: polling `mod`, thermal `outdoor-ext`, ZRAM `100p`, Bootguard `pass`, matrix count `83`.
 Pre-release test build.
 
 - Adds Bootguard v2 self-only threshold guard.

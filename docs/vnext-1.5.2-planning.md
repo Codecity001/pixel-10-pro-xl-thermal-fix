@@ -1,3 +1,5 @@
+Status: 1.5.2-universal-test.4 published and runtime-verified on mustang / CP2A.260605.012 with Bootguard pass, ZRAM 100p and matrix count 83.
+
 Status: 1.5.2-universal-test.4 build candidate prepared from main with Bootguard v2; requires install + reboot runtime verify.
 
 Status: Bootguard v2 guard pack added without WebUI: Action debug export, boot-crash export, last-good diff and self-only thresholded disable.
