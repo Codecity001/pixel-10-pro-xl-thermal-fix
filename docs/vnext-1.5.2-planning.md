@@ -1,3 +1,18 @@
+## WebUI vNext external reference: Encore Tweaks
+
+Status: captured for post-stable WebUI planning.
+
+See `docs/webui-vnext-encore-audit.md`.
+
+Decision: use Encore only as a WebUI/config/status inspiration source. Do not import its CPU/GPU/DRAM/sysctl/thermal-policy performance tweaks or daemon requirements.
+
+Useful ideas:
+- WebUI-X / KSUWebUI launch pattern while keeping Action menu fallback
+- status dashboard from module state files
+- clear separation of remembered settings, runtime status, Bootguard state and update channel
+- optional soft-disable concept with explicit Bootguard separation
+- structured config view for later WebUI work
+
 Status: 1.5.2-universal-test.4 published and runtime-verified on mustang / CP2A.260605.012 with Bootguard pass, ZRAM 100p and matrix count 83.
 
 Status: 1.5.2-universal-test.4 build candidate prepared from main with Bootguard v2; requires install + reboot runtime verify.
