@@ -2,6 +2,6 @@ id=pixel-10-pro-xl-thermal-fix
 name=Pixel 10 Thermal & Memory Control
 version=1.5.2-universal-test.4
 versionCode=1016204
-author=Lycidias93, based on marx161
+author=Lycidias93, based on marx161; Contributor: Harish / Codecity001
 description=P:⚪ mod | T:⚪ stock | Z:⚪ off | Action: settings/debug
 updateJson=https://raw.githubusercontent.com/Lycidias93/pixel-10-pro-xl-thermal-fix/main/update.json
