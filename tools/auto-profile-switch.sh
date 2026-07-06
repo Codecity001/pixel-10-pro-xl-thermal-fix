@@ -45,7 +45,7 @@ case "$ANDROID" in
   16|16.*)
     case "$DEVICE" in mustang|blazer|frankel|rango) ;; *) GUARD="unsupported_android16_device_$DEVICE" ;; esac
     if [ -z "$GUARD" ]; then
-      PROFILE="$DEVICE"
+      PROFILE="$DEVICE/16/base"
       PROFILE_STATE="auto_android16_${DEVICE}_major_guard"
       BUILD_STATE="android16_${DEVICE}_${BUILD_ID}_${INCREMENTAL}_major_guard_auto_switch"
       SOURCE_BUILD="$A16_BUILD"
@@ -56,14 +56,14 @@ case "$ANDROID" in
     case "$DEVICE" in
       mustang)
         case "$BUILD_ID" in
-          CP31.*) PROFILE="mustang-android17-cp31"; PROFILE_STATE="auto_android17_cp31_mustang_major_guard"; BUILD_STATE="android17_mustang_${BUILD_ID}_${INCREMENTAL}_major_guard_auto_switch_using_cp31_profile"; SOURCE_BUILD="$A17_CP31_BUILD"; SOURCE_INC="$A17_CP31_INC" ;;
-          CP21.*) PROFILE="mustang-android17-cp21"; PROFILE_STATE="auto_android17_cp21_mustang_major_guard"; BUILD_STATE="android17_mustang_${BUILD_ID}_${INCREMENTAL}_major_guard_auto_switch_using_cp21_profile"; SOURCE_BUILD="$A17_CP21_BUILD"; SOURCE_INC="$INCREMENTAL" ;;
-          *) PROFILE="mustang-android17-stable-cp2a-260605012"; PROFILE_STATE="auto_android17_stable_mustang_major_guard"; BUILD_STATE="android17_mustang_${BUILD_ID}_${INCREMENTAL}_major_guard_auto_switch_using_cp2a_profile"; SOURCE_BUILD="$A17_STABLE_BUILD"; SOURCE_INC="$A17_STABLE_INC" ;;
+          CP31.*) PROFILE="mustang/17/cp31/cp31260618005/base"; PROFILE_STATE="auto_android17_cp31_mustang_major_guard"; BUILD_STATE="android17_mustang_${BUILD_ID}_${INCREMENTAL}_major_guard_auto_switch_using_cp31_profile"; SOURCE_BUILD="$A17_CP31_BUILD"; SOURCE_INC="$A17_CP31_INC" ;;
+          CP21.*) PROFILE="mustang/17/cp21/cp21260330011/base"; PROFILE_STATE="auto_android17_cp21_mustang_major_guard"; BUILD_STATE="android17_mustang_${BUILD_ID}_${INCREMENTAL}_major_guard_auto_switch_using_cp21_profile"; SOURCE_BUILD="$A17_CP21_BUILD"; SOURCE_INC="$INCREMENTAL" ;;
+          *) PROFILE="mustang/17/stable/cp2a-260605012/base"; PROFILE_STATE="auto_android17_stable_mustang_major_guard"; BUILD_STATE="android17_mustang_${BUILD_ID}_${INCREMENTAL}_major_guard_auto_switch_using_cp2a_profile"; SOURCE_BUILD="$A17_STABLE_BUILD"; SOURCE_INC="$A17_STABLE_INC" ;;
         esac ;;
       frankel|blazer|rango)
         case "$BUILD_ID" in
-          CP21.*) PROFILE="${DEVICE}-android17-cp21"; PROFILE_STATE="auto_android17_cp21_${DEVICE}_major_guard"; BUILD_STATE="android17_${DEVICE}_${BUILD_ID}_${INCREMENTAL}_major_guard_auto_switch_using_cp21_profile"; SOURCE_BUILD="$A17_CP21_BUILD"; SOURCE_INC="$INCREMENTAL" ;;
-          *) PROFILE="${DEVICE}-android17-stable-cp2a-260605012"; PROFILE_STATE="auto_android17_stable_${DEVICE}_major_guard"; BUILD_STATE="android17_${DEVICE}_${BUILD_ID}_${INCREMENTAL}_major_guard_auto_switch_using_cp2a_profile"; SOURCE_BUILD="$A17_STABLE_BUILD"; SOURCE_INC="$A17_STABLE_INC" ;;
+          CP21.*) PROFILE="${DEVICE}/17/cp21/cp21260330011/base"; PROFILE_STATE="auto_android17_cp21_${DEVICE}_major_guard"; BUILD_STATE="android17_${DEVICE}_${BUILD_ID}_${INCREMENTAL}_major_guard_auto_switch_using_cp21_profile"; SOURCE_BUILD="$A17_CP21_BUILD"; SOURCE_INC="$INCREMENTAL" ;;
+          *) PROFILE="${DEVICE}/17/stable/cp2a-260605012/base"; PROFILE_STATE="auto_android17_stable_${DEVICE}_major_guard"; BUILD_STATE="android17_${DEVICE}_${BUILD_ID}_${INCREMENTAL}_major_guard_auto_switch_using_cp2a_profile"; SOURCE_BUILD="$A17_STABLE_BUILD"; SOURCE_INC="$A17_STABLE_INC" ;;
         esac ;;
       *) GUARD="unsupported_android17_device_$DEVICE" ;;
     esac
@@ -104,7 +104,8 @@ BASE_PROFILE="$PROFILE"
 THERMAL_OUTDOOR_PROFILE="$(getcfg THERMAL_OUTDOOR_PROFILE)"
 case "$THERMAL_OUTDOOR_PROFILE" in
   outdoor-safe|outdoor-plus|outdoor-extended)
-    OUTDOOR_PROFILE="${BASE_PROFILE}-${THERMAL_OUTDOOR_PROFILE}"
+    OUTDOOR_PROFILE="$(profile_matrix_variant "$BASE_PROFILE" "$THERMAL_OUTDOOR_PROFILE" 2>/dev/null || true)"
+    [ -n "$OUTDOOR_PROFILE" ] || OUTDOOR_PROFILE="${BASE_PROFILE}-${THERMAL_OUTDOOR_PROFILE}"
     OUTDOOR_PROFILE_DIR="$MODDIR/profiles/$OUTDOOR_PROFILE/system/vendor/etc"
     if [ -s "$OUTDOOR_PROFILE_DIR/thermal_info_config_throttling.json" ] && [ -s "$OUTDOOR_PROFILE_DIR/thermal_info_config.json" ] && [ -s "$OUTDOOR_PROFILE_DIR/thermal_info_config_charge.json" ]; then
       PROFILE="$OUTDOOR_PROFILE"
