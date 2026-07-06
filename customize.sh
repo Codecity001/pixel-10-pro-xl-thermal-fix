@@ -22,6 +22,8 @@ A17_STABLE_CP2A_SOURCE_REPORT_SHA256="a17_pixel10_thermal_ptune_magisk_stable_v3
 
 ui_print "----------------------------------------"
 ui_print "  Pixel 10 Thermal & Memory Control"
+ui_print "  by Lycidias93, based on marx161"
+ui_print "  Contributor: Harish / Codecity001"
 ui_print "  A17 Thermal Throttle Fix profile installer"
 ui_print "----------------------------------------"
 ui_print "SELinux read-only policy"
@@ -249,9 +251,4 @@ ui_print "- Android: $android"
 # ZRAM_HELPER_CHMOD_V1412_TEST2: keep helper scripts executable for direct Magisk/KSU shell use.
 if [ -d "$MODPATH/tools" ]; then
   chmod 0755 "$MODPATH"/tools/*.sh "$MODPATH"/tools/resetprop-rs 2>/dev/null || true
-fi
-
-# Contributor attribution
-if command -v ui_print >/dev/null 2>&1; then
-  ui_print " - Contributor: Codecity001 (https://github.com/Codecity001)"
 fi
