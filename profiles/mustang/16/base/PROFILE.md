@@ -1,10 +1,3 @@
-<!-- PROFILE_BASIS_CLARITY_V1_START -->
-Status: legacy Android 16 compatibility profile.
-
-This plain profiles/mustang directory is not the Android 17 mustang profile path.
-Use explicit Android 17 directories such as profiles/mustang-android17-cp31-cp31260618005 for Android 17 work.
-<!-- PROFILE_BASIS_CLARITY_V1_END -->
-
 # mustang profile
 
 Status: stable verified; identical to v1.3-mustang.15
