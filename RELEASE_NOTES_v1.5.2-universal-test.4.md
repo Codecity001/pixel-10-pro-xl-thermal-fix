@@ -47,3 +47,7 @@ RESULT: PIXEL_THERMAL_152_TEST4_RUNTIME_PASS device=mustang build=CP2A.260605.01
 Bootguard v2 updated `last_good.env`, kept `fail_count=0`, and did not create `disable`, `remove` or `skip_mount` markers.
 
 Runtime feedback is still needed for `frankel`, `blazer` and `rango`.
+
+## Credits
+
+- Codecity001 - contributor. https://github.com/Codecity001
