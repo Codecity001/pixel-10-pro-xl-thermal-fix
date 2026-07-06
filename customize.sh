@@ -250,3 +250,8 @@ ui_print "- Android: $android"
 if [ -d "$MODPATH/tools" ]; then
   chmod 0755 "$MODPATH"/tools/*.sh "$MODPATH"/tools/resetprop-rs 2>/dev/null || true
 fi
+
+# Contributor attribution
+if command -v ui_print >/dev/null 2>&1; then
+  ui_print " - Contributor: Codecity001 (https://github.com/Codecity001)"
+fi
