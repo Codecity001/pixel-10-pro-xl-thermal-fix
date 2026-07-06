@@ -134,21 +134,21 @@ case "$android" in
       mustang)
         case "$build_id" in
           CP31.*)
-            profile="mustang-android17-cp31"
+            profile="mustang/17/cp31/cp31260618005/base"
             profile_state="android17_cp31_major_guard_test_pending_live_verification"
             build_state="android17_mustang_${build_id}_${incremental}_major_guard_test_using_cp31_profile"
             profile_source_build="$A17_CP31_PROFILE_SOURCE_BUILD"
             profile_source_incremental="$A17_CP31_PROFILE_SOURCE_INCREMENTAL"
             ;;
           CP21.*)
-            profile="mustang-android17-cp21"
+            profile="mustang/17/cp21/cp21260330011/base"
             profile_state="android17_cp21_major_guard_test_pending_live_verification"
             build_state="android17_mustang_${build_id}_${incremental}_major_guard_test_using_cp21_profile"
             profile_source_build="$A17_CP21_PROFILE_SOURCE_BUILD"
             profile_source_incremental="$incremental"
             ;;
           *)
-            profile="mustang-android17-stable-cp2a-260605012"
+            profile="mustang/17/stable/cp2a-260605012/base"
             profile_state="android17_stable_major_guard_test_mustang_runtime_verified_baseline"
             build_state="android17_mustang_${build_id}_${incremental}_major_guard_test_using_cp2a_profile"
             profile_source_build="$A17_STABLE_CP2A_PROFILE_SOURCE_BUILD"
@@ -160,14 +160,14 @@ case "$android" in
       blazer|frankel|rango)
         case "$build_id" in
           CP21.*)
-            profile="${device}-android17-cp21"
+            profile="${device}/17/cp21/cp21260330011/base"
             profile_state="android17_cp21_major_guard_test_pending_live_verification"
             build_state="android17_${device}_${build_id}_${incremental}_major_guard_test_using_cp21_profile"
             profile_source_build="$A17_CP21_PROFILE_SOURCE_BUILD"
             profile_source_incremental="$incremental"
             ;;
           *)
-            profile="${device}-android17-stable-cp2a-260605012"
+            profile="${device}/17/stable/cp2a-260605012/base"
             profile_state="android17_stable_major_guard_test_${device}_pending_live_verification"
             build_state="android17_${device}_${build_id}_${incremental}_major_guard_test_using_cp2a_profile"
             profile_source_build="$A17_STABLE_CP2A_PROFILE_SOURCE_BUILD"

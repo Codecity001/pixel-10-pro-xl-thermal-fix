@@ -39,7 +39,8 @@ thermal_install_overlay() {
 
   case "$THERMAL_OUTDOOR_PROFILE" in
     outdoor-safe|outdoor-plus|outdoor-extended)
-      outdoor_profile="$base_profile-$THERMAL_OUTDOOR_PROFILE"
+      outdoor_profile="$(profile_matrix_variant "$base_profile" "$THERMAL_OUTDOOR_PROFILE" 2>/dev/null || true)"
+      [ -n "$outdoor_profile" ] || outdoor_profile="$base_profile-$THERMAL_OUTDOOR_PROFILE"
       outdoor_profile_dir="$MODPATH/profiles/$outdoor_profile/system/vendor/etc"
       if [ -s "$outdoor_profile_dir/thermal_info_config_throttling.json" ] && [ -s "$outdoor_profile_dir/thermal_info_config.json" ] && [ -s "$outdoor_profile_dir/thermal_info_config_charge.json" ]; then
         profile="$outdoor_profile"

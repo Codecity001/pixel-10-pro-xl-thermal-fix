@@ -1,20 +1,19 @@
 #!/system/bin/sh
-# Pixel 10 A17 Test9 full profile matrix helper.
+# Pixel 10 A17 nested profile matrix helper.
 
 profile_matrix_base() {
   _device="${1:-}"
   _build="${2:-}"
-  case "$_build" in
-    CP2A.*|cp2a.*) _family="cp2a"; _buildid="cp2a260605012" ;;
-    CP21.*|cp21.*) _family="cp21"; _buildid="cp21260330011" ;;
-    CP31.*|cp31.*) _family="cp31"; _buildid="cp31260618005" ;;
-    *) return 1 ;;
-  esac
   case "$_device" in
     frankel|blazer|mustang|rango) ;;
     *) return 1 ;;
   esac
-  printf "%s\n" "${_device}-android17-${_family}-${_buildid}"
+  case "$_build" in
+    CP2A.*|cp2a.*) printf "%s\n" "$_device/17/stable/cp2a-260605012/base" ;;
+    CP21.*|cp21.*) printf "%s\n" "$_device/17/cp21/cp21260330011/base" ;;
+    CP31.*|cp31.*) printf "%s\n" "$_device/17/cp31/cp31260618005/base" ;;
+    *) return 1 ;;
+  esac
 }
 
 profile_matrix_variant() {
@@ -22,7 +21,12 @@ profile_matrix_variant() {
   _variant="${2:-base}"
   case "$_variant" in
     base|stock|"") printf "%s\n" "$_base" ;;
-    outdoor-safe|outdoor-plus|outdoor-extended) printf "%s-%s\n" "$_base" "$_variant" ;;
+    outdoor-safe|outdoor-plus|outdoor-extended)
+      case "$_base" in
+        */base) printf "%s\n" "${_base%/base}/$_variant" ;;
+        *) printf "%s\n" "$_base-$_variant" ;;
+      esac
+    ;;
     *) return 1 ;;
   esac
 }
