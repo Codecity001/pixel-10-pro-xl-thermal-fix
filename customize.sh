@@ -21,6 +21,7 @@ A17_STABLE_CP2A_PROFILE_SOURCE_INCREMENTAL="15430684"
 A17_STABLE_CP2A_SOURCE_REPORT_SHA256="a17_pixel10_thermal_ptune_magisk_stable_v3_factory_extract"
 
 ui_print "----------------------------------------"
+ui_print "  Contributor: Codecity001"
 ui_print "  A17 Thermal Throttle Fix profile installer"
 ui_print "----------------------------------------"
 ui_print "SELinux read-only policy"
