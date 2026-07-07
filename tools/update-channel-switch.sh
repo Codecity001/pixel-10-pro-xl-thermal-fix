@@ -77,7 +77,7 @@ status_channel() {
   [ -n "$stable_v" ] && msg "Stable JSON: $stable_v"
   [ -n "$test_v" ] && msg "Test JSON: $test_v"
   msg "Mode: path switch"
-  msg "No ZIP download"
+  msg "No ZIP download"; msg "Refresh Magisk update check"
 }
 
 set_stable() {
@@ -85,7 +85,7 @@ set_stable() {
   cfg_set UPDATE_CHANNEL stable
   msg "Switched: stable"
   msg "Magisk path updated"
-  msg "No ZIP download"
+  msg "No ZIP download"; msg "Refresh Magisk update check"
 }
 
 set_test() {
@@ -93,7 +93,7 @@ set_test() {
   cfg_set UPDATE_CHANNEL test
   msg "Switched: test"
   msg "Magisk path updated"
-  msg "No ZIP download"
+  msg "No ZIP download"; msg "Refresh Magisk update check"
 }
 
 case "${1:-status}" in

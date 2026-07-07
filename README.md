@@ -177,12 +177,14 @@ The Action button opens an extended terminal dashboard with Status, Settings for
 
 Action menu quick guide:
 
+- Navigation: Vol+ cycles, Vol- selects, 30s timeout keeps the shown choice.
+
 - Status: refreshes P, T, Z and manager description.
 - Settings > Polling: Mod values or Stock values; rematerializes the thermal overlay.
 - Settings > Thermal: Stock, Outdoor Safe, Outdoor Plus, or Outdoor Ext; reboot recommended.
 - Settings > ZRAM: Enabled or Disabled; disabling needs reboot.
 - Debug > Debug ZIP: creates a report in Download.
-- Debug > Boot Crash TGZ: creates a boot-crash evidence archive.
+- Debug > Boot Crash Archive: creates a boot-crash evidence archive.
 - Debug > Bootguard: shows Bootguard and last-good diff.
 - Debug > Clear Counters: resets Bootguard counters only; disable state is preserved.
 - Advanced > Update Channel: switches the Magisk update path only; no ZIP download.
