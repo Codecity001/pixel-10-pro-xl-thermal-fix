@@ -21,8 +21,15 @@ profile_matrix_variant() {
   _variant="${2:-base}"
   case "$_variant" in
     base|stock|"") printf "%s\n" "$_base" ;;
-    outdoor-safe|outdoor-plus|outdoor-extended)
+    outdoor-safe|outdoor-plus|outdoor-extended|outdoor-g4-adapted|outdoor-g4-adapted-plus)
       case "$_base" in
+        */17/stable/cp2a-260605012/base)
+          _device="${_base%%/*}"
+          case "$_variant" in
+            outdoor-g4-adapted|outdoor-g4-adapted-plus) printf "%s\n" "$_device/17/stable/cp2a-260605012/$_variant" ;;
+            *) printf "%s\n" "$_device/17/cp2a/cp2a260605012/$_variant" ;;
+          esac
+        ;;
         */base) printf "%s\n" "${_base%/base}/$_variant" ;;
         *) printf "%s\n" "$_base-$_variant" ;;
       esac
