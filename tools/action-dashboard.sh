@@ -6,6 +6,7 @@ CONFIG_FILE="$CONFIG_DIR/config.env"
 
 MENU_CYCLE_AVAILABLE=0
 [ -s "$MODDIR/tools/menu-cycle.sh" ] && . "$MODDIR/tools/menu-cycle.sh" && MENU_CYCLE_AVAILABLE=1
+[ -s "$MODDIR/tools/profile-matrix-test9.sh" ] && . "$MODDIR/tools/profile-matrix-test9.sh" || true
 
 msg() {
   if command -v ui_print >/dev/null 2>&1; then ui_print "$*"; else echo "$*"; fi
@@ -40,6 +41,9 @@ cfg_set() {
 strip_outdoor_suffix() {
   p="$1"
   case "$p" in
+    */outdoor-extended) echo "${p%/outdoor-extended}/base" ;;
+    */outdoor-plus) echo "${p%/outdoor-plus}/base" ;;
+    */outdoor-safe) echo "${p%/outdoor-safe}/base" ;;
     *-outdoor-extended) echo "${p%-outdoor-extended}" ;;
     *-outdoor-plus) echo "${p%-outdoor-plus}" ;;
     *-outdoor-safe) echo "${p%-outdoor-safe}" ;;
@@ -57,9 +61,13 @@ current_base_profile() {
 variant_exists() {
   base="$1"
   variant="$2"
+  case "$variant" in stock|base) return 0 ;; esac
   case "$variant" in
-    stock|base) return 0 ;;
     outdoor-safe|outdoor-plus|outdoor-extended)
+      if command -v profile_matrix_variant >/dev/null 2>&1; then
+        path="$(profile_matrix_variant "$base" "$variant" 2>/dev/null || true)"
+        [ -n "$path" ] && [ -s "$MODDIR/profiles/$path/system/vendor/etc/thermal_info_config_throttling.json" ] && return 0
+      fi
       [ -s "$MODDIR/profiles/$base-$variant/system/vendor/etc/thermal_info_config_throttling.json" ]
     ;;
     *) return 1 ;;
@@ -71,7 +79,15 @@ selected_variant_profile() {
   choice="$(cfg_get THERMAL_OUTDOOR_PROFILE)"
   case "$choice" in
     outdoor-safe|outdoor-plus|outdoor-extended)
-      if variant_exists "$base" "$choice"; then echo "$base-$choice"; else echo "$base"; fi
+      if variant_exists "$base" "$choice"; then
+        if command -v profile_matrix_variant >/dev/null 2>&1; then
+          profile_matrix_variant "$base" "$choice" 2>/dev/null || echo "$base"
+        else
+          echo "$base-$choice"
+        fi
+      else
+        echo "$base"
+      fi
     ;;
     *) echo "$base" ;;
   esac
@@ -280,7 +296,7 @@ update_channel_status() {
   if [ -s "$MODDIR/tools/update-channel-switch.sh" ]; then
     sh "$MODDIR/tools/update-channel-switch.sh" status
   else
-    msg "Update Channel"
+    msg "Update Channelannel"
     msg "Switch tool missing"
   fi
 }
@@ -288,16 +304,16 @@ update_channel_status() {
 update_channel_loop() {
   while :; do
     update_channel_status
-    ui_menu3 "Update Ch" "Use Stable" "Use Test" "Back" 2
+    ui_menu3 "Update Channel" "Use Stable" "Use Test" "Back" 2
     [ "$UI_REASON" = "timeout" ] && return 0
     case "$UI_INDEX" in
       0)
         sh "$MODDIR/tools/update-channel-switch.sh" stable
-        msg "Back to Update Ch."
+        msg "Back to Update Channel."
       ;;
       1)
         sh "$MODDIR/tools/update-channel-switch.sh" test
-        msg "Back to Update Ch."
+        msg "Back to Update Channel."
       ;;
       *)
         msg "Back."
@@ -309,7 +325,7 @@ update_channel_loop() {
 
 advanced_loop() {
   while :; do
-    ui_menu5 "Advanced" "pTune Status" "Update Ch" "Override OFF" "Override ON" "Back" 0
+    ui_menu5 "Advanced" "pTune Status" "Update Channel" "pTune OFF" "pTune ON" "Back" 0
     [ "$UI_REASON" = "timeout" ] && return 0
     case "$UI_INDEX" in
       0) ptune_status; msg "Back to Advanced." ;;
@@ -368,7 +384,7 @@ bootguard_status() {
 }
 
 bootguard_clear() {
-  ui_menu3 "Clear Guard" "Keep State" "Clear Count" "Back" 0
+  ui_menu3 "Clear Counters" "Keep State" "Clear Count" "Back" 0
   [ "$UI_REASON" = "timeout" ] && return 0
   case "$UI_INDEX" in
     1)
@@ -385,7 +401,7 @@ bootguard_clear() {
 
 debug_loop() {
   while :; do
-    ui_menu5 "Debug" "Debug ZIP" "BootCrash TGZ" "Bootguard" "Clear Guard" "Back" 0
+    ui_menu5 "Debug" "Debug ZIP" "Boot Crash TGZ" "Bootguard" "Clear Counters" "Back" 0
     [ "$UI_REASON" = "timeout" ] && return 0
     case "$UI_INDEX" in
       0) debug_zip ;;

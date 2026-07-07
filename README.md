@@ -8,6 +8,13 @@ Stable **1.5.1-universal.1** promotes the verified Test7 dynamic manager Ampel/A
 
 ---
 
+## Current pre-release test channel
+
+- 1.5.2-universal-test.5 fixes the nested Android 17 Outdoor menu and profile resolver.
+- Use test.5 or newer for Outdoor Extended on CP2A, CP21 and CP31 nested profiles.
+- 1.5.2-universal-test.4 can wrongly fall back to Stock because its Outdoor menu checked old flat profile paths.
+- Stable channel remains 1.5.1-universal.1.
+
 ## What this module does
 
 This module installs guarded Pixel 10 thermal and memory overlays through Magisk. It does **not** replace Android thermal management; the stock thermal HAL remains in control while selected profile inputs are changed for supported device/build combinations.
@@ -167,6 +174,20 @@ P:🟢 mod | T:🟢 outdoor-ext | Z:🟢 100p | Action: settings/debug
 The status is refreshed after boot and whenever the module Action is opened. If the manager caches module descriptions, reopen or refresh the manager after using Action.
 
 The Action button opens an extended terminal dashboard with Status, Settings for Polling/Thermal/ZRAM, Debug ZIP creation, Advanced pTune status/override guards, and Exit.
+
+Action menu quick guide:
+
+- Status: refreshes P, T, Z and manager description.
+- Settings > Polling: Mod values or Stock values; rematerializes the thermal overlay.
+- Settings > Thermal: Stock, Outdoor Safe, Outdoor Plus, or Outdoor Ext; reboot recommended.
+- Settings > ZRAM: Enabled or Disabled; disabling needs reboot.
+- Debug > Debug ZIP: creates a report in Download.
+- Debug > Boot Crash TGZ: creates a boot-crash evidence archive.
+- Debug > Bootguard: shows Bootguard and last-good diff.
+- Debug > Clear Counters: resets Bootguard counters only; disable state is preserved.
+- Advanced > Update Channel: switches the Magisk update path only; no ZIP download.
+- Advanced > pTune Status or pTune OFF or pTune ON: inspect or explicitly allow pTune coexistence risk.
+
 
 ---
 
