@@ -1,3 +1,20 @@
+# 1.5.2-universal-test.5
+
+Pre-release test build.
+
+IMPORTANT:
+
+- This build fixes the nested Android 17 Outdoor menu and profile resolver.
+- Use this build for Outdoor Extended on CP2A/CP21/CP31 nested profiles.
+- 1.5.2-universal-test.4 can wrongly fall back to Stock because its Outdoor menu checked old flat profile paths.
+- Verified after reboot on mustang / CP2A.260605.012 / 15430684: P mod, T outdoor-ext, Z 100p.
+
+Included:
+
+- Nested Outdoor menu fix for all Pixel 10 profile devices: blazer, frankel, mustang, rango.
+- CP2A, CP21 and CP31 base/outdoor matrix validation.
+- Stable update.json remains unchanged on 1.5.1-universal.1.
+
 # 1.5.2-universal-test.4
 
 - Runtime PASS recorded on `mustang / CP2A.260605.012`: polling `mod`, thermal `outdoor-ext`, ZRAM `100p`, Bootguard `pass`, matrix count `83`.
