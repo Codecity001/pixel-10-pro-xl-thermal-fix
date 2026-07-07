@@ -21,13 +21,23 @@ mc_read_key() {
 
 mc_desc() {
   case "$1" in
+    "Action") echo "Open status, settings, debug, advanced." ;;
+    "Settings") echo "Change Polling, Thermal, or ZRAM." ;;
+    "Polling") echo "Choose module or stock polling values." ;;
+    "Polling Fix") echo "Module values or stock values." ;;
+    "Thermal") echo "Choose Stock, Safe, Plus, or Extended." ;;
+    "Thermal Profile") echo "Stock, Safe, Plus, or Extended." ;;
+    "ZRAM 100%") echo "Enable or disable 100 percent ZRAM." ;;
+    "Debug") echo "Create evidence and bootguard reports." ;;
+    "Debug Logging") echo "Minimal or full debug evidence." ;;
+    "Bootguard") echo "Show bootguard and last-good state." ;;
+    "Clear Counters") echo "Reset bootguard counters only." ;;
+    "Advanced") echo "pTune and update-channel tools." ;;
+    "Update Channel") echo "Stable or test update path only." ;;
+    "pTune Override") echo "Allow module beside pTune." ;;
+    "pTune Risk") echo "Explicit pTune coexistence risk." ;;
     "Remember Settings") echo "Last choices or fresh start." ;;
     "Safety Level") echo "Allow testing or block conflicts." ;;
-    "Polling Fix") echo "Module values or stock values." ;;
-    "pTune Override") echo "Allow module beside pTune." ;;
-    "Thermal Profile") echo "Stock, Safe, Plus, or Extended." ;;
-    "Debug Logging") echo "Minimal or full debug evidence." ;;
-    "ZRAM 100%") echo "Stock swap or 100% ZRAM." ;;
     *) echo "" ;;
   esac
 }
