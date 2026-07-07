@@ -168,12 +168,12 @@ rematerialize_thermal_overlay() {
   fi
   printf '%s\n' "$selected" > "$MODDIR/guard/selected_profile" 2>/dev/null || true
   printf '%s\n' "yes" > "$MODDIR/guard/action_cycle_pending_reboot" 2>/dev/null || true
-  msg "- Profile saved"; msg "- Reboot recommended"; msg "- Vendor mount refresh"; return 0
+  msg "- Profile saved"; msg "- Selected profile:"; msg "$selected"; msg "- Reboot recommended"; msg "- Vendor mount refresh"; return 0
 }
 
 set_polling() {
   cur="$(cfg_get THERMAL_POLLING_MODE)"; case "$cur" in stock) idx=1 ;; *) idx=0 ;; esac
-  ui_menu3 "Polling" "Mod values" "Stock values" "Back" "$idx"
+  ui_menu3 "Polling Mode" "Module values" "Stock values" "Back" "$idx"
   [ "$UI_REASON" = "timeout" ] && return 0
   case "$UI_INDEX" in
     0) cfg_set THERMAL_POLLING_MODE mod; cfg_set LAST_THERMAL_POLLING_MODE mod; msg "- Polling: mod" ;;
@@ -204,7 +204,7 @@ set_thermal() {
   if [ "$base" = "unknown" ]; then msg "! Base profile unknown."; msg "Run Debug ZIP."; return 0; fi
   cur="$(cfg_get THERMAL_OUTDOOR_PROFILE)"
   case "$cur" in outdoor-safe) idx=1 ;; outdoor-plus) idx=2 ;; outdoor-extended) idx=3 ;; *) idx=0 ;; esac
-  ui_menu5 "Thermal" "Stock" "Outdoor Safe" "Outdoor Plus" "Outdoor Ext" "Back" "$idx"
+  ui_menu5 "Thermal Profile" "Stock" "Outdoor Safe" "Outdoor Plus" "Outdoor Extended" "Back" "$idx"
   [ "$UI_REASON" = "timeout" ] && return 0
   case "$UI_INDEX" in 0) choice=stock ;; 1) choice=outdoor-safe ;; 2) choice=outdoor-plus ;; 3) choice=outdoor-extended ;; *) msg "Back."; return 0 ;; esac
   if ! variant_exists "$base" "$choice"; then msg "! Profile missing."; msg "Using Stock"; choice=stock; fi
@@ -217,7 +217,7 @@ set_thermal() {
 
 set_zram() {
   cur="$(cfg_get ENABLE_ZRAM_100P)"; case "$cur" in 1) idx=0 ;; *) idx=1 ;; esac
-  ui_menu3 "ZRAM 100%" "Enabled" "Disabled" "Back" "$idx"
+  ui_menu3 "ZRAM 100%" "Enable 100p" "Disable" "Back" "$idx"
   [ "$UI_REASON" = "timeout" ] && return 0
   case "$UI_INDEX" in
     0)
@@ -236,7 +236,7 @@ set_zram() {
 
 settings_loop() {
   while :; do
-    mc_cycle4 "Settings" "Polling" "Thermal" "ZRAM" "Back" 0
+    mc_cycle4 "Settings" "Polling Mode" "Thermal Profile" "ZRAM 100%" "Back" 0
     [ "$MC_REASON" = "timeout" ] && return 0
     case "$MC_INDEX" in 0) set_polling ;; 1) set_thermal ;; 2) set_zram ;; *) msg "Back."; return 0 ;; esac
   done
@@ -276,7 +276,7 @@ ptune_status() {
 
 ptune_override_off() {
   cfg_set PTUNE_OVERRIDE_MENU off; cfg_set ALLOW_THERMAL_WITH_PTUNE 0; cfg_set RISK_ACK_PTUNE_THERMAL_COLLISION none; cfg_set LAST_PTUNE_OVERRIDE 0
-  msg "pTune override: OFF"; msg "Reinstall recommended"
+  msg "pTune override: OFF"; msg "Reinstall or reflash required"
 }
 
 ptune_override_on() {
@@ -287,16 +287,17 @@ ptune_override_on() {
   ui_menu3 "pTune Risk" "Keep OFF" "Enable risk" "Back" 0
   [ "$UI_REASON" = "timeout" ] && return 0
   case "$UI_INDEX" in
-    1) cfg_set PTUNE_OVERRIDE_MENU on; cfg_set ALLOW_THERMAL_WITH_PTUNE 1; cfg_set RISK_ACK_PTUNE_THERMAL_COLLISION I_UNDERSTAND_BOOTLOOP_RISK; cfg_set LAST_PTUNE_OVERRIDE 1; msg "pTune override: ON"; msg "Reinstall required" ;;
+    1) cfg_set PTUNE_OVERRIDE_MENU on; cfg_set ALLOW_THERMAL_WITH_PTUNE 1; cfg_set RISK_ACK_PTUNE_THERMAL_COLLISION I_UNDERSTAND_BOOTLOOP_RISK; cfg_set LAST_PTUNE_OVERRIDE 1; msg "pTune override: ON"; msg "Reinstall or reflash required" ;;
     *) ptune_override_off ;;
   esac
 }
 
 update_channel_status() {
+    if [ ! -s "$MODDIR/tools/update-channel-switch.sh" ]; then msg "! Cannot switch update channel."; msg "Switch tool missing."; return 0; fi
   if [ -s "$MODDIR/tools/update-channel-switch.sh" ]; then
     sh "$MODDIR/tools/update-channel-switch.sh" status
   else
-    msg "Update Channelannel"
+    msg "Update Channel"
     msg "Switch tool missing"
   fi
 }
@@ -304,6 +305,7 @@ update_channel_status() {
 update_channel_loop() {
   while :; do
     update_channel_status
+    if [ ! -s "$MODDIR/tools/update-channel-switch.sh" ]; then msg "! Cannot switch update channel."; msg "Switch tool missing."; return 0; fi
     ui_menu3 "Update Channel" "Use Stable" "Use Test" "Back" 2
     [ "$UI_REASON" = "timeout" ] && return 0
     case "$UI_INDEX" in
@@ -325,7 +327,7 @@ update_channel_loop() {
 
 advanced_loop() {
   while :; do
-    ui_menu5 "Advanced" "pTune Status" "Update Channel" "pTune OFF" "pTune ON" "Back" 0
+    ui_menu5 "Advanced" "pTune Status" "Update Channel" "pTune Override OFF" "pTune Override ON" "Back" 0
     [ "$UI_REASON" = "timeout" ] && return 0
     case "$UI_INDEX" in
       0) ptune_status; msg "Back to Advanced." ;;
@@ -384,7 +386,7 @@ bootguard_status() {
 }
 
 bootguard_clear() {
-  ui_menu3 "Clear Counters" "Keep State" "Clear Count" "Back" 0
+  ui_menu3 "Clear Counters" "Keep State" "Reset Counters" "Back" 0
   [ "$UI_REASON" = "timeout" ] && return 0
   case "$UI_INDEX" in
     1)
@@ -401,7 +403,7 @@ bootguard_clear() {
 
 debug_loop() {
   while :; do
-    ui_menu5 "Debug" "Debug ZIP" "Boot Crash TGZ" "Bootguard" "Clear Counters" "Back" 0
+    ui_menu5 "Debug" "Debug ZIP" "Boot Crash Archive" "Bootguard" "Clear Counters" "Back" 0
     [ "$UI_REASON" = "timeout" ] && return 0
     case "$UI_INDEX" in
       0) debug_zip ;;

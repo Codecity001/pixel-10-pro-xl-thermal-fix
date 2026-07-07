@@ -1,5 +1,9 @@
 # Unreleased after 1.5.2-universal-test.5
 
+- Fixes the Update Channel fallback label typo.
+- Hardens Action menu labels for Polling Mode, Thermal Profile, ZRAM 100 percent, pTune Override and Boot Crash Archive.
+- Adds an Action menu UX verifier for labels, nested resolver coverage and README coverage.
+- Adds clearer Action menu navigation wording to README.
 - Fixes Action > Settings > Thermal to use the nested profile matrix, matching the test.5 installer resolver.
 - Adds clearer Action, Settings, Debug, Advanced, Update Channel and Bootguard menu descriptions.
 - Updates README with a test.5 nested Outdoor warning and Action menu quick guide.

@@ -23,6 +23,7 @@ mc_desc() {
   case "$1" in
     "Action") echo "Open status, settings, debug, advanced." ;;
     "Settings") echo "Change Polling, Thermal, or ZRAM." ;;
+    "Polling Mode") echo "Module polling values or stock values." ;;
     "Polling") echo "Choose module or stock polling values." ;;
     "Polling Fix") echo "Module values or stock values." ;;
     "Thermal") echo "Choose Stock, Safe, Plus, or Extended." ;;
@@ -30,6 +31,10 @@ mc_desc() {
     "ZRAM 100%") echo "Enable or disable 100 percent ZRAM." ;;
     "Debug") echo "Create evidence and bootguard reports." ;;
     "Debug Logging") echo "Minimal or full debug evidence." ;;
+    "Bootguard Status") echo "Show bootguard and last-good state." ;;
+    "Boot Crash Archive") echo "Create boot crash evidence archive." ;;
+    "pTune Override OFF") echo "Keep pTune coexistence blocked." ;;
+    "pTune Override ON") echo "Allow explicit pTune coexistence risk." ;;
     "Bootguard") echo "Show bootguard and last-good state." ;;
     "Clear Counters") echo "Reset bootguard counters only." ;;
     "Advanced") echo "pTune and update-channel tools." ;;
