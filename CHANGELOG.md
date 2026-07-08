@@ -1,3 +1,13 @@
+# 1.5.2-universal-test.6
+
+Pre-release test build.
+
+- Promotes Action menu nested resolver and UX label hardening.
+- Adds README documentation for Outdoor Safe, Outdoor Plus and Outdoor Extended temperature deltas.
+- Makes the Action UX verifier runtime-safe when README.md is absent from the installed module path.
+- Adds tools/zram-runtime-kb-verify.sh using /proc/swaps KB arithmetic, avoiding Android shell byte-overflow.
+- Keeps stable update.json unchanged on 1.5.1-universal.1.
+
 # Unreleased after 1.5.2-universal-test.5
 
 - Fixes the Update Channel fallback label typo.

@@ -291,3 +291,22 @@ See [CREDITS.md](CREDITS.md) for the detailed list.
 ## License
 
 See [LICENSE](LICENSE).
+
+## Outdoor profile temperature deltas
+
+The Outdoor profiles are staged thermal profile deltas, not thermal-safety bypass modes.
+
+For the current mustang CP2A profile set:
+
+| Variant | VIRTUAL-SKIN thresholds | Delta vs base | VIRTUAL-SKIN-HINT thresholds | Delta vs base |
+|---|---:|---:|---:|---:|
+| Base | 39 / 43 / 45 / 46.5 / 52 / 55 C | baseline | 37 / 43 / 45 / 46.5 / 52 / 55 C | baseline |
+| outdoor-safe | 40 / 44 / 46 / 47.5 / 53 / 56 C | +1 C each | 38 / 44 / 46 / 47.5 / 53 / 56 C | +1 C each |
+| outdoor-plus | 41 / 45 / 47 / 48.5 / 54 / 57 C | +2 C each | 39 / 45 / 47 / 48.5 / 54 / 57 C | +2 C each |
+| outdoor-extended | 42 / 46 / 48 / 49.5 / 55 / 58 C | +3 C each | 40 / 46 / 48 / 49.5 / 55 / 58 C | +3 C each |
+
+Short version: safe = base +1 C, plus = base +2 C, extended = base +3 C for the main VIRTUAL-SKIN and VIRTUAL-SKIN-HINT threshold rows.
+
+Outdoor Extended is not always better. It is the strongest outdoor delta and should stay limited to tested device/build combinations. For unknown builds, Stock or Safe fallback should be used until anchors and runtime behavior are verified.
+
+These modes do not disable core thermal safety.
