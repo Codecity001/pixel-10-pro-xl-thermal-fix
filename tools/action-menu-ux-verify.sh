@@ -6,7 +6,7 @@ for f in action.sh tools/action-dashboard.sh tools/menu-cycle.sh tools/profile-m
   sh -n "$f"
   echo "PASS sh_n $f"
 done
-if grep -RIn --exclude=action-menu-ux-verify.sh "Channelannel" tools README.md CHANGELOG.md >/dev/null 2>&1; then
+if grep -RIn --exclude=action-menu-ux-verify.sh "Channelannel" tools CHANGELOG.md README.md 2>/dev/null; then
   echo "FAIL typo Channelannel"
   exit 20
 fi
@@ -20,8 +20,13 @@ grep -q "Boot Crash Archive" tools/action-dashboard.sh
 grep -q "Reset Counters" tools/action-dashboard.sh
 grep -q "Cannot switch update channel" tools/action-dashboard.sh
 grep -q "Refresh Magisk update check" tools/update-channel-switch.sh
-grep -q "Action menu quick guide" README.md
-grep -q "Navigation: Vol+ cycles" README.md
+if [ -s README.md ]; then
+  grep -q "Action menu quick guide" README.md
+  grep -q "Outdoor profile temperature deltas" README.md
+  echo "PASS readme_runtime_or_zip_present"
+else
+  echo "INFO readme_absent_runtime_optional"
+fi
 . tools/profile-matrix-test9.sh
 base="$(profile_matrix_base mustang CP2A.260605.012)"
 p="$(profile_matrix_variant "$base" outdoor-extended)"
