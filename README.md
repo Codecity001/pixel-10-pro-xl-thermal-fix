@@ -310,3 +310,10 @@ Short version: safe = base +1 C, plus = base +2 C, extended = base +3 C for the 
 Outdoor Extended is not always better. It is the strongest outdoor delta and should stay limited to tested device/build combinations. For unknown builds, Stock or Safe fallback should be used until anchors and runtime behavior are verified.
 
 These modes do not disable core thermal safety.
+
+## 1.5.2-universal-test.7 Canary diagnostic
+
+- Adds a guarded diagnostic path for Canary/ZP builds.
+- On Canary/ZP, install is debug-only: no thermal overlay, no Outdoor profile, no ZRAM fstab.
+- Creates /sdcard/Download/pixel_thermal_canary_diagnostic_*.tgz during install.
+- Normal supported non-Canary builds keep the existing test.6 behavior.

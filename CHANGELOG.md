@@ -1,3 +1,13 @@
+# 1.5.2-universal-test.7
+
+Pre-release diagnostic build.
+
+- Adds Canary/ZP diagnostic install path.
+- Canary/ZP path disables thermal overlay, Outdoor profile, polling mod and ZRAM fstab.
+- Adds tools/preinstall-debug.sh and automatic canary diagnostic TGZ creation.
+- Lowers Bootguard minimum threshold to 1 so diagnostic installs can self-disable faster.
+- Normal non-Canary builds keep test.6 behavior.
+
 # 1.5.2-universal-test.6
 
 Pre-release test build.
