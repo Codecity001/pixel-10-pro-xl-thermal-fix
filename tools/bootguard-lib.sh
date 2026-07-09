@@ -24,7 +24,7 @@ num_or_zero() {
 threshold() {
   t="$(cfg_get BOOTGUARD_FAIL_THRESHOLD)"
   t="$(num_or_zero "$t")"
-  [ "$t" -ge 2 ] 2>/dev/null || t=2
+  [ "$t" -ge 1 ] 2>/dev/null || t=1
   [ "$t" -le 5 ] 2>/dev/null || t=5
   echo "$t"
 }

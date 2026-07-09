@@ -83,6 +83,95 @@ config_get() {
   [ -r "$CONFIG_FILE" ] || return 0
   grep -E "^${key}=" "$CONFIG_FILE" 2>/dev/null | tail -n 1 | sed "s/^${key}=//" | tr -d '\r'
 }
+# BEGIN CANARY_DIAGNOSTIC_NO_OVERLAY_V152T7
+case "$build_id:$fingerprint" in
+  ZP*:*|*:*/ZP*|*:CANARY/*)
+    ui_print "! Canary/ZP diagnostic mode"
+    ui_print "! No thermal overlay, no ZRAM, no Outdoor profile"
+    android_guard="android17_canary_diagnostic_pass"
+    fingerprint_android_guard="canary_zp_diagnostic_guard"
+    incremental_guard="canary_zp_recorded_$incremental"
+    profile="diagnostic/no-overlay"
+    profile_state="canary_zp_diagnostic_no_overlay_no_zram"
+    build_state="canary_zp_${device}_${build_id}_${incremental}_diagnostic_no_overlay_no_zram"
+    profile_source_android="17"
+    profile_source_build="none_diagnostic"
+    profile_source_incremental="none_diagnostic"
+    source_report_sha256="canary_diagnostic_no_overlay_no_zram"
+    profile_dir="none"
+    active_dir="none"
+    PTUNE_GUARD_MODE="diagnostic"
+    PTUNE_INSTALLED_PATH="unset"
+    PTUNE_ACTIVE_PATH="unset"
+    PTUNE_CONFLICT_PATH="unset"
+    PTUNE_CONFLICT_MODE="diagnostic_no_overlay"
+    PTUNE_OVERRIDE_ALLOWED="0"
+    PTUNE_KNOWN_BAD="not_checked_diagnostic"
+    PTUNE_RISK_ACK_STATE="not_applicable_diagnostic"
+    PTUNE_OVERRIDE_NAME="none"
+    THERMAL_OUTDOOR_PROFILE="stock"
+    mkdir -p "$CONFIG_DIR" "$MODPATH/guard"
+    {
+      echo "DEBUG_MODE=1"
+      echo "debug_mode=1"
+      echo "ENABLE_ZRAM_100P=0"
+      echo "ZRAM_RESTART_MMD=0"
+      echo "ZRAM_RISK_ACK=diagnostic_disabled"
+      echo "THERMAL_OUTDOOR_PROFILE=stock"
+      echo "THERMAL_OUTDOOR_TARGET=stock"
+      echo "THERMAL_SETTINGS_MODE=canary_diagnostic"
+      echo "THERMAL_SAFETY_LEVEL=normal"
+      echo "THERMAL_POLLING_MODE=stock"
+      echo "THERMAL_POLLING_EFFECTIVE=stock"
+      echo "BOOTGUARD_FAIL_THRESHOLD=1"
+      echo "CANARY_DIAGNOSTIC_MODE=1"
+    } > "$CONFIG_FILE"
+    rm -rf "$MODPATH/system"
+    if [ -s "$MODPATH/tools/preinstall-debug.sh" ]; then
+      chmod 0755 "$MODPATH/tools/preinstall-debug.sh" 2>/dev/null || true
+      MODULE_VERSION="$MODULE_VERSION" MODULE_VERSION_CODE="$MODULE_VERSION_CODE" sh "$MODPATH/tools/preinstall-debug.sh" install || true
+    fi
+    {
+      echo "module_id=$MODULE_ID"
+      echo "module_version=$MODULE_VERSION"
+      echo "module_version_code=$MODULE_VERSION_CODE"
+      echo "device=$device"
+      echo "profile=$profile"
+      echo "profile_state=$profile_state"
+      echo "build_state=$build_state"
+      echo "android=$android"
+      echo "android_sdk=$android_sdk"
+      echo "build_id=$build_id"
+      echo "incremental=$incremental"
+      echo "android_guard=$android_guard"
+      echo "fingerprint_android_guard=$fingerprint_android_guard"
+      echo "incremental_guard=$incremental_guard"
+      echo "profile_source_android=$profile_source_android"
+      echo "profile_source_build=$profile_source_build"
+      echo "profile_source_incremental=$profile_source_incremental"
+      echo "source_report_sha256=$source_report_sha256"
+      echo "profile_materialized=no"
+      echo "overlay_materializer=canary_diagnostic_no_overlay_v152t7"
+      echo "active_overlay_dir=none"
+      echo
+      echo "zram_fstab_materialized=no"
+      echo "zram_feature=disabled_canary_diagnostic"
+      echo "zram_apply_stage=disabled"
+      echo "thermal_outdoor_profile=stock"
+      echo "thermal_outdoor_target=stock"
+      echo "thermal_polling_mode=stock"
+      echo "thermal_polling_effective=stock"
+      echo "debug_collector=canary_preinstall_debug_v152t7"
+      echo "debug_zip_target=/sdcard/Download/pixel_thermal_canary_diagnostic_*.tgz"
+    } > "$MODPATH/install-state.txt"
+    thermal_save_install_debug "success" "canary_diagnostic_no_overlay_no_zram"
+    ui_print "- Diagnostic install-state written"
+    ui_print "- Debug TGZ: /sdcard/Download/pixel_thermal_canary_diagnostic_*.tgz"
+    ui_print "- Reboot test: safe diagnostic, no overlay"
+    exit 0
+  ;;
+esac
+# END CANARY_DIAGNOSTIC_NO_OVERLAY_V152T7
 # BEGIN PIXEL_THERMAL_INSTALL_OPTIONS_MENU_V1413_TEST17
 if [ -s "$MODPATH/tools/install-options-menu.sh" ]; then
   chmod 0755 "$MODPATH/tools/menu-cycle.sh" "$MODPATH/tools/install-options-menu.sh" 2>/dev/null || true
