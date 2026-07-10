@@ -1,3 +1,13 @@
+# Factory image SSD2 canonical root
+
+- Documents /ssd2/pixel-thermal-factory as the canonical factory image and thermal stock-intake root.
+- Marks /ssd1/jdownloader-downloads/pixel10-a17-vendor as superseded.
+- Records migration evidence: 162 moved, 0 failed, deep inventory 165, leftovers 0.
+- Ensures full thermal file set intake documentation exists.
+- No stock files imported.
+- No runtime claims added.
+- Stable update.json unchanged.
+
 # 1.5.2-universal-test.7
 
 Pre-release diagnostic build.

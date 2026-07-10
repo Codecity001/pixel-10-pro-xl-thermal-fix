@@ -85,3 +85,13 @@ thermal_info_config_throttling.json
 This PR adds the guard and manifest layer only.
 
 No stock files are imported yet.
+
+## SSD2 canonical storage
+
+Marker: FACTORY_IMAGE_SSD2_CANONICAL_20260710
+
+Factory image, vendor extract and thermal stock-intake work now uses only:
+
+/ssd2/pixel-thermal-factory
+
+The former /ssd1/jdownloader-downloads/pixel10-a17-vendor tree is superseded and was migrated under /ssd2/pixel-thermal-factory/migrated/20260710_112828/.
